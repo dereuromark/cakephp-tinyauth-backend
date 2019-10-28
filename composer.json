@@ -14,10 +14,10 @@
 	],
 	"require": {
 		"php": ">=5.6",
-		"cakephp/cakephp": "^3.8.0"
+		"cakephp/cakephp": "^3.8.0",
+		"dereuromark/cakephp-tinyauth": "dev-develop"
 	},
 	"require-dev": {
-		"dereuromark/cakephp-tinyauth": "dev-develop",
 		"fig-r/psr2r-sniffer": "dev-master"
 	},
 	"support": {

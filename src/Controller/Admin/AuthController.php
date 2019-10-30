@@ -2,7 +2,9 @@
 
 namespace TinyAuthBackend\Controller\Admin;
 
-class AuthController {
+use App\Controller\AppController;
+
+class AuthController extends AppController {
 
 	/**
 	 * @return void

@@ -5,3 +5,4 @@
 /composer.lock
 /composer.phar
 .idea/
+/config/Migrations/schema-dump-default.lock

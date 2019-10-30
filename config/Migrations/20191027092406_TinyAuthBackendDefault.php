@@ -10,7 +10,7 @@ class TinyAuthBackendDefault extends AbstractMigration
 	 */
 	public function up()
 	{
-		$this->table('tinyauth_allow_rules')
+		$this->table('tiny_auth_allow_rules')
 			->addColumn('type', 'integer', [ // allow/deny
 				'default' => null,
 				'limit' => 2,
@@ -32,8 +32,11 @@ class TinyAuthBackendDefault extends AbstractMigration
 				'null' => true,
 			])
 			->create();
+		$this->table('tiny_auth_allow_rules')
+			->addIndex(['path'], ['unique' => true])
+			->save();
 
-		$this->table('tinyauth_acl_rules')
+		$this->table('tiny_auth_acl_rules')
 			->addColumn('type', 'integer', [ // allow/deny
 				'default' => null,
 				'limit' => 2,
@@ -60,6 +63,9 @@ class TinyAuthBackendDefault extends AbstractMigration
 				'null' => true,
 			])
 			->create();
+		$this->table('tiny_auth_acl_rules')
+			->addIndex(['path', 'role'], ['unique' => true])
+			->save();
 	}
 
 	/**
@@ -69,7 +75,7 @@ class TinyAuthBackendDefault extends AbstractMigration
 	 */
 	public function down()
 	{
-		$this->dropTable('tinyauth_allow_rules');
-		$this->dropTable('tinyauth_acl_rules');
+		$this->dropTable('tiny_auth_allow_rules');
+		$this->dropTable('tiny_auth_acl_rules');
 	}
 }

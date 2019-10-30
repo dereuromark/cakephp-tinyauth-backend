@@ -14,18 +14,6 @@ class Plugin extends BasePlugin {
 	 * @return void
 	 */
 	public function routes($routes) {
-		/*
-		// This would be without admin prefix
-		$routes->plugin(
-			'TinyAuthBackend',
-			['path' => '/auth'],
-			function (RouteBuilder $routes) {
-				$routes->connect('/', ['controller' => 'Auth', 'action' => 'index']);
-				$routes->fallbacks();
-			}
-		);
-		*/
-
 		$routes->prefix('admin', function (RouteBuilder $routes) {
 			$routes->plugin(
 				'TinyAuthBackend',

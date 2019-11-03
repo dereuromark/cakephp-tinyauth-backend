@@ -7,6 +7,15 @@ use Cake\TestSuite\TestCase;
 class DbAclAdapterTest extends TestCase {
 
 	/**
+	 * Fixtures
+	 *
+	 * @var array
+	 */
+	public $fixtures = [
+		'plugin.TinyAuthBackend.TinyAuthAclRules'
+	];
+
+	/**
 	 * @return void
 	 */
 	public function testGetAcl() {

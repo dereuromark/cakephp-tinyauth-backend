@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ */
+?>
 <h1>TinyAuth Backend</h1>
 
 <p>Make sure that these plugin controllers can never be accessed by anyone else than the "admin" role. You otherwise create security issues!</p>

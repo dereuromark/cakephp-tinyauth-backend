@@ -13,6 +13,7 @@ use Cake\Validation\Validator;
  * @method \TinyAuthBackend\Model\Entity\AclRule[] patchEntities($entities, array $data, array $options = [])
  * @method \TinyAuthBackend\Model\Entity\AclRule findOrCreate($search, callable $callback = null, $options = [])
  * @method \TinyAuthBackend\Model\Entity\AclRule saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class AclRulesTable extends Table {
 
@@ -49,8 +50,17 @@ class AclRulesTable extends Table {
 	public function validationDefault(Validator $validator) {
 		$validator
 			->requirePresence('path', 'create')
-			->notEmpty('path')
+			->notEmptyString('path')
 			->add('path', 'unique', ['rule' => ['validateUnique', ['scope' => ['role']]], 'provider' => 'table']);
+
+		$validator
+			->integer('type')
+			->requirePresence('type', 'create')
+			->notEmptyString('type');
+
+		$validator
+			->requirePresence('role', 'create')
+			->notEmptyString('role');
 
 		return $validator;
 	}

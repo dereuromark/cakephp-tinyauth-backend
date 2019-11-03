@@ -13,6 +13,7 @@ use Cake\Validation\Validator;
  * @method \TinyAuthBackend\Model\Entity\AllowRule[] patchEntities($entities, array $data, array $options = [])
  * @method \TinyAuthBackend\Model\Entity\AllowRule findOrCreate($search, callable $callback = null, $options = [])
  * @method \TinyAuthBackend\Model\Entity\AllowRule saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class AllowRulesTable extends Table {
 
@@ -49,8 +50,13 @@ class AllowRulesTable extends Table {
 	public function validationDefault(Validator $validator) {
 		$validator
 			->requirePresence('path', 'create')
-			->notEmpty('path')
+			->notEmptyString('path')
 			->add('path', 'unique', ['rule' => ['validateUnique', ['scope' => []]], 'provider' => 'table']);
+
+		$validator
+			->integer('type')
+			->requirePresence('type', 'create')
+			->notEmptyString('type');
 
 		return $validator;
 	}

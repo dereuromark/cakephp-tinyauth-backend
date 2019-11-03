@@ -1,7 +1,7 @@
 <?php
 namespace TinyAuthBackend\Model\Entity;
 
-use Cake\ORM\Entity;
+use Tools\Model\Entity\Entity;
 
 /**
  * @property int $id
@@ -30,5 +30,17 @@ class AllowRule extends Entity {
 		'created' => true,
 		'modified' => true
 	];
+
+	/**
+	 * @param int|null $value
+	 * @return array|string
+	 */
+	public static function types($value = null) {
+		$options = [
+			static::TYPE_ALLOW => __('allow'),
+			static::TYPE_DENY => __('deny'),
+		];
+		return parent::enum($value, $options);
+	}
 
 }

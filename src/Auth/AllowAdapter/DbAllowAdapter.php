@@ -2,9 +2,24 @@
 
 namespace TinyAuthBackend\Auth\AllowAdapter;
 
+use Cake\Datasource\ModelAwareTrait;
+use TinyAuthBackend\Model\Entity\AllowRule;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 
+/**
+ * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
+ */
 class DbAllowAdapter implements AllowAdapterInterface {
+
+	use ModelAwareTrait;
+
+	/**
+	 * @var string[]
+	 */
+	protected static $typeMap = [
+		AllowRule::TYPE_ALLOW => 'allow',
+		AllowRule::TYPE_DENY => 'deny',
+	];
 
 	/**
 	 * {@inheritDoc}
@@ -12,9 +27,56 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	 * @return array
 	 */
 	public function getAllow(array $config) {
-		$auth = [];
+		$allow = [];
 
-		return $auth;
+		$allowRules = $this->getRules();
+		foreach ($allowRules as $allowRule) {
+			list($key, $action) = explode('::', $allowRule->path);
+			$ruleType = static::$typeMap[$allowRule->type];
+			if (!isset($allow[$key])) {
+				$allow[$key] = $this->buildArray($key);
+				foreach (static::$typeMap as $type) {
+					$allow[$key][$type] = [];
+				}
+			}
+			$allow[$key][$ruleType][] = $action;
+		}
+
+		return $allow;
+	}
+
+	/**
+	 * @return \TinyAuthBackend\Model\Entity\AllowRule[]
+	 */
+	protected function getRules() {
+		$this->loadModel('TinyAuthBackend.AllowRules');
+		return $this->AllowRules->find()
+			->select(['type', 'path'])
+			->all()
+			->toArray();
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return string[]
+	 */
+	protected function buildArray($key) {
+		$prefix = $plugin = null;
+		if (strpos($key, '.') !== false) {
+			list($plugin, $key) = explode('.', $key, 2);
+		}
+		if (strpos($key, '/') !== false) {
+			$pos = strrpos($key, '/');
+			$prefix = substr($key, 0, $pos);
+			$key = substr($key, $pos + 1);
+		}
+
+		return [
+			'plugin' => $plugin,
+			'prefix' => $prefix,
+			'controller' => $key,
+		];
 	}
 
 }

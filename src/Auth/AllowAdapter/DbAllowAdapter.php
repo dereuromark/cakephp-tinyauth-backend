@@ -4,6 +4,7 @@ namespace TinyAuthBackend\Auth\AllowAdapter;
 
 use Cake\Datasource\ModelAwareTrait;
 use TinyAuthBackend\Model\Entity\AllowRule;
+use TinyAuthBackend\Utility\RulePath;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 
 /**
@@ -31,7 +32,11 @@ class DbAllowAdapter implements AllowAdapterInterface {
 
 		$allowRules = $this->getRules();
 		foreach ($allowRules as $allowRule) {
-			list($key, $action) = explode('::', $allowRule->path);
+			$array = RulePath::parse($allowRule->path);
+			$action = $array['action'];
+			unset($array['action']);
+			$key = RulePath::key($array);
+
 			$ruleType = static::$typeMap[$allowRule->type];
 			if (!isset($allow[$key])) {
 				$allow[$key] = $this->buildArray($key);

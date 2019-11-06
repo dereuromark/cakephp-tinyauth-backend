@@ -79,3 +79,5 @@ See
 
 ### Custom theme/template
 TODO
+
+For now you can also just create a custom theme folder in your app and it will take those templates instead.

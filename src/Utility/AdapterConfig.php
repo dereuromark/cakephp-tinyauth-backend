@@ -5,7 +5,7 @@ use Cake\Core\Configure;
 use TinyAuthBackend\Auth\AclAdapter\DbAclAdapter;
 use TinyAuthBackend\Auth\AllowAdapter\DbAllowAdapter;
 
-class Config {
+class AdapterConfig {
 
 	/**
 	 * @return bool

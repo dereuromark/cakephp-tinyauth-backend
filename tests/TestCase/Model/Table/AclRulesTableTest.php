@@ -58,14 +58,33 @@ class AclRulesTableTest extends TestCase {
 	public function testSave() {
 		$data = [
 			'type' => AclRule::TYPE_ALLOW,
-			'path' => 'Foo',
+			'path' => 'MyVendor/MyPlugin.MyPrefix/MySubPrefix/MyController::myAction',
 			'role' => 'user',
 		];
 		$aclRule = $this->AclRules->newEntity($data);
 
 		$result = $this->AclRules->save($aclRule);
-		$this->assertTrue(!empty($result));
+		$this->assertTrue(!empty($result), print_r($aclRule->getErrors(), true));
 		$this->assertInstanceOf(AclRule::class, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSaveAutoInflected() {
+		$data = [
+			'type' => AclRule::TYPE_ALLOW,
+			'path' => 'MyVendor/MyPlugin.my_prefix/my_sub_prefix/MyController::myAction',
+			'role' => 'user',
+		];
+		$aclRule = $this->AclRules->newEntity($data);
+
+		$result = $this->AclRules->save($aclRule);
+		$this->assertTrue(!empty($result), print_r($aclRule->getErrors(), true));
+		$this->assertInstanceOf(AclRule::class, $result);
+
+		$expected = 'MyVendor/MyPlugin.MyPrefix/MySubPrefix/MyController::myAction';
+		$this->assertSame($expected, $result->path);
 	}
 
 }

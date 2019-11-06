@@ -5,7 +5,7 @@ namespace TinyAuthBackend\Shell;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
-use TinyAuthBackend\Utility\Config;
+use TinyAuthBackend\Utility\AdapterConfig;
 use TinyAuthBackend\Utility\Importer;
 use TinyAuth\Utility\TinyAuth;
 
@@ -106,7 +106,7 @@ class TinyAuthBackendShell extends Shell {
 	 * @return void
 	 */
 	protected function importAllow($file) {
-		if (!Config::isAllowEnabled()) {
+		if (!AdapterConfig::isAllowEnabled()) {
 			$this->err('Allow not enabled, skipping');
 			return;
 		}
@@ -135,7 +135,7 @@ class TinyAuthBackendShell extends Shell {
 	 * @return void
 	 */
 	protected function importAcl($file) {
-		if (!Config::isAclEnabled()) {
+		if (!AdapterConfig::isAclEnabled()) {
 			$this->err('ACL not enabled, skipping');
 			return;
 		}

@@ -14,7 +14,7 @@
 	<h1>Authentication Backend</h1>
 
     <h2><?= __('Tiny Auth Allow Rules') ?></h2>
-    <table cellpadding="0" cellspacing="0">
+    <table class="table list">
         <thead>
             <tr>
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>

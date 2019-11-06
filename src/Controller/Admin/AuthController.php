@@ -3,6 +3,7 @@
 namespace TinyAuthBackend\Controller\Admin;
 
 use App\Controller\AppController;
+use TinyAuth\Utility\TinyAuth;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
@@ -19,6 +20,9 @@ class AuthController extends AppController {
 	 * @return void
 	 */
 	public function index() {
+		$availableRoles = (new TinyAuth())->getAvailableRoles();
+
+		$this->set(compact('availableRoles'));
 	}
 
 }

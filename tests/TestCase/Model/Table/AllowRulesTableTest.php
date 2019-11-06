@@ -55,13 +55,31 @@ class AllowRulesTableTest extends TestCase {
 	public function testSave() {
 		$data = [
 			'type' => AllowRule::TYPE_ALLOW,
-			'path' => 'Foo',
+			'path' => 'Foo::*',
 		];
 		$allowRule = $this->AllowRules->newEntity($data);
 
 		$result = $this->AllowRules->save($allowRule);
-		$this->assertTrue(!empty($result));
+		$this->assertTrue(!empty($result), print_r($allowRule->getErrors(), true));
 		$this->assertInstanceOf(AllowRule::class, $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSaveAutoInflected() {
+		$data = [
+			'type' => AllowRule::TYPE_ALLOW,
+			'path' => 'MyVendor/MyPlugin.my_prefix/my_sub_prefix/MyController::myAction',
+		];
+		$allowRule = $this->AllowRules->newEntity($data);
+
+		$result = $this->AllowRules->save($allowRule);
+		$this->assertTrue(!empty($result), print_r($allowRule->getErrors(), true));
+		$this->assertInstanceOf(AllowRule::class, $result);
+
+		$expected = 'MyVendor/MyPlugin.MyPrefix/MySubPrefix/MyController::myAction';
+		$this->assertSame($expected, $result->path);
 	}
 
 }

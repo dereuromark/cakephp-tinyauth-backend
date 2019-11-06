@@ -1,6 +1,8 @@
 <?php
 namespace TinyAuthBackend\Model\Table;
 
+use ArrayObject;
+use Cake\Event\Event;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -16,6 +18,8 @@ use Cake\Validation\Validator;
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class AclRulesTable extends Table {
+
+	use ValidationTrait;
 
 	/**
 	 * @var array
@@ -51,7 +55,8 @@ class AclRulesTable extends Table {
 		$validator
 			->requirePresence('path', 'create')
 			->notEmptyString('path')
-			->add('path', 'unique', ['rule' => ['validateUnique', ['scope' => ['role']]], 'provider' => 'table']);
+			->add('path', 'unique', ['rule' => ['validateUnique', ['scope' => ['role']]], 'provider' => 'table'])
+			->add('path', 'valid', ['rule' => ['validatePath'], 'provider' => 'table']);
 
 		$validator
 			->integer('type')
@@ -63,6 +68,34 @@ class AclRulesTable extends Table {
 			->notEmptyString('role');
 
 		return $validator;
+	}
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \ArrayObject $data
+	 * @param \ArrayObject $options
+	 * @return void
+	 */
+	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options) {
+		if (empty($data['path'])) {
+			return;
+		}
+
+		$path = $this->normalizePath($data['path']);
+		if ($path === $data['path']) {
+			return;
+		}
+
+		$data['path'] = $path;
+	}
+
+	/**
+	 * @param string $path
+	 *
+	 * @return bool
+	 */
+	public function validatePath($path) {
+		return $this->assertValidPath($path);
 	}
 
 }

@@ -4,7 +4,8 @@ namespace TinyAuthBackend\Controller\Admin;
 
 use App\Controller\AppController;
 use Cake\Event\Event;
-use TinyAuthBackend\Utility\Config;
+use TinyAuthBackend\Utility\AdapterConfig;
+use TinyAuth\Utility\TinyAuth;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
@@ -23,10 +24,23 @@ class AclController extends AppController {
 	 * @return \Cake\Http\Response|null|void
 	 */
 	public function beforeFilter(Event $event) {
-		if (!Config::isAclEnabled()) {
+		if (!AdapterConfig::isAclEnabled()) {
 			$this->Flash->error('Not enabled');
 			return $this->redirect(['controller' => 'Auth']);
 		}
+	}
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 *
+	 * @return \Cake\Http\Response|null|void
+	 */
+	public function beforeRender(Event $event) {
+		$availableRoles = (new TinyAuth())->getAvailableRoles();
+		$roles = array_combine(array_keys($availableRoles), array_keys($availableRoles));
+		$roles['*'] = '*';
+
+		$this->set(compact('roles'));
 	}
 
 	/**

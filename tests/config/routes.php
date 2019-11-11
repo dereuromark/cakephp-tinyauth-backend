@@ -1,12 +1,14 @@
 <?php
 
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\DashedRoute;
 
 Router::reload();
 
 Router::defaultRouteClass(DashedRoute::class);
-/*
+
+// Copy from Application.php for now
 Router::prefix('admin', function (RouteBuilder $routes) {
 	$routes->plugin(
 		'TinyAuthBackend',
@@ -17,4 +19,3 @@ Router::prefix('admin', function (RouteBuilder $routes) {
 		}
 	);
 });
-*/

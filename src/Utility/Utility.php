@@ -13,7 +13,7 @@ class Utility {
 	 * @return string
 	 */
 	public static function underscoreTokenString($word, $separator) {
-		$pieces = explode($separator, $word);
+		$pieces = explode($separator, $word) ?: [];
 		foreach ($pieces as $key => $piece) {
 			$pieces[$key] = Inflector::underscore($piece);
 		}
@@ -28,7 +28,7 @@ class Utility {
 	 * @return string
 	 */
 	public static function camelizeTokenString($word, $separator) {
-		$pieces = explode($separator, $word);
+		$pieces = explode($separator, $word) ?: [];
 		foreach ($pieces as $key => $piece) {
 			$pieces[$key] = Inflector::camelize($piece);
 		}

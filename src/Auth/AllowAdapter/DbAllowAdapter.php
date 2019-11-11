@@ -72,7 +72,7 @@ class DbAllowAdapter implements AllowAdapterInterface {
 			list($plugin, $key) = explode('.', $key, 2);
 		}
 		if (strpos($key, '/') !== false) {
-			$pos = strrpos($key, '/');
+			$pos = (int)strrpos($key, '/');
 			$prefix = substr($key, 0, $pos);
 			$key = substr($key, $pos + 1);
 		}

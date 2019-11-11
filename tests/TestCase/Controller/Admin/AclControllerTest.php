@@ -1,8 +1,10 @@
 <?php
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
+use Cake\Core\Configure;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use TinyAuthBackend\Auth\AclAdapter\DbAclAdapter;
 
 /**
  * TinyAuthBackend\Controller\TinyAuthAclRulesController Test Case
@@ -23,12 +25,33 @@ class AclControllerTest extends TestCase {
 	];
 
 	/**
+	 * @return void
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		//$this->loadPlugins(['TinyAuthBackend']);
+
+		Configure::write('Roles', [
+			'user' => ROLE_USER,
+			'moderator' => ROLE_MODERATOR,
+			'admin' => ROLE_ADMIN
+		]);
+
+		Configure::write('TinyAuth.aclAdapter', DbAclAdapter::class);
+	}
+
+	/**
 	 * Test index method
 	 *
 	 * @return void
 	 */
 	public function testIndex() {
-		$this->markTestIncomplete('Not implemented yet.');
+		$this->disableErrorHandlerMiddleware();
+
+		$this->get(['prefix' => 'admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl']);
+
+		$this->assertResponseCode(200);
 	}
 
 	/**

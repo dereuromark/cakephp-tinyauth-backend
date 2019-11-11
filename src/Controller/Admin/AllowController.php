@@ -37,7 +37,7 @@ class AllowController extends AppController {
 	 */
 	public function beforeRender(Event $event) {
 		$availableRoles = (new TinyAuth())->getAvailableRoles();
-		$roles = array_combine(array_keys($availableRoles), array_keys($availableRoles));
+		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
 		$roles['*'] = '*';
 
 		$this->set(compact('roles'));
@@ -77,7 +77,7 @@ class AllowController extends AppController {
 	public function add() {
 		$allowRule = $this->AllowRules->newEntity();
 		if ($this->request->is('post')) {
-			$allowRule = $this->AllowRules->patchEntity($allowRule, $this->request->getData());
+			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
 			if ($this->AllowRules->save($allowRule)) {
 				$this->Flash->success(__('The tiny auth allow rule has been saved.'));
 
@@ -100,7 +100,7 @@ class AllowController extends AppController {
 			'contain' => []
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$allowRule = $this->AllowRules->patchEntity($allowRule, $this->request->getData());
+			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
 			if ($this->AllowRules->save($allowRule)) {
 				$this->Flash->success(__('The tiny auth allow rule has been saved.'));
 

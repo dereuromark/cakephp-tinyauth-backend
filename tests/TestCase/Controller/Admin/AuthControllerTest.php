@@ -1,6 +1,7 @@
 <?php
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
+use Cake\Core\Configure;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -20,6 +21,21 @@ class AuthControllerTest extends TestCase {
 		'plugin.TinyAuthBackend.TinyAuthAllowRules',
 		'plugin.TinyAuthBackend.TinyAuthAclRules'
 	];
+
+	/**
+	 * @return void
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		//$this->loadPlugins(['TinyAuthBackend']);
+
+		Configure::write('Roles', [
+			'user' => ROLE_USER,
+			'moderator' => ROLE_MODERATOR,
+			'admin' => ROLE_ADMIN
+		]);
+	}
 
 	/**
 	 * Test index method

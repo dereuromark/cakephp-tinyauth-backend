@@ -37,7 +37,7 @@ class AclController extends AppController {
 	 */
 	public function beforeRender(Event $event) {
 		$availableRoles = (new TinyAuth())->getAvailableRoles();
-		$roles = array_combine(array_keys($availableRoles), array_keys($availableRoles));
+		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
 		$roles['*'] = '*';
 
 		$this->set(compact('roles'));
@@ -77,7 +77,7 @@ class AclController extends AppController {
 	public function add() {
 		$aclRule = $this->AclRules->newEntity();
 		if ($this->request->is('post')) {
-			$aclRule = $this->AclRules->patchEntity($aclRule, $this->request->getData());
+			$aclRule = $this->AclRules->patchEntity($aclRule, (array)$this->request->getData());
 			if ($this->AclRules->save($aclRule)) {
 				$this->Flash->success(__('The tiny auth acl rule has been saved.'));
 
@@ -100,7 +100,7 @@ class AclController extends AppController {
 			'contain' => []
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$aclRule = $this->AclRules->patchEntity($aclRule, $this->request->getData());
+			$aclRule = $this->AclRules->patchEntity($aclRule, (array)$this->request->getData());
 			if ($this->AclRules->save($aclRule)) {
 				$this->Flash->success(__('The tiny auth acl rule has been saved.'));
 

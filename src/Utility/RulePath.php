@@ -21,7 +21,7 @@ class RulePath {
 			list($plugin, $controller) = explode('.', $controller, 2);
 		}
 		if (strpos($controller, '/') !== false) {
-			$pos = strrpos($controller, '/');
+			$pos = (int)strrpos($controller, '/');
 			$prefix = substr($controller, 0, $pos);
 			$controller = substr($controller, $pos + 1);
 		}

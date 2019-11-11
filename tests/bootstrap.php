@@ -2,6 +2,9 @@
 /**
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
+use Cake\Routing\Router;
+
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -28,7 +31,10 @@ define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 
 Cake\Core\Configure::write('App', [
-	'namespace' => 'TestApp'
+	'namespace' => 'TestApp',
+	'paths' => [
+		'templates' => [ROOT . DS . 'tests' . DS . 'test_app' . DS . 'src' . DS . 'Template' . DS],
+	],
 ]);
 
 Cake\Core\Configure::write('debug', true);
@@ -57,6 +63,14 @@ $cache = [
 Cake\Cache\Cache::setConfig($cache);
 
 Cake\Core\Plugin::getCollection()->add(new TinyAuthBackend\Plugin());
+
+Router::reload();
+
+class_alias(\TestApp\Controller\AppController::class, 'App\Controller\AppController');
+
+define('ROLE_USER', 1);
+define('ROLE_MODERATOR', 2);
+define('ROLE_ADMIN', 3);
 
 // Ensure default test connection is defined
 if (!getenv('db_class')) {

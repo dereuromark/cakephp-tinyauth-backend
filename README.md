@@ -17,7 +17,7 @@ Install the plugin with composer from your CakePHP project's ROOT directory
 (where composer.json file is located)
 
 ```sh
-composer require dereuromark/cakephp-tinyauth-backend:dev-master
+composer require dereuromark/cakephp-tinyauth-backend
 ```
 
 It will auto-require `dereuromark/cakephp-tinyauth` dependency.

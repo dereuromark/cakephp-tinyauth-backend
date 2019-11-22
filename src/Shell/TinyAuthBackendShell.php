@@ -94,7 +94,7 @@ class TinyAuthBackendShell extends Shell {
 		];
 		$parser->addSubcommand('import', [
 			'help' => 'Import existing rules from INI files.',
-			'parser' => $importParser
+			'parser' => $importParser,
 		]);
 
 		return $parser;

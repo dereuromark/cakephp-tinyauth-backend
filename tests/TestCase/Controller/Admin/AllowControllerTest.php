@@ -21,7 +21,7 @@ class AllowControllerTest extends TestCase {
 	 * @var array
 	 */
 	public $fixtures = [
-		'plugin.TinyAuthBackend.TinyAuthAllowRules'
+		'plugin.TinyAuthBackend.TinyAuthAllowRules',
 	];
 
 	/**
@@ -35,7 +35,7 @@ class AllowControllerTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => ROLE_USER,
 			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN
+			'admin' => ROLE_ADMIN,
 		]);
 
 		Configure::write('TinyAuth.allowAdapter', DbAllowAdapter::class);

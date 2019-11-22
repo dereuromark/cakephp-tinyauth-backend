@@ -28,7 +28,7 @@ class AllowRule extends Entity {
 		'type' => true,
 		'path' => true,
 		'created' => true,
-		'modified' => true
+		'modified' => true,
 	];
 
 	/**

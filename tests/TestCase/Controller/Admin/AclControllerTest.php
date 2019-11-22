@@ -21,7 +21,7 @@ class AclControllerTest extends TestCase {
 	 * @var array
 	 */
 	public $fixtures = [
-		'plugin.TinyAuthBackend.TinyAuthAclRules'
+		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];
 
 	/**
@@ -35,7 +35,7 @@ class AclControllerTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => ROLE_USER,
 			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN
+			'admin' => ROLE_ADMIN,
 		]);
 
 		Configure::write('TinyAuth.aclAdapter', DbAclAdapter::class);

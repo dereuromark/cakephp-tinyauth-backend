@@ -30,7 +30,7 @@ class AclRule extends Entity {
 		'role' => true,
 		'path' => true,
 		'created' => true,
-		'modified' => true
+		'modified' => true,
 	];
 
 	/**

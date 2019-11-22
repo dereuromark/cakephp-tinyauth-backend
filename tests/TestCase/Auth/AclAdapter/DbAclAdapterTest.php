@@ -12,7 +12,7 @@ class DbAclAdapterTest extends TestCase {
 	 * @var array
 	 */
 	public $fixtures = [
-		'plugin.TinyAuthBackend.TinyAuthAclRules'
+		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];
 
 	/**

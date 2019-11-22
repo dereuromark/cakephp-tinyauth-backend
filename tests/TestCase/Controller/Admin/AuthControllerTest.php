@@ -19,7 +19,7 @@ class AuthControllerTest extends TestCase {
 	 */
 	public $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAllowRules',
-		'plugin.TinyAuthBackend.TinyAuthAclRules'
+		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];
 
 	/**
@@ -33,7 +33,7 @@ class AuthControllerTest extends TestCase {
 		Configure::write('Roles', [
 			'user' => ROLE_USER,
 			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN
+			'admin' => ROLE_ADMIN,
 		]);
 	}
 

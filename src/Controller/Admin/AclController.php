@@ -63,7 +63,7 @@ class AclController extends AppController {
 	 */
 	public function view($id = null) {
 		$aclRule = $this->AclRules->get($id, [
-			'contain' => []
+			'contain' => [],
 		]);
 
 		$this->set('aclRule', $aclRule);
@@ -97,7 +97,7 @@ class AclController extends AppController {
 	 */
 	public function edit($id = null) {
 		$aclRule = $this->AclRules->get($id, [
-			'contain' => []
+			'contain' => [],
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$aclRule = $this->AclRules->patchEntity($aclRule, (array)$this->request->getData());

@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
 use Cake\Core\Configure;

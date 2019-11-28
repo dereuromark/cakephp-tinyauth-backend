@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuthBackend\Model\Entity;
 
 use Tools\Model\Entity\Entity;

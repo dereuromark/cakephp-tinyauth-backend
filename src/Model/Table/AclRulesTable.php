@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuthBackend\Model\Table;
 
 use ArrayObject;

@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuthBackend\Test\TestCase\utility;
 
 use Cake\TestSuite\TestCase;

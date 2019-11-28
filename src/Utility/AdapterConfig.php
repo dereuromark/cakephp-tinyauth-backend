@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuthBackend\Utility;
 
 use Cake\Core\Configure;

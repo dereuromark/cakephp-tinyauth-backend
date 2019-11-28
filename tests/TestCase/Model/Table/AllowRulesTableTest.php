@@ -1,4 +1,5 @@
 <?php
+
 namespace TinyAuthBackend\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;

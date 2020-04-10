@@ -1,5 +1,5 @@
 # CakePHP TinyAuth backend
-[![Build Status](https://api.travis-ci.org/dereuromark/cakephp-tinyauth-backend.svg?branch=master)](https://travis-ci.org/dereuromark/cakephp-tinyauth-backend)
+[![Build Status](https://api.travis-ci.com/dereuromark/cakephp-tinyauth-backend.svg?branch=master)](https://travis-ci.org/dereuromark/cakephp-tinyauth-backend)
 [![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tinyauth-backend/master.svg)](https://codecov.io/github/dereuromark/cakephp-tinyauth-backend?branch=master)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/license)](https://packagist.org/packages/dereuromark/cakephp-tinyauth-backend)

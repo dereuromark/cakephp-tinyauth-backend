@@ -16,14 +16,14 @@ class AclController extends AppController {
 	/**
 	 * @var string
 	 */
-	public $modelClass = 'TinyAuthBackend.AclRules';
+	protected $modelClass = 'TinyAuthBackend.AclRules';
 
 	/**
 	 * @param \Cake\Event\Event $event
 	 *
 	 * @return \Cake\Http\Response|null|void
 	 */
-	public function beforeFilter(Event $event) {
+	public function beforeFilter(\Cake\Event\EventInterface $event) {
 		if (!AdapterConfig::isAclEnabled()) {
 			$this->Flash->error('Not enabled');
 			return $this->redirect(['controller' => 'Auth']);
@@ -35,7 +35,7 @@ class AclController extends AppController {
 	 *
 	 * @return \Cake\Http\Response|null|void
 	 */
-	public function beforeRender(Event $event) {
+	public function beforeRender(\Cake\Event\EventInterface $event) {
 		$availableRoles = (new TinyAuth())->getAvailableRoles();
 		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
 		$roles['*'] = '*';
@@ -75,7 +75,7 @@ class AclController extends AppController {
 	 * @return \Cake\Http\Response|null|void
 	 */
 	public function add() {
-		$aclRule = $this->AclRules->newEntity();
+		$aclRule = $this->AclRules->newEmptyEntity();
 		if ($this->request->is('post')) {
 			$aclRule = $this->AclRules->patchEntity($aclRule, (array)$this->request->getData());
 			if ($this->AclRules->save($aclRule)) {

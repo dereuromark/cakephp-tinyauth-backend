@@ -9,7 +9,7 @@ Router::reload();
 Router::defaultRouteClass(DashedRoute::class);
 
 // Copy from Application.php for now
-Router::prefix('admin', function (RouteBuilder $routes) {
+Router::prefix('Admin', function (RouteBuilder $routes) {
 	$routes->plugin(
 		'TinyAuthBackend',
 		['path' => '/auth'],

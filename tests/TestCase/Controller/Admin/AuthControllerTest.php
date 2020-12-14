@@ -18,7 +18,7 @@ class AuthControllerTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAllowRules',
 		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];
@@ -26,7 +26,7 @@ class AuthControllerTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		//$this->loadPlugins(['TinyAuthBackend']);
@@ -46,7 +46,7 @@ class AuthControllerTest extends TestCase {
 	public function testIndex() {
 		$this->disableErrorHandlerMiddleware();
 
-		$this->get(['prefix' => 'admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Auth']);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Auth']);
 
 		$this->assertResponseCode(200);
 	}

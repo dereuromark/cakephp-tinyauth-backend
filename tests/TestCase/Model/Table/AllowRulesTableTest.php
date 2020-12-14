@@ -24,7 +24,7 @@ class AllowRulesTableTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAllowRules',
 	];
 
@@ -33,7 +33,7 @@ class AllowRulesTableTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$config = TableRegistry::getTableLocator()->exists('AllowRules') ? [] : ['className' => AllowRulesTable::class];
 		$this->AllowRules = TableRegistry::getTableLocator()->get('AllowRules', $config);
@@ -44,7 +44,7 @@ class AllowRulesTableTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->AllowRules);
 
 		parent::tearDown();

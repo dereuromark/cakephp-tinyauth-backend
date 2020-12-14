@@ -21,7 +21,7 @@ class AclRulesTableTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];
 
@@ -30,7 +30,7 @@ class AclRulesTableTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$config = TableRegistry::exists('AclRules') ? [] : ['className' => AclRulesTable::class];
 		$this->AclRules = TableRegistry::get('AclRules', $config);
@@ -41,7 +41,7 @@ class AclRulesTableTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->AclRules);
 
 		parent::tearDown();

@@ -1,8 +1,9 @@
 <?php
 
-namespace TinyAuthBackend\Auth\AllowAdapter;
+namespace TinyAuthBackend\Test\TestCase\Auth\AllowAdapter;
 
 use Cake\TestSuite\TestCase;
+use TinyAuthBackend\Auth\AllowAdapter\DbAllowAdapter;
 
 class DbAllowAdapterTest extends TestCase {
 
@@ -11,7 +12,7 @@ class DbAllowAdapterTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAllowRules',
 	];
 

@@ -33,7 +33,7 @@ class TinyAuthBackendShell extends Shell {
 		$importer = new Importer();
 		$importer->initializeAcl($role);
 
-		$url = Router::url(['plugin' => 'TinyAuthBackend', 'prefix' => 'admin', 'controller' => 'Auth', 'action' => 'index'], true);
+		$url = Router::url(['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin', 'controller' => 'Auth', 'action' => 'index'], true);
 
 		$this->success('Necessary ACL rules stored. Using a user with this `' . $role . '` role you can now navigate to the backend `' . $url . '`.');
 	}
@@ -65,7 +65,7 @@ class TinyAuthBackendShell extends Shell {
 	/**
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
-	public function getOptionParser() {
+	public function getOptionParser(): \Cake\Console\ConsoleOptionParser {
 		$parser = parent::getOptionParser();
 		$parser->setDescription(
 			'Use TinyAuth backend functionality.'

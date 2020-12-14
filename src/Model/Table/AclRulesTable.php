@@ -39,7 +39,7 @@ class AclRulesTable extends Table {
 	 *
 	 * @return void
 	 */
-	public function initialize(array $config) {
+	public function initialize(array $config): void {
 		parent::initialize($config);
 
 		$this->addBehavior('Timestamp');
@@ -52,7 +52,7 @@ class AclRulesTable extends Table {
 	 *
 	 * @return \Cake\Validation\Validator
 	 */
-	public function validationDefault(Validator $validator) {
+	public function validationDefault(Validator $validator): Validator {
 		$validator
 			->requirePresence('path', 'create')
 			->notEmptyString('path')
@@ -77,7 +77,7 @@ class AclRulesTable extends Table {
 	 * @param \ArrayObject $options
 	 * @return void
 	 */
-	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options) {
+	public function beforeMarshal(\Cake\Event\EventInterface $event, ArrayObject $data, ArrayObject $options) {
 		if (empty($data['path'])) {
 			return;
 		}

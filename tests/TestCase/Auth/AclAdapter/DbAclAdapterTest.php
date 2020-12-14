@@ -1,8 +1,9 @@
 <?php
 
-namespace TinyAuthBackend\Auth\AclAdapter;
+namespace TinyAuthBackend\Test\TestCase\Auth\AclAdapter;
 
 use Cake\TestSuite\TestCase;
+use TinyAuthBackend\Auth\AclAdapter\DbAclAdapter;
 
 class DbAclAdapterTest extends TestCase {
 
@@ -11,7 +12,7 @@ class DbAclAdapterTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	public $fixtures = [
+	protected $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];
 

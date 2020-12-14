@@ -3,7 +3,7 @@
 namespace TinyAuthBackend\Controller\Admin;
 
 use App\Controller\AppController;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use TinyAuthBackend\Utility\AdapterConfig;
 use TinyAuth\Utility\TinyAuth;
 
@@ -16,14 +16,14 @@ class AllowController extends AppController {
 	/**
 	 * @var string
 	 */
-	public $modelClass = 'TinyAuthBackend.AllowRules';
+	protected $modelClass = 'TinyAuthBackend.AllowRules';
 
 	/**
-	 * @param \Cake\Event\Event $event
+	 * @param \Cake\Event\EventInterface $event
 	 *
 	 * @return \Cake\Http\Response|null|void
 	 */
-	public function beforeFilter(Event $event) {
+	public function beforeFilter(EventInterface $event) {
 		if (!AdapterConfig::isAllowEnabled()) {
 			$this->Flash->error('Not enabled');
 			return $this->redirect(['controller' => 'Auth']);
@@ -31,11 +31,11 @@ class AllowController extends AppController {
 	}
 
 	/**
-	 * @param \Cake\Event\Event $event
+	 * @param \Cake\Event\EventInterface $event
 	 *
 	 * @return \Cake\Http\Response|null|void
 	 */
-	public function beforeRender(Event $event) {
+	public function beforeRender(EventInterface $event) {
 		$availableRoles = (new TinyAuth())->getAvailableRoles();
 		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
 		$roles['*'] = '*';
@@ -75,7 +75,7 @@ class AllowController extends AppController {
 	 * @return \Cake\Http\Response|null|void
 	 */
 	public function add() {
-		$allowRule = $this->AllowRules->newEntity();
+		$allowRule = $this->AllowRules->newEmptyEntity();
 		if ($this->request->is('post')) {
 			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
 			if ($this->AllowRules->save($allowRule)) {

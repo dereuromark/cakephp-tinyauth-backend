@@ -27,7 +27,7 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	 *
 	 * @return array
 	 */
-	public function getAllow(array $config) {
+	public function getAllow(array $config): array {
 		$allow = [];
 
 		$allowRules = $this->getRules();

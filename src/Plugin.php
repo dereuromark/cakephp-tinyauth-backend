@@ -14,7 +14,7 @@ class Plugin extends BasePlugin {
 	 * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
 	 * @return void
 	 */
-	public function routes(\Cake\Routing\RouteBuilder $routes): void {
+	public function routes(RouteBuilder $routes): void {
 		$routes->prefix('Admin', function (RouteBuilder $routes) {
 			$routes->plugin(
 				'TinyAuthBackend',

@@ -2,6 +2,7 @@
 
 namespace TinyAuthBackend\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
@@ -65,7 +66,7 @@ class TinyAuthBackendShell extends Shell {
 	/**
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
-	public function getOptionParser(): \Cake\Console\ConsoleOptionParser {
+	public function getOptionParser(): ConsoleOptionParser {
 		$parser = parent::getOptionParser();
 		$parser->setDescription(
 			'Use TinyAuth backend functionality.'

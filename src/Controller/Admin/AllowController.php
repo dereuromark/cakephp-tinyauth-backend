@@ -46,7 +46,7 @@ class AllowController extends AppController {
 	/**
 	 * Index method
 	 *
-	 * @return \Cake\Http\Response|null
+	 * @return \Cake\Http\Response|null|void
 	 */
 	public function index() {
 		$allowRules = $this->paginate($this->AllowRules);
@@ -58,7 +58,7 @@ class AllowController extends AppController {
 	 * View method
 	 *
 	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @return \Cake\Http\Response|null
+	 * @return \Cake\Http\Response|null|void
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 */
 	public function view($id = null) {
@@ -72,7 +72,7 @@ class AllowController extends AppController {
 	/**
 	 * Add method
 	 *
-	 * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response|null|void
 	 */
 	public function add() {
 		$allowRule = $this->AllowRules->newEntity();
@@ -92,7 +92,7 @@ class AllowController extends AppController {
 	 * Edit method
 	 *
 	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+	 * @return \Cake\Http\Response|null|void
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 */
 	public function edit($id = null) {

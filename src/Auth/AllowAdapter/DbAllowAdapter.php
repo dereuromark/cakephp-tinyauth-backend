@@ -64,7 +64,7 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	/**
 	 * @param string $key
 	 *
-	 * @return string[]
+	 * @return array
 	 */
 	protected function buildArray($key) {
 		$prefix = $plugin = null;

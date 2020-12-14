@@ -28,7 +28,7 @@ class RulePath {
 
 		return [
 			'plugin' => $plugin,
-			'prefix' => Utility::underscoreTokenString($prefix, '/'),
+			'prefix' => $prefix ? Utility::underscoreTokenString($prefix, '/') : null,
 			'controller' => $controller,
 			'action' => $action,
 		];

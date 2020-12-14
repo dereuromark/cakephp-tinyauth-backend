@@ -46,7 +46,7 @@ class AclController extends AppController {
 	/**
 	 * Index method
 	 *
-	 * @return \Cake\Http\Response|null
+	 * @return \Cake\Http\Response|null|void
 	 */
 	public function index() {
 		$aclRules = $this->paginate($this->AclRules);
@@ -58,7 +58,7 @@ class AclController extends AppController {
 	 * View method
 	 *
 	 * @param string|null $id Tiny Auth Acl Rule id.
-	 * @return \Cake\Http\Response|null
+	 * @return \Cake\Http\Response|null|void
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 */
 	public function view($id = null) {
@@ -72,7 +72,7 @@ class AclController extends AppController {
 	/**
 	 * Add method
 	 *
-	 * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response|null|void
 	 */
 	public function add() {
 		$aclRule = $this->AclRules->newEntity();
@@ -92,7 +92,7 @@ class AclController extends AppController {
 	 * Edit method
 	 *
 	 * @param string|null $id Tiny Auth Acl Rule id.
-	 * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+	 * @return \Cake\Http\Response|null|void
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 */
 	public function edit($id = null) {

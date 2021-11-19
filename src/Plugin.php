@@ -22,7 +22,7 @@ class Plugin extends BasePlugin {
 				function (RouteBuilder $routes) {
 					$routes->connect('/', ['controller' => 'Auth', 'action' => 'index']);
 					$routes->fallbacks();
-				}
+				},
 			);
 		});
 	}

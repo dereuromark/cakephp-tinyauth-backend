@@ -3,9 +3,9 @@
 namespace TinyAuthBackend\Auth\AllowAdapter;
 
 use Cake\Datasource\ModelAwareTrait;
+use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 use TinyAuthBackend\Model\Entity\AllowRule;
 use TinyAuthBackend\Utility\RulePath;
-use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
@@ -15,7 +15,7 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	use ModelAwareTrait;
 
 	/**
-	 * @var string[]
+	 * @var array<string>
 	 */
 	protected static $typeMap = [
 		AllowRule::TYPE_ALLOW => 'allow',
@@ -51,10 +51,11 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	}
 
 	/**
-	 * @return \TinyAuthBackend\Model\Entity\AllowRule[]
+	 * @return array<\TinyAuthBackend\Model\Entity\AllowRule>
 	 */
 	protected function getRules() {
 		$this->loadModel('TinyAuthBackend.AllowRules');
+
 		return $this->AllowRules->find()
 			->select(['type', 'path'])
 			->all()
@@ -69,7 +70,7 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	protected function buildArray($key) {
 		$prefix = $plugin = null;
 		if (strpos($key, '.') !== false) {
-			list($plugin, $key) = explode('.', $key, 2);
+			[$plugin, $key] = explode('.', $key, 2);
 		}
 		if (strpos($key, '/') !== false) {
 			$pos = (int)strrpos($key, '/');

@@ -10,10 +10,10 @@ use Cake\Validation\Validator;
 /**
  * @method \TinyAuthBackend\Model\Entity\AllowRule get($primaryKey, $options = [])
  * @method \TinyAuthBackend\Model\Entity\AllowRule newEntity($data = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\AllowRule[] newEntities(array $data, array $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\AllowRule> newEntities(array $data, array $options = [])
  * @method \TinyAuthBackend\Model\Entity\AllowRule|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \TinyAuthBackend\Model\Entity\AllowRule patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\AllowRule[] patchEntities($entities, array $data, array $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\AllowRule> patchEntities($entities, array $data, array $options = [])
  * @method \TinyAuthBackend\Model\Entity\AllowRule findOrCreate($search, callable $callback = null, $options = [])
  * @method \TinyAuthBackend\Model\Entity\AllowRule saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior

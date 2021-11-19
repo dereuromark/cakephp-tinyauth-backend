@@ -13,12 +13,12 @@ class RulePath {
 		$controller = $path;
 		$action = null;
 		if (strpos($controller, '::') !== false) {
-			list($controller, $action) = explode('::', $controller);
+			[$controller, $action] = explode('::', $controller);
 		}
 
 		$prefix = $plugin = null;
 		if (strpos($controller, '.') !== false) {
-			list($plugin, $controller) = explode('.', $controller, 2);
+			[$plugin, $controller] = explode('.', $controller, 2);
 		}
 		if (strpos($controller, '/') !== false) {
 			$pos = (int)strrpos($controller, '/');

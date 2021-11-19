@@ -3,11 +3,11 @@
 namespace TinyAuthBackend\Utility;
 
 use Cake\Datasource\ModelAwareTrait;
-use TinyAuthBackend\Model\Entity\AclRule;
-use TinyAuthBackend\Model\Entity\AllowRule;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 use TinyAuth\Utility\TinyAuth;
+use TinyAuthBackend\Model\Entity\AclRule;
+use TinyAuthBackend\Model\Entity\AllowRule;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules

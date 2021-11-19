@@ -6,9 +6,9 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
+use TinyAuth\Utility\TinyAuth;
 use TinyAuthBackend\Utility\AdapterConfig;
 use TinyAuthBackend\Utility\Importer;
-use TinyAuth\Utility\TinyAuth;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
@@ -40,7 +40,7 @@ class TinyAuthBackendShell extends Shell {
 	}
 
 	/**
-	 * @return string[]
+	 * @return array<string>
 	 */
 	protected function _getAvailableRoles() {
 		$roles = (new TinyAuth())->getAvailableRoles();
@@ -69,7 +69,7 @@ class TinyAuthBackendShell extends Shell {
 	public function getOptionParser(): ConsoleOptionParser {
 		$parser = parent::getOptionParser();
 		$parser->setDescription(
-			'Use TinyAuth backend functionality.'
+			'Use TinyAuth backend functionality.',
 		);
 
 		$initParser = [
@@ -109,6 +109,7 @@ class TinyAuthBackendShell extends Shell {
 	protected function importAllow($file) {
 		if (!AdapterConfig::isAllowEnabled()) {
 			$this->err('Allow not enabled, skipping');
+
 			return;
 		}
 
@@ -121,6 +122,7 @@ class TinyAuthBackendShell extends Shell {
 		}
 		if (!file_exists($file)) {
 			$this->err($fileName . ' does not exist or cannot be found, skipping');
+
 			return;
 		}
 
@@ -138,6 +140,7 @@ class TinyAuthBackendShell extends Shell {
 	protected function importAcl($file) {
 		if (!AdapterConfig::isAclEnabled()) {
 			$this->err('ACL not enabled, skipping');
+
 			return;
 		}
 
@@ -150,6 +153,7 @@ class TinyAuthBackendShell extends Shell {
 		}
 		if (!file_exists($file)) {
 			$this->err($fileName . ' does not exist or cannot be found, skipping');
+
 			return;
 		}
 

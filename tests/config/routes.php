@@ -1,8 +1,8 @@
 <?php
 
+use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
-use Cake\Routing\Route\DashedRoute;
 
 Router::reload();
 
@@ -16,6 +16,6 @@ Router::prefix('Admin', function (RouteBuilder $routes) {
 		function (RouteBuilder $routes) {
 			$routes->connect('/', ['controller' => 'Auth', 'action' => 'index']);
 			$routes->fallbacks();
-		}
+		},
 	);
 });

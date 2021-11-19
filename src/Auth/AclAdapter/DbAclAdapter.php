@@ -3,8 +3,8 @@
 namespace TinyAuthBackend\Auth\AclAdapter;
 
 use Cake\Datasource\ModelAwareTrait;
-use TinyAuthBackend\Model\Entity\AclRule;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
+use TinyAuthBackend\Model\Entity\AclRule;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
@@ -14,7 +14,7 @@ class DbAclAdapter implements AclAdapterInterface {
 	use ModelAwareTrait;
 
 	/**
-	 * @var string[]
+	 * @var array<string>
 	 */
 	protected static $typeMap = [
 		AclRule::TYPE_ALLOW => 'allow',
@@ -31,7 +31,7 @@ class DbAclAdapter implements AclAdapterInterface {
 
 		$aclRules = $this->getRules();
 		foreach ($aclRules as $aclRule) {
-			list($key, $action) = explode('::', $aclRule->path);
+			[$key, $action] = explode('::', $aclRule->path);
 			$ruleType = static::$typeMap[$aclRule->type];
 			if (!isset($acl[$key])) {
 				$acl[$key] = $this->buildArray($key);
@@ -46,10 +46,11 @@ class DbAclAdapter implements AclAdapterInterface {
 	}
 
 	/**
-	 * @return \TinyAuthBackend\Model\Entity\AclRule[]
+	 * @return array<\TinyAuthBackend\Model\Entity\AclRule>
 	 */
 	protected function getRules() {
 		$this->loadModel('TinyAuthBackend.AclRules');
+
 		return $this->AclRules->find()
 			->select(['type', 'role', 'path'])
 			->all()
@@ -64,7 +65,7 @@ class DbAclAdapter implements AclAdapterInterface {
 	protected function buildArray($key) {
 		$prefix = $plugin = null;
 		if (strpos($key, '.') !== false) {
-			list($plugin, $key) = explode('.', $key, 2);
+			[$plugin, $key] = explode('.', $key, 2);
 		}
 		if (strpos($key, '/') !== false) {
 			$pos = (int)strrpos($key, '/');
@@ -80,10 +81,10 @@ class DbAclAdapter implements AclAdapterInterface {
 	}
 
 	/**
-	 * @param int[] $availableRoles
+	 * @param array<int> $availableRoles
 	 * @param string $role
 	 *
-	 * @return int[]
+	 * @return array<int>
 	 */
 	protected function buildRoleArray(array $availableRoles, $role) {
 		if (isset($availableRoles[$role])) {

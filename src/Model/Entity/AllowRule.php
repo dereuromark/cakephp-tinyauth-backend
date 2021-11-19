@@ -13,8 +13,15 @@ use Tools\Model\Entity\Entity;
  */
 class AllowRule extends Entity {
 
-	const TYPE_ALLOW = 1;
-	const TYPE_DENY = 2;
+    /**
+     * @var int
+     */
+	public const TYPE_ALLOW = 1;
+
+    /**
+     * @var int
+     */
+	public const TYPE_DENY = 2;
 
 	/**
 	 * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -23,7 +30,7 @@ class AllowRule extends Entity {
 	 * be mass assigned. For security purposes, it is advised to set '*' to false
 	 * (or remove it), and explicitly make individual fields accessible as needed.
 	 *
-	 * @var array
+	 * @var array<string, bool>
 	 */
 	protected $_accessible = [
 		'type' => true,
@@ -34,13 +41,14 @@ class AllowRule extends Entity {
 
 	/**
 	 * @param int|null $value
-	 * @return array|string
+	 * @return array|string|null
 	 */
 	public static function types($value = null) {
 		$options = [
 			static::TYPE_ALLOW => __('allow'),
 			static::TYPE_DENY => __('deny'),
 		];
+
 		return parent::enum($value, $options);
 	}
 

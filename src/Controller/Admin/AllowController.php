@@ -4,8 +4,8 @@ namespace TinyAuthBackend\Controller\Admin;
 
 use App\Controller\AppController;
 use Cake\Event\EventInterface;
-use TinyAuthBackend\Utility\AdapterConfig;
 use TinyAuth\Utility\TinyAuth;
+use TinyAuthBackend\Utility\AdapterConfig;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
@@ -26,6 +26,7 @@ class AllowController extends AppController {
 	public function beforeFilter(EventInterface $event) {
 		if (!AdapterConfig::isAllowEnabled()) {
 			$this->Flash->error('Not enabled');
+
 			return $this->redirect(['controller' => 'Auth']);
 		}
 	}
@@ -57,9 +58,9 @@ class AllowController extends AppController {
 	/**
 	 * View method
 	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @return \Cake\Http\Response|null|void
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param string|null $id Tiny Auth Allow Rule id.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @return \Cake\Http\Response|null|void
 	 */
 	public function view($id = null) {
 		$allowRule = $this->AllowRules->get($id, [
@@ -91,9 +92,9 @@ class AllowController extends AppController {
 	/**
 	 * Edit method
 	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @return \Cake\Http\Response|null|void
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param string|null $id Tiny Auth Allow Rule id.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @return \Cake\Http\Response|null|void
 	 */
 	public function edit($id = null) {
 		$allowRule = $this->AllowRules->get($id, [
@@ -114,9 +115,9 @@ class AllowController extends AppController {
 	/**
 	 * Delete method
 	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @return \Cake\Http\Response|null Redirects to index.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param string|null $id Tiny Auth Allow Rule id.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @return \Cake\Http\Response|null Redirects to index.
 	 */
 	public function delete($id = null) {
 		$this->request->allowMethod(['post', 'delete']);

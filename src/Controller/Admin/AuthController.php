@@ -12,7 +12,7 @@ use TinyAuth\Utility\TinyAuth;
 class AuthController extends AppController {
 
 	/**
-	 * @var string|false
+	 * @var string|null
 	 */
 	protected $modelClass = '';
 

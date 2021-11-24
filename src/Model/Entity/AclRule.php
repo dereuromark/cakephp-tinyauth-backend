@@ -14,14 +14,14 @@ use Tools\Model\Entity\Entity;
  */
 class AclRule extends Entity {
 
-    /**
-     * @var int
-     */
+	/**
+	 * @var int
+	 */
 	public const TYPE_ALLOW = 1;
 
-    /**
-     * @var int
-     */
+	/**
+	 * @var int
+	 */
 	public const TYPE_DENY = 2;
 
 	/**

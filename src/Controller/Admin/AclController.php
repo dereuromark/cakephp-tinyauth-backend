@@ -58,9 +58,9 @@ class AclController extends AppController {
 	/**
 	 * View method
 	 *
-     * @param string|null $id Tiny Auth Acl Rule id.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     * @return \Cake\Http\Response|null|void
+	 * @param string|null $id Tiny Auth Acl Rule id.
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return \Cake\Http\Response|null|void
 	 */
 	public function view($id = null) {
 		$aclRule = $this->AclRules->get($id, [
@@ -92,9 +92,9 @@ class AclController extends AppController {
 	/**
 	 * Edit method
 	 *
-     * @param string|null $id Tiny Auth Acl Rule id.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     * @return \Cake\Http\Response|null|void
+	 * @param string|null $id Tiny Auth Acl Rule id.
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return \Cake\Http\Response|null|void
 	 */
 	public function edit($id = null) {
 		$aclRule = $this->AclRules->get($id, [
@@ -115,9 +115,9 @@ class AclController extends AppController {
 	/**
 	 * Delete method
 	 *
-     * @param string|null $id Tiny Auth Acl Rule id.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     * @return \Cake\Http\Response|null Redirects to index.
+	 * @param string|null $id Tiny Auth Acl Rule id.
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return \Cake\Http\Response|null Redirects to index.
 	 */
 	public function delete($id = null) {
 		$this->request->allowMethod(['post', 'delete']);

@@ -13,14 +13,14 @@ use Tools\Model\Entity\Entity;
  */
 class AllowRule extends Entity {
 
-    /**
-     * @var int
-     */
+	/**
+	 * @var int
+	 */
 	public const TYPE_ALLOW = 1;
 
-    /**
-     * @var int
-     */
+	/**
+	 * @var int
+	 */
 	public const TYPE_DENY = 2;
 
 	/**

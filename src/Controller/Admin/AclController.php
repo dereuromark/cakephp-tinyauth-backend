@@ -9,7 +9,7 @@ use TinyAuthBackend\Utility\AdapterConfig;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
- * @method \TinyAuthBackend\Model\Entity\AclRule[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @method \Cake\Datasource\ResultSetInterface<\TinyAuthBackend\Model\Entity\AclRule> paginate($object = null, array $settings = [])
  */
 class AclController extends AppController {
 

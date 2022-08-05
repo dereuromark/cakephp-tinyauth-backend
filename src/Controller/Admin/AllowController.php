@@ -9,7 +9,7 @@ use TinyAuthBackend\Utility\AdapterConfig;
 
 /**
  * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
- * @method \TinyAuthBackend\Model\Entity\AllowRule[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @method \Cake\Datasource\ResultSetInterface<\TinyAuthBackend\Model\Entity\AllowRule> paginate($object = null, array $settings = [])
  */
 class AllowController extends AppController {
 

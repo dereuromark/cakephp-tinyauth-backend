@@ -1,15 +1,15 @@
 <?php
+
 use Migrations\AbstractMigration;
 
-class TinyAuthBackendDefault extends AbstractMigration
-{
+class TinyAuthBackendDefault extends AbstractMigration {
+
 	/**
 	 * Creates tables
 	 *
 	 * @return void
 	 */
-	public function up()
-	{
+	public function up() {
 		$this->table('tiny_auth_allow_rules')
 			->addColumn('type', 'integer', [ // allow/deny
 				'default' => null,
@@ -73,9 +73,9 @@ class TinyAuthBackendDefault extends AbstractMigration
 	 *
 	 * @return void
 	 */
-	public function down()
-	{
+	public function down() {
 		$this->dropTable('tiny_auth_allow_rules');
 		$this->dropTable('tiny_auth_acl_rules');
 	}
+
 }

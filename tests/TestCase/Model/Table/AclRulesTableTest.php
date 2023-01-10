@@ -10,18 +10,16 @@ use TinyAuthBackend\Model\Table\AclRulesTable;
 class AclRulesTableTest extends TestCase {
 
 	/**
-	 * Test subject
-	 *
-	 * @var \TinyAuthBackend\Model\Table\AclRulesTable
-	 */
-	public $AclRules;
+  * Test subject
+  */
+	public AclRulesTable $AclRules;
 
 	/**
 	 * Fixtures
 	 *
 	 * @var array
 	 */
-	protected $fixtures = [
+	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];
 
@@ -32,8 +30,8 @@ class AclRulesTableTest extends TestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		$config = TableRegistry::exists('AclRules') ? [] : ['className' => AclRulesTable::class];
-		$this->AclRules = TableRegistry::get('AclRules', $config);
+		$config = TableRegistry::getTableLocator()->exists('AclRules') ? [] : ['className' => AclRulesTable::class];
+		$this->AclRules = TableRegistry::getTableLocator()->get('AclRules', $config);
 	}
 
 	/**

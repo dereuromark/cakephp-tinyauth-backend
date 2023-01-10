@@ -13,18 +13,16 @@ use TinyAuthBackend\Model\Table\AllowRulesTable;
 class AllowRulesTableTest extends TestCase {
 
 	/**
-	 * Test subject
-	 *
-	 * @var \TinyAuthBackend\Model\Table\AllowRulesTable
-	 */
-	public $AllowRules;
+  * Test subject
+  */
+	public AllowRulesTable $AllowRules;
 
 	/**
 	 * Fixtures
 	 *
 	 * @var array
 	 */
-	protected $fixtures = [
+	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAllowRules',
 	];
 

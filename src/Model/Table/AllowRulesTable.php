@@ -22,15 +22,9 @@ class AllowRulesTable extends Table {
 
 	use ValidationTrait;
 
-	/**
-	 * @var array
-	 */
-	public $order = ['created' => 'DESC'];
+	public array $order = ['created' => 'DESC'];
 
-	/**
-	 * @var string
-	 */
-	protected $_table = 'tiny_auth_allow_rules';
+	protected ?string $_table = 'tiny_auth_allow_rules';
 
 	/**
 	 * Initialize method

@@ -14,7 +14,7 @@ class AuthController extends AppController {
 	/**
 	 * @var string|null
 	 */
-	protected $modelClass = '';
+	protected ?string $defaultTable = '';
 
 	/**
 	 * @return void

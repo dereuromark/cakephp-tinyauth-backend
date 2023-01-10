@@ -16,7 +16,7 @@ class AllowController extends AppController {
 	/**
 	 * @var string
 	 */
-	protected $modelClass = 'TinyAuthBackend.AllowRules';
+	protected ?string $defaultTable = 'TinyAuthBackend.AllowRules';
 
 	/**
 	 * @param \Cake\Event\EventInterface $event

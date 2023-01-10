@@ -17,7 +17,7 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	/**
 	 * @var array<string>
 	 */
-	protected static $typeMap = [
+	protected static array $typeMap = [
 		AllowRule::TYPE_ALLOW => 'allow',
 		AllowRule::TYPE_DENY => 'deny',
 	];

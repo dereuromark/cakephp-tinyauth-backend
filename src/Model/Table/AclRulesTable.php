@@ -22,15 +22,9 @@ class AclRulesTable extends Table {
 
 	use ValidationTrait;
 
-	/**
-	 * @var array
-	 */
-	public $order = ['created' => 'DESC'];
+	public array $order = ['created' => 'DESC'];
 
-	/**
-	 * @var string
-	 */
-	protected $_table = 'tiny_auth_acl_rules';
+	protected ?string $_table = 'tiny_auth_acl_rules';
 
 	/**
 	 * Initialize method

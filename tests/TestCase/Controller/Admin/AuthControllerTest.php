@@ -18,7 +18,7 @@ class AuthControllerTest extends TestCase {
 	 *
 	 * @var array
 	 */
-	protected $fixtures = [
+	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthAllowRules',
 		'plugin.TinyAuthBackend.TinyAuthAclRules',
 	];

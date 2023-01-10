@@ -9,8 +9,8 @@ use Tools\Model\Entity\Entity;
  * @property int $type
  * @property string $role
  * @property string $path
- * @property \Cake\I18n\FrozenTime|null $created
- * @property \Cake\I18n\FrozenTime|null $modified
+ * @property \Cake\I18n\DateTime|null $created
+ * @property \Cake\I18n\DateTime|null $modified
  */
 class AclRule extends Entity {
 
@@ -33,7 +33,7 @@ class AclRule extends Entity {
 	 *
 	 * @var array<string, bool>
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
 		'type' => true,
 		'role' => true,
 		'path' => true,

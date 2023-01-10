@@ -16,7 +16,7 @@ class AclController extends AppController {
 	/**
 	 * @var string
 	 */
-	protected $modelClass = 'TinyAuthBackend.AclRules';
+	protected ?string $defaultTable = 'TinyAuthBackend.AclRules';
 
 	/**
 	 * @param \Cake\Event\EventInterface $event

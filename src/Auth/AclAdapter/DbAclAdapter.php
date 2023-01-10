@@ -16,7 +16,7 @@ class DbAclAdapter implements AclAdapterInterface {
 	/**
 	 * @var array<string>
 	 */
-	protected static $typeMap = [
+	protected static array $typeMap = [
 		AclRule::TYPE_ALLOW => 'allow',
 		AclRule::TYPE_DENY => 'deny',
 	];

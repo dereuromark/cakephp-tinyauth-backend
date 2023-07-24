@@ -9,6 +9,7 @@ use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Routing\Router;
 use TestApp\Controller\AppController;
+use TinyAuthBackend\Plugin as TinyAuthBackendPlugin;
 
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -67,7 +68,7 @@ $cache = [
 
 Cache::setConfig($cache);
 
-Plugin::getCollection()->add(new TinyAuthBackend\Plugin());
+Plugin::getCollection()->add(new TinyAuthBackendPlugin());
 
 Router::reload();
 

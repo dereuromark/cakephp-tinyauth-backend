@@ -5,13 +5,13 @@ namespace TinyAuthBackend\Auth\AclAdapter;
 use Cake\Datasource\ModelAwareTrait;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuthBackend\Model\Entity\AclRule;
+use TinyAuthBackend\Model\Table\AclRulesTable;
 
-/**
- * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
- */
 class DbAclAdapter implements AclAdapterInterface {
 
 	use ModelAwareTrait;
+
+	protected AclRulesTable $AclRules;
 
 	/**
 	 * @var array<string>

@@ -5,11 +5,14 @@ namespace TinyAuthBackend\Auth\AllowAdapter;
 use Cake\Datasource\ModelAwareTrait;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 use TinyAuthBackend\Model\Entity\AllowRule;
+use TinyAuthBackend\Model\Table\AllowRulesTable;
 use TinyAuthBackend\Utility\RulePath;
 
 class DbAllowAdapter implements AllowAdapterInterface {
 
 	use ModelAwareTrait;
+
+	protected AllowRulesTable $AllowRules;
 
 	/**
 	 * @var array<string>

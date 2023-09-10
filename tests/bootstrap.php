@@ -43,6 +43,7 @@ require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
 
 Configure::write('App', [
 	'namespace' => 'TestApp',
+	'encoding' => 'UTF-8',
 	'paths' => [
 		'templates' => [ROOT . DS . 'tests' . DS . 'test_app' . DS . 'templates' . DS],
 	],

@@ -3,12 +3,18 @@
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Datasource\ConnectionManager;
 use Cake\Routing\Router;
+use Cake\TestSuite\Fixture\SchemaLoader;
 use TestApp\Controller\AppController;
+use TinyAuthBackend\TinyAuthBackendPlugin;
 
-require dirname(__DIR__) . '/vendor/cakephp/cakephp/src/basics.php';
-require dirname(__DIR__) . '/vendor/autoload.php';
-
+if (!defined('DS')) {
+	define('DS', DIRECTORY_SEPARATOR);
+}
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'src');
 
@@ -16,29 +22,33 @@ define('APP', rtrim(sys_get_temp_dir(), DS) . DS . APP_DIR . DS);
 if (!is_dir(APP)) {
 	mkdir(APP, 0770, true);
 }
-define('TESTS', ROOT . DS . 'tests' . DS);
-
-define('CONFIG', dirname(__FILE__) . DS . 'config' . DS);
 
 define('TMP', ROOT . DS . 'tmp' . DS);
 if (!is_dir(TMP)) {
 	mkdir(TMP, 0770, true);
 }
+define('CONFIG', ROOT . DS . 'config' . DS);
+define('TESTS', ROOT . DS . 'tests' . DS);
 
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
 
 define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+define('CAKE', CORE_PATH . APP_DIR . DS);
 
-Cake\Core\Configure::write('App', [
+require dirname(__DIR__) . '/vendor/autoload.php';
+require CORE_PATH . 'config/bootstrap.php';
+require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
+
+Configure::write('App', [
 	'namespace' => 'TestApp',
 	'paths' => [
 		'templates' => [ROOT . DS . 'tests' . DS . 'test_app' . DS . 'templates' . DS],
 	],
 ]);
 
-Cake\Core\Configure::write('debug', true);
+Configure::write('debug', true);
 
 $cache = [
 	'default' => [
@@ -61,9 +71,9 @@ $cache = [
 	],
 ];
 
-Cake\Cache\Cache::setConfig($cache);
+Cache::setConfig($cache);
 
-Cake\Core\Plugin::getCollection()->add(new TinyAuthBackend\Plugin());
+Plugin::getCollection()->add(new TinyAuthBackendPlugin());
 
 Router::reload();
 
@@ -79,7 +89,7 @@ if (!getenv('db_class')) {
 	putenv('db_dsn=sqlite::memory:');
 }
 
-Cake\Datasource\ConnectionManager::setConfig('test', [
+ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class') ?: null,
 	'dsn' => getenv('db_dsn') ?: null,
@@ -92,6 +102,6 @@ Cake\Datasource\ConnectionManager::setConfig('test', [
 ]);
 
 if (env('FIXTURE_SCHEMA_METADATA')) {
-	$loader = new Cake\TestSuite\Fixture\SchemaLoader();
+	$loader = new SchemaLoader();
 	$loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
 }

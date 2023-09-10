@@ -6,9 +6,6 @@ use Cake\Datasource\ModelAwareTrait;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuthBackend\Model\Entity\AclRule;
 
-/**
- * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
- */
 class DbAclAdapter implements AclAdapterInterface {
 
 	use ModelAwareTrait;
@@ -49,9 +46,9 @@ class DbAclAdapter implements AclAdapterInterface {
 	 * @return array<\TinyAuthBackend\Model\Entity\AclRule>
 	 */
 	protected function getRules() {
-		$this->loadModel('TinyAuthBackend.AclRules');
+		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
 
-		return $this->AclRules->find()
+		return $AclRules->find()
 			->select(['type', 'role', 'path'])
 			->all()
 			->toArray();

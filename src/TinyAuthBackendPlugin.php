@@ -8,7 +8,9 @@ use Cake\Routing\RouteBuilder;
 /**
  * Plugin for TinyAuthBackend
  */
-class Plugin extends BasePlugin {
+class TinyAuthBackendPlugin extends BasePlugin {
+
+	protected bool $bootstrapEnabled = false;
 
 	/**
 	 * @param \Cake\Routing\RouteBuilder $routes The route builder to update.

@@ -9,10 +9,6 @@ use TinyAuth\Utility\TinyAuth;
 use TinyAuthBackend\Model\Entity\AclRule;
 use TinyAuthBackend\Model\Entity\AllowRule;
 
-/**
- * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
- * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
- */
 class Importer {
 
 	use ModelAwareTrait;
@@ -71,10 +67,10 @@ class Importer {
 	 * @return void
 	 */
 	protected function addAllow(array $data) {
-		$this->loadModel('TinyAuthBackend.AllowRules');
+		$AllowRules = $this->fetchModel('TinyAuthBackend.AllowRules');
 
-		$allowRule = $this->AllowRules->newEntity($data);
-		$this->AllowRules->save($allowRule);
+		$allowRule = $AllowRules->newEntity($data);
+		$AllowRules->save($allowRule);
 	}
 
 	/**
@@ -130,10 +126,10 @@ class Importer {
 	 * @return void
 	 */
 	protected function addAcl(array $data) {
-		$this->loadModel('TinyAuthBackend.AclRules');
+		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
 
-		$aclRule = $this->AclRules->newEntity($data);
-		$this->AclRules->save($aclRule);
+		$aclRule = $AclRules->newEntity($data);
+		$AclRules->save($aclRule);
 	}
 
 	/**
@@ -150,14 +146,15 @@ class Importer {
 			'TinyAuthBackend.Acl::*',
 		];
 
-		$this->loadModel('TinyAuthBackend.AclRules');
+		/** @var \TinyAuthBackend\Model\Table\AclRulesTable $AclRules */
+		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
 		foreach ($paths as $path) {
-			$aclRule = $this->AclRules->newEntity([
+			$aclRule = $AclRules->newEntity([
 				'type' => AclRule::TYPE_ALLOW,
 				'role' => $role,
 				'path' => $path,
 			]);
-			$this->AclRules->saveOrFail($aclRule);
+			$AclRules->saveOrFail($aclRule);
 		}
 	}
 

@@ -7,9 +7,6 @@ use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 use TinyAuthBackend\Model\Entity\AllowRule;
 use TinyAuthBackend\Utility\RulePath;
 
-/**
- * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
- */
 class DbAllowAdapter implements AllowAdapterInterface {
 
 	use ModelAwareTrait;
@@ -54,9 +51,9 @@ class DbAllowAdapter implements AllowAdapterInterface {
 	 * @return array<\TinyAuthBackend\Model\Entity\AllowRule>
 	 */
 	protected function getRules() {
-		$this->loadModel('TinyAuthBackend.AllowRules');
+		$AllowRules = $this->fetchModel('TinyAuthBackend.AllowRules');
 
-		return $this->AllowRules->find()
+		return $AllowRules->find()
 			->select(['type', 'path'])
 			->all()
 			->toArray();

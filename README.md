@@ -1,5 +1,5 @@
 # CakePHP TinyAuth backend
-[![CI](https://github.com/dereuromark/cakephp-tinyauth-backend/workflows/CI/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-tinyauth-backend/actions?query=workflow%3ACI+branch%3Amaster)
+[![CI](https://github.com/dereuromark/cakephp-tinyauth-backend/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-tinyauth-backend/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tinyauth-backend/master.svg)](https://codecov.io/github/dereuromark/cakephp-tinyauth-backend/branch/master)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/license)](https://packagist.org/packages/dereuromark/cakephp-tinyauth-backend)

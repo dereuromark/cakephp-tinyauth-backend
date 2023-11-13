@@ -64,7 +64,7 @@ class TinyAuthBackendDefault extends AbstractMigration {
 			])
 			->create();
 		$this->table('tiny_auth_acl_rules')
-			->addIndex(['path', 'role'], ['unique' => true])
+			->addIndex(['path', 'role'], ['unique' => true, 'name' => 'path-role'])
 			->save();
 	}
 

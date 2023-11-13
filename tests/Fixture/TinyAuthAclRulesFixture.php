@@ -24,7 +24,7 @@ class TinyAuthAclRulesFixture extends TestFixture {
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'path' => ['type' => 'unique', 'columns' => ['path', 'role'], 'length' => []],
+            'acl-rules-path' => ['type' => 'unique', 'columns' => ['path', 'role'], 'length' => []],
         ],
         '_options' => [
             'engine' => 'InnoDB',

@@ -3,6 +3,7 @@
 [![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tinyauth-backend/master.svg)](https://codecov.io/github/dereuromark/cakephp-tinyauth-backend/branch/master)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.1-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/license.svg)](LICENSE)
+[![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth-backend)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/d/total)](https://packagist.org/packages/dereuromark/cakephp-tinyauth-backend)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 

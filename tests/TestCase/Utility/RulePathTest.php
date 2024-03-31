@@ -1,6 +1,6 @@
 <?php
 
-namespace TinyAuthBackend\Test\TestCase\utility;
+namespace TinyAuthBackend\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Utility\RulePath;

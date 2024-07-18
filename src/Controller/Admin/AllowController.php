@@ -63,9 +63,7 @@ class AllowController extends AppController {
 	 * @return \Cake\Http\Response|null|void
 	 */
 	public function view($id = null) {
-		$allowRule = $this->AllowRules->get($id, [
-			'contain' => [],
-		]);
+		$allowRule = $this->AllowRules->get($id);
 
 		$this->set('allowRule', $allowRule);
 	}
@@ -97,9 +95,7 @@ class AllowController extends AppController {
 	 * @return \Cake\Http\Response|null|void
 	 */
 	public function edit($id = null) {
-		$allowRule = $this->AllowRules->get($id, [
-			'contain' => [],
-		]);
+		$allowRule = $this->AllowRules->get($id);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
 			if ($this->AllowRules->save($allowRule)) {

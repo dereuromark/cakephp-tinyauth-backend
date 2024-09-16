@@ -31,7 +31,7 @@ class AllowControllerTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		//$this->loadPlugins(['TinyAuthBackend']);
+		$this->loadPlugins(['TinyAuthBackend']);
 
 		Configure::write('Roles', [
 			'user' => ROLE_USER,

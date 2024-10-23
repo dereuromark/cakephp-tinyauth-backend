@@ -14,7 +14,7 @@ use TinyAuthBackend\Utility\AdapterConfig;
 class AclController extends AppController {
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	protected ?string $defaultTable = 'TinyAuthBackend.AclRules';
 

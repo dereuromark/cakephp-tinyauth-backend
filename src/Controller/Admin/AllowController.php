@@ -14,7 +14,7 @@ use TinyAuthBackend\Utility\AdapterConfig;
 class AllowController extends AppController {
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	protected ?string $defaultTable = 'TinyAuthBackend.AllowRules';
 

@@ -19,7 +19,7 @@ class ImportCommand extends Command {
 	use ModelAwareTrait;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	protected ?string $modelClass = 'TinyAuthBackend.AllowRules';
 

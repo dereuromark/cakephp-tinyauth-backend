@@ -12,12 +12,6 @@ Load the plugin by running
 bin/cake plugin load TinyAuthBackend
 ```
 
-or manually add this into your `Application::bootstrap()` method:
-```php
-    $this->addPlugin('TinyAuthBackend');
-```
-
-
 ### Enable the adapters
 If you need only Authentication or Authorization or both, add those as needed in your global Configure settings:
 ```php

@@ -10,7 +10,7 @@
 A database driven backend for CakePHP [TinyAuth plugin](https://github.com/dereuromark/cakephp-tinyauth).
 This replaces the native INI file approach.
 
-This branch is for use with **CakePHP 5.0+**. For details see [version map](https://github.com/dereuromark/cakephp-tinyauth-backend/wiki#cakephp-version-map).
+This branch is for use with **CakePHP 5.1+**. For details see [version map](https://github.com/dereuromark/cakephp-tinyauth-backend/wiki#cakephp-version-map).
 
 ## Installation
 

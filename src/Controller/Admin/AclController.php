@@ -21,22 +21,22 @@ class AclController extends AppController {
 	/**
 	 * @param \Cake\Event\EventInterface $event
 	 *
-	 * @return \Cake\Http\Response|null|void
+	 * @return void
 	 */
-	public function beforeFilter(EventInterface $event) {
+	public function beforeFilter(EventInterface $event): void {
 		if (!AdapterConfig::isAclEnabled()) {
 			$this->Flash->error('Not enabled');
 
-			return $this->redirect(['controller' => 'Auth']);
+			$event->setResult($this->redirect(['controller' => 'Auth']));
 		}
 	}
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
 	 *
-	 * @return \Cake\Http\Response|null|void
+	 * @return void
 	 */
-	public function beforeRender(EventInterface $event) {
+	public function beforeRender(EventInterface $event): void {
 		$availableRoles = (new TinyAuth())->getAvailableRoles();
 		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
 		$roles['*'] = '*';

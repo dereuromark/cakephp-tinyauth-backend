@@ -1,8 +1,8 @@
 <?php
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class TinyAuthBackendDefault extends AbstractMigration {
+class TinyAuthBackendDefault extends BaseMigration {
 
 	/**
 	 * Creates tables

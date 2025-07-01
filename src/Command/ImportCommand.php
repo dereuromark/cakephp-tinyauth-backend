@@ -66,7 +66,7 @@ class ImportCommand extends Command {
 	 */
 	protected function importAllow($file) {
 		if (!AdapterConfig::isAllowEnabled()) {
-			$this->io->err('Allow not enabled, skipping');
+			$this->io->error('Allow not enabled, skipping');
 
 			return;
 		}
@@ -79,7 +79,7 @@ class ImportCommand extends Command {
 			$file = $path . $fileName;
 		}
 		if (!file_exists($file)) {
-			$this->io->err($fileName . ' does not exist or cannot be found, skipping');
+			$this->io->error($fileName . ' does not exist or cannot be found, skipping');
 
 			return;
 		}
@@ -97,7 +97,7 @@ class ImportCommand extends Command {
 	 */
 	protected function importAcl($file) {
 		if (!AdapterConfig::isAclEnabled()) {
-			$this->io->err('ACL not enabled, skipping');
+			$this->io->error('ACL not enabled, skipping');
 
 			return;
 		}
@@ -110,7 +110,7 @@ class ImportCommand extends Command {
 			$file = $path . $fileName;
 		}
 		if (!file_exists($file)) {
-			$this->io->err($fileName . ' does not exist or cannot be found, skipping');
+			$this->io->error($fileName . ' does not exist or cannot be found, skipping');
 
 			return;
 		}

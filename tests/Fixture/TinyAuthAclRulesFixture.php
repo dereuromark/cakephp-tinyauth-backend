@@ -38,8 +38,7 @@ class TinyAuthAclRulesFixture extends TestFixture {
 	 * @return void
 	 */
 	public function init(): void {
-		$this->records = [
-		];
+		$this->records = [];
 		parent::init();
 	}
 

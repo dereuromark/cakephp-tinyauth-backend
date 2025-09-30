@@ -14,7 +14,7 @@ class TinyAuthAclRulesFixture extends TestFixture {
 	 *
 	 * @var array
 	 */
-    // @codingStandardsIgnoreStart
+    // phpcs:disable
     public array $fields = [
         'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
         'type' => ['type' => 'integer', 'length' => 2, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
@@ -31,7 +31,7 @@ class TinyAuthAclRulesFixture extends TestFixture {
             'collation' => 'utf8_unicode_ci'
         ],
     ];
-    // @codingStandardsIgnoreEnd
+    // phpcs:enable
 	/**
 	 * Init method
 	 *

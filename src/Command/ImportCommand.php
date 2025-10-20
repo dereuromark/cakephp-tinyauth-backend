@@ -19,9 +19,12 @@ class ImportCommand extends Command {
 	use ModelAwareTrait;
 
 	/**
-	 * @var string|null
+	 * @inheritDoc
 	 */
-	protected ?string $modelClass = 'TinyAuthBackend.AllowRules';
+	public function __construct() {
+		parent::__construct();
+		$this->modelClass = 'TinyAuthBackend.AllowRules';
+	}
 
 	/**
 	 * @inheritDoc

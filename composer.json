@@ -9,7 +9,8 @@
 		"tinyauth",
 		"authentication",
 		"authorization",
-		"roles"
+		"roles",
+		"admin-panel"
 	],
 	"authors": [
 		{

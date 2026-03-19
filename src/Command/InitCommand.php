@@ -5,7 +5,6 @@ namespace TinyAuthBackend\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\Routing\Router;
 use Shim\Command\Command;
 use TinyAuth\Utility\TinyAuth;
@@ -16,15 +15,7 @@ use TinyAuthBackend\Utility\Importer;
  */
 class InitCommand extends Command {
 
-	use ModelAwareTrait;
-
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct() {
-		parent::__construct();
-		$this->modelClass = 'TinyAuthBackend.AllowRules';
-	}
+	protected string $defaultTable = 'TinyAuthBackend.AllowRules';
 
 	/**
 	 * @inheritDoc

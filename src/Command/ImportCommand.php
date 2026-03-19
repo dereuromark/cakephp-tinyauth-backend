@@ -6,7 +6,6 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
-use Cake\Datasource\ModelAwareTrait;
 use Shim\Command\Command;
 use TinyAuthBackend\Utility\AdapterConfig;
 use TinyAuthBackend\Utility\Importer;
@@ -16,15 +15,7 @@ use TinyAuthBackend\Utility\Importer;
  */
 class ImportCommand extends Command {
 
-	use ModelAwareTrait;
-
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct() {
-		parent::__construct();
-		$this->modelClass = 'TinyAuthBackend.AllowRules';
-	}
+	protected string $defaultTable = 'TinyAuthBackend.AllowRules';
 
 	/**
 	 * @inheritDoc

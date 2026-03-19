@@ -15,7 +15,7 @@ use TinyAuthBackend\Utility\Importer;
  */
 class ImportCommand extends Command {
 
-	protected string $defaultTable = 'TinyAuthBackend.AllowRules';
+	protected ?string $defaultTable = 'TinyAuthBackend.AllowRules';
 
 	/**
 	 * @inheritDoc

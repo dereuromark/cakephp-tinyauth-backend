@@ -59,7 +59,7 @@ class ImportCommand extends Command {
 	 *
 	 * @return void
 	 */
-	protected function importAllow($file) {
+	protected function importAllow(?string $file): void {
 		if (!AdapterConfig::isAllowEnabled()) {
 			$this->io->error('Allow not enabled, skipping');
 
@@ -90,7 +90,7 @@ class ImportCommand extends Command {
 	 *
 	 * @return void
 	 */
-	protected function importAcl($file) {
+	protected function importAcl(?string $file): void {
 		if (!AdapterConfig::isAclEnabled()) {
 			$this->io->error('ACL not enabled, skipping');
 

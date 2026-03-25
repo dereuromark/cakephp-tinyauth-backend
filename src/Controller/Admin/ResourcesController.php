@@ -69,7 +69,7 @@ class ResourcesController extends AppController {
 		$roleId = (int)$this->request->getData('role_id');
 		$type = $this->request->getData('type');
 		$scopeIdRaw = $this->request->getData('scope_id');
-		$scopeId = $scopeIdRaw !== '' && $scopeIdRaw !== null ? (int)$scopeIdRaw : null;
+		$scopeId = $scopeIdRaw !== '' && $scopeIdRaw !== null && is_numeric($scopeIdRaw) ? (int)$scopeIdRaw : null;
 
 		// Validate type
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {

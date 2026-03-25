@@ -4,8 +4,27 @@
  * @var array $tree
  * @var int|null $selectedId
  */
+
+// Find which nodes should be expanded based on selectedId
+$expandedNodes = [];
+if ($selectedId !== null) {
+	foreach ($tree as $plugin => $pluginData) {
+		foreach ($pluginData['prefixes'] as $prefix => $prefixData) {
+			foreach ($prefixData['controllers'] as $controller) {
+				if ($controller->id === $selectedId) {
+					$expandedNodes[$plugin] = true;
+					if ($prefix !== '_root') {
+						$expandedNodes[$plugin . '_' . $prefix] = true;
+					}
+					break 3;
+				}
+			}
+		}
+	}
+}
+$expandedJson = json_encode($expandedNodes);
 ?>
-<div x-data="{ expanded: {} }">
+<div x-data="{ expanded: <?= $expandedJson ?> }">
     <?php foreach ($tree as $plugin => $pluginData) { ?>
     <div class="mb-2">
         <div class="tree-item flex items-center gap-1 cursor-pointer"

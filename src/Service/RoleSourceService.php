@@ -93,7 +93,7 @@ class RoleSourceService {
 		/** @var array<\TinyAuthBackend\Model\Entity\Role> $entities */
 		$entities = $rolesTable->find()
 			->contain(['ParentRoles'])
-			->orderBy(['sort_order' => 'ASC', 'name' => 'ASC'])
+			->orderBy(['Roles.sort_order' => 'ASC', 'Roles.name' => 'ASC'])
 			->all()
 			->toArray();
 

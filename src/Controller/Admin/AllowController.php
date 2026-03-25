@@ -1,128 +1,107 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use App\Controller\AppController;
-use Cake\Event\EventInterface;
-use TinyAuth\Utility\TinyAuth;
-use TinyAuthBackend\Utility\AdapterConfig;
+use Cake\Controller\Controller;
+use Cake\Http\Response;
 
 /**
- * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
- * @method \Cake\Datasource\ResultSetInterface<\TinyAuthBackend\Model\Entity\AllowRule> paginate($object = null, array $settings = [])
+ * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
  */
-class AllowController extends AppController {
+class AllowController extends Controller {
 
 	/**
-	 * @var string|null
-	 */
-	protected ?string $defaultTable = 'TinyAuthBackend.AllowRules';
-
-	/**
-	 * @param \Cake\Event\EventInterface $event
-	 *
 	 * @return void
 	 */
-	public function beforeFilter(EventInterface $event): void {
-		if (!AdapterConfig::isAllowEnabled()) {
-			$this->Flash->error('Not enabled');
-
-			$event->setResult($this->redirect(['controller' => 'Auth']));
-		}
+	public function initialize(): void {
+		parent::initialize();
+		$this->viewBuilder()->setLayout('TinyAuthBackend.tinyauth');
 	}
 
 	/**
-	 * @param \Cake\Event\EventInterface $event
-	 *
 	 * @return void
 	 */
-	public function beforeRender(EventInterface $event): void {
-		$availableRoles = (new TinyAuth())->getAvailableRoles();
-		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
-		$roles['*'] = '*';
+	public function index(): void {
+		$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
 
-		$this->set(compact('roles'));
+		$filter = $this->request->getQuery('filter', 'all');
+
+		$query = $controllersTable->find()
+			->contain([
+				'Actions' => function ($q) use ($filter) {
+					if ($filter === 'public') {
+						return $q->where(['Actions.is_public' => true]);
+					}
+					if ($filter === 'protected') {
+						return $q->where(['Actions.is_public' => false]);
+					}
+
+					return $q;
+				},
+			])
+			->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'name' => 'ASC']);
+
+		$controllers = $query->all()->toArray();
+
+		$this->set(compact('controllers', 'filter'));
 	}
 
 	/**
-	 * Index method
-	 *
-	 * @return \Cake\Http\Response|null|void
+	 * @return \Cake\Http\Response|null
 	 */
-	public function index() {
-		$allowRules = $this->paginate($this->AllowRules);
+	public function toggle(): ?Response {
+		$this->request->allowMethod(['post']);
 
-		$this->set(compact('allowRules'));
-	}
+		$actionId = (int)$this->request->getData('action_id');
+		$isPublic = (bool)$this->request->getData('is_public');
 
-	/**
-	 * View method
-	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function view($id = null) {
-		$allowRule = $this->AllowRules->get($id);
+		if (!$actionId) {
+			$this->response = $this->response->withStatus(400);
+			$this->viewBuilder()->disableAutoLayout();
+			$this->set('error', 'Invalid action ID');
 
-		$this->set('allowRule', $allowRule);
-	}
-
-	/**
-	 * Add method
-	 *
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function add() {
-		$allowRule = $this->AllowRules->newEmptyEntity();
-		if ($this->request->is('post')) {
-			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
-			if ($this->AllowRules->save($allowRule)) {
-				$this->Flash->success(__('The tiny auth allow rule has been saved.'));
-
-				return $this->redirect(['action' => 'index']);
-			}
-			$this->Flash->error(__('The tiny auth allow rule could not be saved. Please, try again.'));
+			return $this->render('toggle_cell');
 		}
-		$this->set(compact('allowRule'));
+
+		$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
+		$action = $actionsTable->get($actionId);
+
+		$action->is_public = $isPublic;
+
+		if (!$actionsTable->save($action)) {
+			$this->response = $this->response->withStatus(500);
+			$this->set('error', 'Failed to update action');
+		}
+
+		$this->viewBuilder()->disableAutoLayout();
+		$this->set(compact('action'));
+
+		return $this->render('toggle_cell');
 	}
 
 	/**
-	 * Edit method
-	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null|void
+	 * @return \Cake\Http\Response|null
 	 */
-	public function edit($id = null) {
-		$allowRule = $this->AllowRules->get($id);
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
-			if ($this->AllowRules->save($allowRule)) {
-				$this->Flash->success(__('The tiny auth allow rule has been saved.'));
+	public function bulkToggle(): ?Response {
+		$this->request->allowMethod(['post']);
 
-				return $this->redirect(['action' => 'index']);
-			}
-			$this->Flash->error(__('The tiny auth allow rule could not be saved. Please, try again.'));
-		}
-		$this->set(compact('allowRule'));
-	}
+		$controllerId = (int)$this->request->getData('controller_id');
+		$isPublic = (bool)$this->request->getData('is_public');
 
-	/**
-	 * Delete method
-	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null Redirects to index.
-	 */
-	public function delete($id = null) {
-		$this->request->allowMethod(['post', 'delete']);
-		$allowRule = $this->AllowRules->get($id);
-		if ($this->AllowRules->delete($allowRule)) {
-			$this->Flash->success(__('The tiny auth allow rule has been deleted.'));
-		} else {
-			$this->Flash->error(__('The tiny auth allow rule could not be deleted. Please, try again.'));
+		if (!$controllerId) {
+			$this->Flash->error(__('Invalid controller.'));
+
+			return $this->redirect(['action' => 'index']);
 		}
+
+		$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
+		$actionsTable->updateAll(
+			['is_public' => $isPublic],
+			['controller_id' => $controllerId],
+		);
+
+		$this->Flash->success(__('Actions updated.'));
 
 		return $this->redirect(['action' => 'index']);
 	}

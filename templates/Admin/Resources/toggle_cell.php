@@ -14,7 +14,7 @@ if (isset($error)) { ?>
 <?php } else {
 $scopeName = $scope?->name;
 $display = match ($type) {
-	'allow' => $scopeName ? "●({$scopeName})" : '●',
+	'allow' => $scopeName ? '●(' . h($scopeName) . ')' : '●',
 	'deny' => '✕',
 	default => '○',
 };

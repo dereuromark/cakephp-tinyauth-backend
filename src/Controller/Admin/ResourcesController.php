@@ -76,7 +76,8 @@ class ResourcesController extends Controller {
 		$abilityId = (int)$this->request->getData('ability_id');
 		$roleId = (int)$this->request->getData('role_id');
 		$type = $this->request->getData('type');
-		$scopeId = $this->request->getData('scope_id') ?: null;
+		$scopeIdRaw = $this->request->getData('scope_id');
+		$scopeId = $scopeIdRaw !== '' && $scopeIdRaw !== null ? (int)$scopeIdRaw : null;
 
 		// Validate type
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
@@ -135,7 +136,13 @@ class ResourcesController extends Controller {
 		$this->request->allowMethod(['post']);
 
 		$resourceId = (int)$this->request->getData('resource_id');
-		$name = $this->request->getData('name');
+		$name = trim((string)$this->request->getData('name'));
+
+		if ($name === '') {
+			$this->Flash->error(__('Ability name is required.'));
+
+			return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
+		}
 
 		$abilitiesTable = $this->fetchTable('TinyAuthBackend.ResourceAbilities');
 		$ability = $abilitiesTable->newEntity([

@@ -32,7 +32,7 @@
 				$scopeId = $perm['scope_id'] ?? null;
 
 				$display = match ($type) {
-					'allow' => $scopeName ? "●({$scopeName})" : '●',
+					'allow' => $scopeName ? '●(' . h($scopeName) . ')' : '●',
 					'deny' => '✕',
 					default => '○',
 				};

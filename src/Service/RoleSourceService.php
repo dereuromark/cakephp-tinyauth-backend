@@ -43,19 +43,23 @@ class RoleSourceService {
 		} elseif (is_string($roleSource)) {
 			// Configure path
 			$roles = Configure::read($roleSource);
-			static::$cachedRoles = is_array($roles) ? $roles : [];
+			static::$cachedRoles = $this->normalizeRoles(is_array($roles) ? $roles : []);
 		} elseif (is_array($roleSource)) {
 			// Direct array
-			static::$cachedRoles = $roleSource;
+			static::$cachedRoles = $this->normalizeRoles($roleSource);
 		} elseif (is_callable($roleSource)) {
 			// Callable
 			$roles = $roleSource();
-			static::$cachedRoles = is_array($roles) ? $roles : [];
+			static::$cachedRoles = $this->normalizeRoles(is_array($roles) ? $roles : []);
 		} else {
 			static::$cachedRoles = [];
 		}
 
-		return static::$cachedRoles;
+		if ($roleSource !== null && static::$cachedRoles) {
+			$this->syncExternalRoles(static::$cachedRoles);
+		}
+
+		return static::$cachedRoles ?? [];
 	}
 
 	/**
@@ -79,6 +83,7 @@ class RoleSourceService {
 					'alias' => $alias,
 					'name' => ucfirst((string)$alias),
 					'parent_id' => null,
+					'parent' => null,
 					'sort_order' => 0,
 				];
 			}
@@ -134,6 +139,72 @@ class RoleSourceService {
 			return $roles;
 		} catch (Exception $e) {
 			return [];
+		}
+	}
+
+	/**
+	 * @param array<mixed, mixed> $roles
+	 * @return array<string, int>
+	 */
+	protected function normalizeRoles(array $roles): array {
+		$result = [];
+		foreach ($roles as $alias => $id) {
+			if (!is_string($alias) || $alias === '') {
+				continue;
+			}
+			if (!is_numeric($id)) {
+				continue;
+			}
+
+			$result[$alias] = (int)$id;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Create/update shadow role rows so FK-backed permission tables remain usable.
+	 *
+	 * @param array<string, int> $roles
+	 * @return void
+	 */
+	protected function syncExternalRoles(array $roles): void {
+		try {
+			/** @var \TinyAuthBackend\Model\Table\RolesTable $rolesTable */
+			$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
+		} catch (Exception $e) {
+			return;
+		}
+
+		$sortOrder = 0;
+		foreach ($roles as $alias => $id) {
+			$sortOrder++;
+
+			$role = $rolesTable->find()->where(['id' => $id])->first();
+			if (!$role) {
+				$role = $rolesTable->find()->where(['alias' => $alias])->first();
+			}
+
+			if ($role) {
+				$role = $rolesTable->patchEntity($role, [
+					'id' => $id,
+					'alias' => $alias,
+					'name' => $role->name ?: ucfirst($alias),
+					'sort_order' => $role->sort_order ?: $sortOrder,
+				]);
+				$rolesTable->save($role);
+
+				continue;
+			}
+
+			$role = $rolesTable->newEntity([
+				'id' => $id,
+				'alias' => $alias,
+				'name' => ucfirst($alias),
+				'parent_id' => null,
+				'sort_order' => $sortOrder,
+			], ['accessibleFields' => ['id' => true]]);
+			$rolesTable->save($role);
 		}
 	}
 

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Model\Table;
 
+use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -76,7 +77,7 @@ class TinyauthControllersTable extends Table {
 			->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'name' => 'ASC']);
 
 		// Filter out excluded plugins (default: DebugKit, TinyAuthBackend)
-		$excludedPlugins = \Cake\Core\Configure::read('TinyAuthBackend.excludedPlugins') ?? ['DebugKit'];
+		$excludedPlugins = Configure::read('TinyAuthBackend.excludedPlugins') ?? ['DebugKit'];
 		if ($excludedPlugins) {
 			$query->where([
 				'OR' => [

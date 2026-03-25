@@ -31,7 +31,7 @@ class TinyAuthResourcesFixture extends TestFixture {
 		'modified' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
 		'_constraints' => [
 			'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-			'tinyauth_resources_name_unique' => ['type' => 'unique', 'columns' => ['name'], 'length' => []],
+			'tinyauth_resources_entity_class_unique' => ['type' => 'unique', 'columns' => ['entity_class'], 'length' => []],
 		],
 		'_options' => [
 			'engine' => 'InnoDB',

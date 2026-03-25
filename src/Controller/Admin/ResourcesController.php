@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
+use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
+use TinyAuthBackend\Service\RoleSourceService;
 
 class ResourcesController extends AppController {
 
@@ -13,22 +15,21 @@ class ResourcesController extends AppController {
 	 */
 	public function index(): void {
 		$resourcesTable = $this->fetchTable('TinyAuthBackend.Resources');
-		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 		$scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');
 
 		$query = $resourcesTable->find()
 			->contain(['ResourceAbilities'])
-			->orderBy(['name' => 'ASC']);
+			->orderBy(['name' => 'ASC', 'entity_class' => 'ASC']);
 
 		// Filter to App namespace by default (configurable)
-		$namespaceFilter = \Cake\Core\Configure::read('TinyAuthBackend.resourceNamespaceFilter') ?? 'App\\';
+		$namespaceFilter = Configure::read('TinyAuthBackend.resourceNamespaceFilter') ?? 'App\\';
 		if ($namespaceFilter) {
 			$query->where(['entity_class LIKE' => $namespaceFilter . '%']);
 		}
 
 		$resources = $query->all()->toArray();
 
-		$roles = $rolesTable->find()->orderBy(['sort_order' => 'ASC'])->all()->toArray();
+		$roles = (new RoleSourceService())->getRoleEntities();
 		$scopes = $scopesTable->find()->orderBy(['name' => 'ASC'])->all()->toArray();
 
 		// Get selected resource
@@ -80,6 +81,9 @@ class ResourcesController extends AppController {
 		// Validate type
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
 			throw new BadRequestException('Invalid permission type');
+		}
+		if (!in_array($roleId, array_values((new RoleSourceService())->getRoles()), true)) {
+			throw new BadRequestException('Invalid role');
 		}
 
 		// Validate scope exists if provided

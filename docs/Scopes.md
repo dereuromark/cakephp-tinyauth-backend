@@ -15,7 +15,7 @@ entity.{entity_field} === user.{user_field}
 
 ### Creating Scopes
 
-1. Go to `/admin/tinyauth/admin/scopes`
+1. Go to `/admin/auth/scopes`
 2. Click "Add Scope"
 3. Enter:
    - **Name**: Identifier (e.g., `own`, `team`, `department`)

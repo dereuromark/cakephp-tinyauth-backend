@@ -8,9 +8,10 @@ Configure::write('TinyAuthBackend', [
 	'roleHierarchy' => true,
 	'multiRole' => false, // Set true for users with multiple roles
 	'roleColumn' => 'role_id', // Single role: column name
-	'rolesTable' => 'roles', // Multi-role: pivot table
+	'rolesTable' => 'roles', // Multi-role: loaded association/property name on the user entity
 	'cacheEnabled' => true,
 	'cacheConfig' => 'default',
+	'superAdminRole' => null,
 
 	// Feature toggles (hybrid: auto-detect from DB tables, override here)
 	// null = auto-detect, true = force enable, false = force disable

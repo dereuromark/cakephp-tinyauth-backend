@@ -25,4 +25,4 @@ composer require dereuromark/cakephp-tinyauth-backend
 It will auto-require `dereuromark/cakephp-tinyauth` dependency.
 
 ## Usage
-See [Docs](/docs).
+See [Docs](/docs/README.md).

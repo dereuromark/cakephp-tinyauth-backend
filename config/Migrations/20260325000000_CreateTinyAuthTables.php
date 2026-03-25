@@ -86,7 +86,7 @@ class CreateTinyAuthTables extends BaseMigration {
 			->addColumn('table_name', 'string', ['limit' => 100, 'null' => false])
 			->addColumn('created', 'datetime', ['null' => true])
 			->addColumn('modified', 'datetime', ['null' => true])
-			->addIndex(['name'], ['unique' => true])
+			->addIndex(['entity_class'], ['unique' => true])
 			->create();
 
 		// Resource Abilities table

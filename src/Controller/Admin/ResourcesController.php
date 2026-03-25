@@ -16,11 +16,17 @@ class ResourcesController extends AppController {
 		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 		$scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');
 
-		$resources = $resourcesTable->find()
+		$query = $resourcesTable->find()
 			->contain(['ResourceAbilities'])
-			->orderBy(['name' => 'ASC'])
-			->all()
-			->toArray();
+			->orderBy(['name' => 'ASC']);
+
+		// Filter to App namespace by default (configurable)
+		$namespaceFilter = \Cake\Core\Configure::read('TinyAuthBackend.resourceNamespaceFilter') ?? 'App\\';
+		if ($namespaceFilter) {
+			$query->where(['entity_class LIKE' => $namespaceFilter . '%']);
+		}
+
+		$resources = $query->all()->toArray();
 
 		$roles = $rolesTable->find()->orderBy(['sort_order' => 'ASC'])->all()->toArray();
 		$scopes = $scopesTable->find()->orderBy(['name' => 'ASC'])->all()->toArray();

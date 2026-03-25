@@ -13,15 +13,15 @@ class RulePath {
 	public static function parse(string $path): array {
 		$controller = $path;
 		$action = null;
-		if (strpos($controller, '::') !== false) {
+		if (str_contains($controller, '::')) {
 			[$controller, $action] = explode('::', $controller);
 		}
 
 		$prefix = $plugin = null;
-		if (strpos($controller, '.') !== false) {
+		if (str_contains($controller, '.')) {
 			[$plugin, $controller] = explode('.', $controller, 2);
 		}
-		if (strpos($controller, '/') !== false) {
+		if (str_contains($controller, '/')) {
 			$pos = (int)strrpos($controller, '/');
 			$prefix = substr($controller, 0, $pos);
 			$controller = substr($controller, $pos + 1);

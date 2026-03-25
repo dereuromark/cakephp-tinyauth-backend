@@ -37,9 +37,9 @@ class RolesControllerTest extends TestCase {
 		$this->loadPlugins(['TinyAuthBackend']);
 
 		Configure::write('Roles', [
-			'user' => ROLE_USER,
-			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN,
+			'user' => 3,
+			'moderator' => 2,
+			'admin' => 1,
 		]);
 	}
 

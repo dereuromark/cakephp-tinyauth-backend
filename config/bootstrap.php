@@ -31,4 +31,13 @@ Configure::write('TinyAuthBackend', [
 	//   callable - Function returning array of roles
 	// Example callable: fn() => TableRegistry::get('Roles')->find('list')->toArray()
 	'roleSource' => null,
+
+	// Resource namespace filter for the admin panel
+	// Only show resources matching this namespace prefix (e.g., 'App\\' to exclude plugin entities)
+	// Set to null or empty string to show all resources
+	'resourceNamespaceFilter' => 'App\\',
+
+	// Plugins to exclude from ACL controller tree in admin panel
+	// These plugins won't appear in the permission management UI
+	'excludedPlugins' => ['DebugKit', 'TinyAuthBackend'],
 ]);

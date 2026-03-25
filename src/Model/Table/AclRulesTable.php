@@ -24,13 +24,6 @@ class AclRulesTable extends Table {
 	use ValidationTrait;
 
 	/**
-	 * @var array<string, string>
-	 */
-	public array $order = ['created' => 'DESC'];
-
-	protected ?string $_table = 'tiny_auth_acl_rules';
-
-	/**
 	 * Initialize method
 	 *
 	 * @param array<string, mixed> $config The configuration for the Table.
@@ -40,6 +33,7 @@ class AclRulesTable extends Table {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
+		$this->setTable('tiny_auth_acl_rules');
 		$this->addBehavior('Timestamp');
 	}
 

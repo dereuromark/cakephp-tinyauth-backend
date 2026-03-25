@@ -138,6 +138,15 @@ class ResourcesController extends AppController {
 		}
 
 		$abilitiesTable = $this->fetchTable('TinyAuthBackend.ResourceAbilities');
+
+		// Check for duplicate
+		$exists = $abilitiesTable->exists(['resource_id' => $resourceId, 'name' => $name]);
+		if ($exists) {
+			$this->Flash->error(__('Ability "{0}" already exists for this resource.', $name));
+
+			return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
+		}
+
 		$ability = $abilitiesTable->newEntity([
 			'resource_id' => $resourceId,
 			'name' => $name,
@@ -147,6 +156,36 @@ class ResourcesController extends AppController {
 			$this->Flash->success(__('Ability added.'));
 		} else {
 			$this->Flash->error(__('Could not add ability.'));
+		}
+
+		return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
+	}
+
+	/**
+	 * @param int $id Ability ID.
+	 * @return \Cake\Http\Response|null
+	 */
+	public function deleteAbility(int $id): ?Response {
+		$this->request->allowMethod(['post', 'delete']);
+
+		/** @var \TinyAuthBackend\Model\Table\ResourceAbilitiesTable $abilitiesTable */
+		$abilitiesTable = $this->fetchTable('TinyAuthBackend.ResourceAbilities');
+		$ability = $abilitiesTable->get($id);
+		$resourceId = $ability->resource_id;
+
+		// Check if ability has permissions
+		$aclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
+		$usageCount = $aclTable->find()->where(['ability_id' => $id])->count();
+		if ($usageCount > 0) {
+			$this->Flash->error(__('Cannot delete ability. It has {0} permission(s) assigned.', $usageCount));
+
+			return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
+		}
+
+		if ($abilitiesTable->delete($ability)) {
+			$this->Flash->success(__('Ability deleted.'));
+		} else {
+			$this->Flash->error(__('Could not delete ability.'));
 		}
 
 		return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);

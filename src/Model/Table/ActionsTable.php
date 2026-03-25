@@ -69,8 +69,7 @@ class ActionsTable extends Table {
 			->notEmptyString('name');
 
 		$validator
-			->boolean('is_public')
-			->notEmptyString('is_public');
+			->boolean('is_public');
 
 		return $validator;
 	}

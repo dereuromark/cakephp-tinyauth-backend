@@ -63,7 +63,9 @@ class AllowController extends AppController {
 
 		$action->is_public = $isPublic;
 
-		if (!$actionsTable->save($action)) {
+		if ($actionsTable->save($action)) {
+			Cache::delete('TinyAuth.allow');
+		} else {
 			$this->response = $this->response->withStatus(500);
 			$this->set('error', 'Failed to update action');
 		}

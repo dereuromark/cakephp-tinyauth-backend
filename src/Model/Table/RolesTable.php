@@ -108,6 +108,31 @@ class RolesTable extends Table {
 					return $this->exists(['id' => $value]);
 				},
 				'message' => __('Parent role does not exist.'),
+			])
+			->add('parent_id', 'noCircular', [
+				'rule' => function ($value, $context) {
+					if (!$value || !isset($context['data']['id'])) {
+						return true;
+					}
+					// Check for circular reference in parent chain
+					$currentId = (int)$context['data']['id'];
+					$parentId = (int)$value;
+					$visited = [$currentId];
+					$maxDepth = 100; // Prevent infinite loop
+
+					while ($parentId && $maxDepth > 0) {
+						if (in_array($parentId, $visited, true)) {
+							return false; // Circular reference detected
+						}
+						$visited[] = $parentId;
+						$parent = $this->find()->select(['parent_id'])->where(['id' => $parentId])->first();
+						$parentId = $parent ? (int)$parent->parent_id : null;
+						$maxDepth--;
+					}
+
+					return true;
+				},
+				'message' => __('Circular parent reference detected.'),
 			]);
 
 		$validator

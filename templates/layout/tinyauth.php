@@ -76,12 +76,12 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
                 <!-- Navigation (feature-aware) -->
                 <nav class="flex items-center gap-1">
                     <?php
-                    $navItems = $this->TinyAuth->getNavigationItems();
-                    $currentController = $this->request->getParam('controller');
-                    foreach ($navItems as $item) {
-                        $isActive = $currentController === $item['route']['controller'];
-                        $route = $item['route'] + ['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin'];
-                    ?>
+					$navItems = $this->TinyAuth->getNavigationItems();
+					$currentController = $this->request->getParam('controller');
+					foreach ($navItems as $item) {
+						$isActive = $currentController === $item['route']['controller'];
+						$route = $item['route'] + ['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin'];
+						?>
                     <a href="<?= $this->Url->build($route) ?>"
                        class="px-3 py-1.5 text-sm rounded-md <?= $isActive ? 'bg-primary text-white' : 'hover:bg-gray-100 dark:hover:bg-slate-700' ?>">
                         <?= h($item['label']) ?>
@@ -90,7 +90,9 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
 
                     <!-- Theme toggle -->
                     <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)"
-                            class="ml-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700">
+                            class="ml-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700"
+                            :aria-label="darkMode ? '<?= __('Switch to light mode') ?>' : '<?= __('Switch to dark mode') ?>'"
+                            type="button">
                         <span x-show="!darkMode">🌙</span>
                         <span x-show="darkMode">☀️</span>
                     </button>

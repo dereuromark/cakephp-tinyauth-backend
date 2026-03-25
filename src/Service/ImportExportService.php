@@ -92,7 +92,7 @@ class ImportExportService {
 		$lines = ['; TinyAuth Allow Export', '; Generated: ' . date('Y-m-d H:i:s'), ''];
 
 		foreach ($controllers as $controller) {
-			if (empty($controller->actions)) {
+			if (!$controller->actions) {
 				continue;
 			}
 
@@ -122,7 +122,7 @@ class ImportExportService {
 			->all();
 
 		// Header row
-		$roleNames = array_map(fn ($r) => $r->alias, $roles);
+		$roleNames = array_map(fn ($r) => '"' . str_replace('"', '""', $r->alias) . '"', $roles);
 		$lines = ['Controller,Action,' . implode(',', $roleNames)];
 
 		foreach ($controllers as $controller) {
@@ -156,8 +156,8 @@ class ImportExportService {
 	 * Import permissions from TinyAuth INI format.
 	 *
 	 * @param string $content INI file content.
-	 * @param string $mode 'merge' or 'replace'.
-	 * @return array<string, mixed>
+	 * @param string $mode 'merge' or 'replace'. Currently only 'merge' is implemented.
+	 * @return array<string, mixed> Result with keys: controllers, actions, permissions, errors.
 	 */
 	public function importIni(string $content, string $mode = 'merge'): array {
 		$controllersTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.TinyauthControllers');
@@ -211,8 +211,13 @@ class ImportExportService {
 					'prefix' => $prefix,
 					'name' => $name,
 				]);
-				$controllersTable->save($controller);
-				$result['controllers']++;
+				if ($controllersTable->save($controller)) {
+					$result['controllers']++;
+				} else {
+					$result['errors'][] = "Failed to save controller: {$name}";
+
+					continue;
+				}
 			}
 
 			// Process actions
@@ -227,8 +232,13 @@ class ImportExportService {
 						'name' => $actionName,
 						'is_public' => false,
 					]);
-					$actionsTable->save($action);
-					$result['actions']++;
+					if ($actionsTable->save($action)) {
+						$result['actions']++;
+					} else {
+						$result['errors'][] = "Failed to save action: {$actionName}";
+
+						continue;
+					}
 				}
 
 				// Parse roles
@@ -252,8 +262,11 @@ class ImportExportService {
 							'role_id' => $roleId,
 							'type' => 'allow',
 						]);
-						$permissionsTable->save($permission);
-						$result['permissions']++;
+						if ($permissionsTable->save($permission)) {
+							$result['permissions']++;
+						} else {
+							$result['errors'][] = "Failed to save permission for role: {$alias}";
+						}
 					}
 				}
 			}

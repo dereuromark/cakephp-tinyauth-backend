@@ -119,6 +119,12 @@ class FeatureService {
 
 		$items = [
 			[
+				'name' => 'dashboard',
+				'label' => 'Dashboard',
+				'enabled' => true, // Always show dashboard
+				'route' => ['controller' => 'Dashboard', 'action' => 'index'],
+			],
+			[
 				'name' => 'acl',
 				'label' => 'ACL',
 				'enabled' => $features['acl'] ?? false,

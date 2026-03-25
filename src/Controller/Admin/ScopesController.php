@@ -3,18 +3,9 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use Cake\Controller\Controller;
 use Cake\Http\Response;
 
-class ScopesController extends Controller {
-
-	/**
-	 * @return void
-	 */
-	public function initialize(): void {
-		parent::initialize();
-		$this->viewBuilder()->setLayout('TinyAuthBackend.tinyauth');
-	}
+class ScopesController extends AppController {
 
 	/**
 	 * @return void

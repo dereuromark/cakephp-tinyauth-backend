@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use Cake\Controller\Controller;
 use Cake\Http\Response;
 use TinyAuthBackend\Service\RoleSourceService;
 
-class RolesController extends Controller {
+class RolesController extends AppController {
 
 	protected RoleSourceService $roleSource;
 
@@ -16,7 +15,6 @@ class RolesController extends Controller {
 	 */
 	public function initialize(): void {
 		parent::initialize();
-		$this->viewBuilder()->setLayout('TinyAuthBackend.tinyauth');
 		$this->roleSource = new RoleSourceService();
 	}
 

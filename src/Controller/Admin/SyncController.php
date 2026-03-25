@@ -3,20 +3,11 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use Cake\Controller\Controller;
 use Cake\Http\Response;
 use TinyAuthBackend\Service\ControllerSyncService;
 use TinyAuthBackend\Service\ResourceSyncService;
 
-class SyncController extends Controller {
-
-	/**
-	 * @return void
-	 */
-	public function initialize(): void {
-		parent::initialize();
-		$this->viewBuilder()->setLayout('TinyAuthBackend.tinyauth');
-	}
+class SyncController extends AppController {
 
 	/**
 	 * @return \Cake\Http\Response|null

@@ -4,22 +4,13 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Controller\Admin;
 
 use Cake\Cache\Cache;
-use Cake\Controller\Controller;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 
 /**
  * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
  */
-class AllowController extends Controller {
-
-	/**
-	 * @return void
-	 */
-	public function initialize(): void {
-		parent::initialize();
-		$this->viewBuilder()->setLayout('TinyAuthBackend.tinyauth');
-	}
+class AllowController extends AppController {
 
 	/**
 	 * @return void

@@ -8,6 +8,7 @@
 // Find which nodes should be expanded based on selectedId
 $expandedNodes = [];
 if ($selectedId !== null) {
+	$selectedId = (int)$selectedId;
 	foreach ($tree as $plugin => $pluginData) {
 		foreach ($pluginData['prefixes'] as $prefix => $prefixData) {
 			foreach ($prefixData['controllers'] as $controller) {
@@ -46,7 +47,7 @@ $expandedJson = json_encode($expandedNodes);
                 <div x-show="expanded['<?= h($plugin) ?>_<?= h($prefix) ?>']" x-collapse class="ml-4">
                     <?php foreach ($prefixData['controllers'] as $controller) { ?>
                     <a href="<?= $this->Url->build(['action' => 'index', '?' => ['controller_id' => $controller->id]]) ?>"
-                       class="tree-item block text-sm <?= $controller->id === $selectedId ? 'active' : '' ?>">
+                       class="tree-item block text-sm <?= (int)$controller->id === $selectedId ? 'active' : '' ?>">
                         <?= h($controller->name) ?>
                     </a>
                     <?php } ?>
@@ -55,7 +56,7 @@ $expandedJson = json_encode($expandedNodes);
             <?php } else { ?>
 					<?php foreach ($prefixData['controllers'] as $controller) { ?>
                 <a href="<?= $this->Url->build(['action' => 'index', '?' => ['controller_id' => $controller->id]]) ?>"
-                   class="tree-item block text-sm <?= $controller->id === $selectedId ? 'active' : '' ?>">
+                   class="tree-item block text-sm <?= (int)$controller->id === $selectedId ? 'active' : '' ?>">
 						<?= h($controller->name) ?>
                 </a>
                 <?php } ?>

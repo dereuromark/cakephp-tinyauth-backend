@@ -44,14 +44,18 @@ class TinyAuthBackendPlugin extends BasePlugin {
 	 */
 	public function routes(RouteBuilder $routes): void {
 		$routes->plugin('TinyAuthBackend', ['path' => '/admin/tinyauth'], function (RouteBuilder $builder): void {
-			$builder->connect('/', ['controller' => 'Acl', 'action' => 'index', 'prefix' => 'Admin']);
-			$builder->connect('/acl', ['controller' => 'Acl', 'action' => 'index', 'prefix' => 'Admin']);
-			$builder->connect('/allow', ['controller' => 'Allow', 'action' => 'index', 'prefix' => 'Admin']);
-			$builder->connect('/roles', ['controller' => 'Roles', 'action' => 'index', 'prefix' => 'Admin']);
-			$builder->connect('/resources', ['controller' => 'Resources', 'action' => 'index', 'prefix' => 'Admin']);
-			$builder->connect('/scopes', ['controller' => 'Scopes', 'action' => 'index', 'prefix' => 'Admin']);
-			$builder->connect('/sync', ['controller' => 'Sync', 'action' => 'index', 'prefix' => 'Admin']);
-			$builder->fallbacks();
+			$builder->prefix('Admin', function (RouteBuilder $prefixBuilder): void {
+				$prefixBuilder->connect('/', ['controller' => 'Acl', 'action' => 'index']);
+				$prefixBuilder->connect('/acl', ['controller' => 'Acl', 'action' => 'index']);
+				$prefixBuilder->connect('/allow', ['controller' => 'Allow', 'action' => 'index']);
+				$prefixBuilder->connect('/roles', ['controller' => 'Roles', 'action' => 'index']);
+				$prefixBuilder->connect('/resources', ['controller' => 'Resources', 'action' => 'index']);
+				$prefixBuilder->connect('/scopes', ['controller' => 'Scopes', 'action' => 'index']);
+				$prefixBuilder->connect('/sync', ['controller' => 'Sync', 'action' => 'index']);
+				$prefixBuilder->connect('/sync/controllers', ['controller' => 'Sync', 'action' => 'controllers']);
+				$prefixBuilder->connect('/sync/resources', ['controller' => 'Sync', 'action' => 'resources']);
+				$prefixBuilder->fallbacks();
+			});
 		});
 	}
 

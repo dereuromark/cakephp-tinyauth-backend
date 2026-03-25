@@ -13,7 +13,8 @@ class DbAllowAdapterTest extends TestCase {
 	 * @var array
 	 */
 	protected array $fixtures = [
-		'plugin.TinyAuthBackend.TinyAuthAllowRules',
+		'plugin.TinyAuthBackend.TinyAuthControllers',
+		'plugin.TinyAuthBackend.TinyAuthActions',
 	];
 
 	/**

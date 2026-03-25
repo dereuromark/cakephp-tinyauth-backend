@@ -8,14 +8,20 @@ Router::reload();
 
 Router::defaultRouteClass(DashedRoute::class);
 
-// Copy from Application.php for now
-Router::prefix('Admin', function (RouteBuilder $routes) {
-	$routes->plugin(
-		'TinyAuthBackend',
-		['path' => '/auth'],
-		function (RouteBuilder $routes) {
-			$routes->connect('/', ['controller' => 'Auth', 'action' => 'index']);
-			$routes->fallbacks();
-		},
-	);
+// Match the plugin routes from TinyAuthBackendPlugin
+// Use prefix scope so fallbacks work correctly with Admin prefix
+Router::plugin('TinyAuthBackend', ['path' => '/admin/tinyauth'], function (RouteBuilder $builder): void {
+	$builder->prefix('Admin', function (RouteBuilder $prefixBuilder): void {
+		$prefixBuilder->connect('/', ['controller' => 'Acl', 'action' => 'index']);
+		$prefixBuilder->connect('/acl', ['controller' => 'Acl', 'action' => 'index']);
+		$prefixBuilder->connect('/allow', ['controller' => 'Allow', 'action' => 'index']);
+		$prefixBuilder->connect('/roles', ['controller' => 'Roles', 'action' => 'index']);
+		$prefixBuilder->connect('/resources', ['controller' => 'Resources', 'action' => 'index']);
+		$prefixBuilder->connect('/scopes', ['controller' => 'Scopes', 'action' => 'index']);
+		$prefixBuilder->connect('/sync', ['controller' => 'Sync', 'action' => 'index']);
+		// Explicit routes for Sync controller actions
+		$prefixBuilder->connect('/sync/controllers', ['controller' => 'Sync', 'action' => 'controllers']);
+		$prefixBuilder->connect('/sync/resources', ['controller' => 'Sync', 'action' => 'resources']);
+		$prefixBuilder->fallbacks();
+	});
 });

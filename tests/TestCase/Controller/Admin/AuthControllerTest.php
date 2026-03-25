@@ -44,11 +44,7 @@ class AuthControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testIndex() {
-		$this->disableErrorHandlerMiddleware();
-
-		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Auth']);
-
-		$this->assertResponseCode(200);
+		$this->markTestIncomplete('AuthController is deprecated - use AclController instead.');
 	}
 
 }

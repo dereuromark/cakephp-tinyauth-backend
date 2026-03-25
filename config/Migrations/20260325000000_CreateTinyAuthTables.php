@@ -21,6 +21,14 @@ class CreateTinyAuthTables extends BaseMigration {
 			->addIndex(['parent_id'])
 			->create();
 
+		// Add self-referencing foreign key after table creation
+		$this->table('tinyauth_roles')
+			->addForeignKey('parent_id', 'tinyauth_roles', 'id', [
+				'delete' => 'SET_NULL',
+				'update' => 'CASCADE',
+			])
+			->update();
+
 		// Controllers table
 		$this->table('tinyauth_controllers')
 			->addColumn('plugin', 'string', ['limit' => 100, 'null' => true])

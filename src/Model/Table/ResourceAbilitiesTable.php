@@ -62,7 +62,25 @@ class ResourceAbilitiesTable extends Table {
 			->scalar('name')
 			->maxLength('name', 50)
 			->requirePresence('name', 'create')
-			->notEmptyString('name');
+			->notEmptyString('name')
+			->add('name', 'uniquePerResource', [
+				'rule' => function ($value, $context) {
+					if (empty($context['data']['resource_id'])) {
+						return true;
+					}
+					$conditions = [
+						'resource_id' => $context['data']['resource_id'],
+						'name' => $value,
+					];
+					// Exclude current record when editing
+					if (!empty($context['data']['id'])) {
+						$conditions['id !='] = $context['data']['id'];
+					}
+
+					return !$this->exists($conditions);
+				},
+				'message' => __('This ability name already exists for this resource.'),
+			]);
 
 		$validator
 			->scalar('description')

@@ -175,7 +175,7 @@ class ResourcesController extends AppController {
 
 		// Check if ability has permissions
 		$aclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
-		$usageCount = $aclTable->find()->where(['ability_id' => $id])->count();
+		$usageCount = $aclTable->find()->where(['resource_ability_id' => $id])->count();
 		if ($usageCount > 0) {
 			$this->Flash->error(__('Cannot delete ability. It has {0} permission(s) assigned.', $usageCount));
 

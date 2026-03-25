@@ -12,10 +12,20 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')) ?>
     <title><?= $this->fetch('title') ?> - TinyAuth</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+        // Configure HTMX to include CSRF token in all requests
+        document.addEventListener('htmx:configRequest', function(event) {
+            var csrfToken = document.querySelector('meta[name="csrfToken"]');
+            if (csrfToken) {
+                event.detail.headers['X-CSRF-Token'] = csrfToken.content;
+            }
+        });
+    </script>
     <script>
         tailwind.config = {
             darkMode: 'class',

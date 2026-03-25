@@ -153,6 +153,9 @@ class TinyAuthServiceTest extends TestCase {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 	public function testCanAccessResourceUsesEntityClassToAvoidNameCollisions(): void {
 		$this->insertRow('tinyauth_resources', [
 			'id' => 2,
@@ -204,7 +207,12 @@ class TinyAuthServiceTest extends TestCase {
 		$result = $service->getUserRoles($user);
 
 		$this->assertSame(['user', 'admin'], $result);
+<<<<<<< HEAD
 =======
+=======
+	}
+
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 	protected function insertRow(string $table, array $data): void {
 		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
 >>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)

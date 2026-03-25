@@ -7,12 +7,18 @@ use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+<<<<<<< HEAD
 use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
+=======
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 
 class InitCommandTest extends TestCase {
 
 	use ConsoleIntegrationTestTrait;
+<<<<<<< HEAD
 	use DatabaseTestTrait;
+=======
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
@@ -45,4 +51,11 @@ class InitCommandTest extends TestCase {
 		$this->assertGreaterThan(0, TableRegistry::getTableLocator()->get('tinyauth_acl_permissions')->find()->count());
 	}
 
+<<<<<<< HEAD
+=======
+	protected function insertRow(string $table, array $data): void {
+		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
+	}
+
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 }

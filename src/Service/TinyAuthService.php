@@ -66,10 +66,14 @@ class TinyAuthService {
 		return $this->canAccess(
 			$this->getUserRoles($user),
 <<<<<<< HEAD
+<<<<<<< HEAD
 			$this->getResourceIdentifier($entity),
 =======
 			$this->getResourceName($entity),
 >>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
+=======
+			$this->getResourceIdentifier($entity),
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 			$ability,
 			$entity,
 			$user,
@@ -131,7 +135,7 @@ class TinyAuthService {
 		$resourceAclTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.ResourceAcl');
 
 		/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $result */
-		$result = $resourceAclTable->find()
+			$result = $resourceAclTable->find()
 			->contain(['ResourceAbilities.Resources', 'Roles', 'Scopes'])
 			->matching('ResourceAbilities.Resources', function ($q) use ($resource) {
 				return $q->where([
@@ -260,6 +264,7 @@ class TinyAuthService {
 	 * @return string
 	 */
 <<<<<<< HEAD
+<<<<<<< HEAD
 	protected function getResourceIdentifier(EntityInterface $entity): string {
 		return get_class($entity);
 =======
@@ -269,6 +274,10 @@ class TinyAuthService {
 
 		return end($parts) ?: '';
 >>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
+=======
+	protected function getResourceIdentifier(EntityInterface $entity): string {
+		return get_class($entity);
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 	}
 
 	/**

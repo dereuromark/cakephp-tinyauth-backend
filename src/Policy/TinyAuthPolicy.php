@@ -170,6 +170,7 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	 */
 	protected function getResourceName(EntityInterface $entity): string {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		return get_class($entity);
 	}
 
@@ -179,6 +180,9 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 		$entityName = end($parts) ?: '';
 
 		return $entityName;
+=======
+		return get_class($entity);
+>>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 	}
 
 >>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)

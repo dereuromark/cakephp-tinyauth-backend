@@ -71,12 +71,23 @@ class TinyauthControllersTable extends Table {
 	 * @return array<string, array<string, mixed>>
 	 */
 	public function findTree(): array {
-		/** @var array<\TinyAuthBackend\Model\Entity\TinyauthController> $controllers */
-		$controllers = $this->find()
+		$query = $this->find()
 			->contain(['Actions'])
-			->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'name' => 'ASC'])
-			->all()
-			->toArray();
+			->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'name' => 'ASC']);
+
+		// Filter out excluded plugins (default: DebugKit, TinyAuthBackend)
+		$excludedPlugins = \Cake\Core\Configure::read('TinyAuthBackend.excludedPlugins') ?? ['DebugKit', 'TinyAuthBackend'];
+		if ($excludedPlugins) {
+			$query->where([
+				'OR' => [
+					'plugin IS' => null,
+					'plugin NOT IN' => $excludedPlugins,
+				],
+			]);
+		}
+
+		/** @var array<\TinyAuthBackend\Model\Entity\TinyauthController> $controllers */
+		$controllers = $query->all()->toArray();
 
 		return $this->buildTree($controllers);
 	}

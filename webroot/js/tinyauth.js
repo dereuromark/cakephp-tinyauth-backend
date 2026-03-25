@@ -47,16 +47,3 @@ window.TinyAuth.togglePermission = function(actionId, roleId, currentState) {
     });
 };
 
-// Resource permission toggle (with scope)
-window.TinyAuth.toggleResourcePermission = function(abilityId, roleId, currentState, scopeId) {
-    htmx.ajax('POST', window.TinyAuth.urls.resourceToggle, {
-        values: {
-            ability_id: abilityId,
-            role_id: roleId,
-            type: currentState === 'none' ? 'allow' : (currentState === 'allow' ? 'deny' : 'none'),
-            scope_id: scopeId || ''
-        },
-        target: '#rcell-' + abilityId + '-' + roleId,
-        swap: 'outerHTML'
-    });
-};

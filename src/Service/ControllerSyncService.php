@@ -241,8 +241,9 @@ class ControllerSyncService {
 							'name' => $actionName,
 							'is_public' => false,
 						]);
-						$actionsTable->save($action);
-						$result['actions_added']++;
+						if ($actionsTable->save($action)) {
+							$result['actions_added']++;
+						}
 					}
 				}
 			}

@@ -76,6 +76,14 @@ class ResourcesController extends AppController {
 			throw new BadRequestException('Invalid permission type');
 		}
 
+		// Validate scope exists if provided
+		if ($scopeId !== null) {
+			$scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');
+			if (!$scopesTable->exists(['id' => $scopeId])) {
+				throw new BadRequestException('Invalid scope');
+			}
+		}
+
 		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 
 		$existing = $resourceAclTable->find()

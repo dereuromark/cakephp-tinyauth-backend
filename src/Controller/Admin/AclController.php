@@ -113,6 +113,7 @@ class AclController extends AppController {
 		$this->viewBuilder()->disableAutoLayout();
 
 		$q = $this->request->getQuery('q', '');
+		$q = substr($q, 0, 100); // Limit search query length
 		$results = ['controllers' => [], 'actions' => [], 'roles' => []];
 
 		if (strlen($q) >= 2) {

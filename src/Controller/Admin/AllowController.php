@@ -6,6 +6,7 @@ namespace TinyAuthBackend\Controller\Admin;
 use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 /**
  * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
@@ -30,7 +31,7 @@ class AllowController extends Controller {
 
 		$query = $controllersTable->find()
 			->contain([
-				'Actions' => function (\Cake\ORM\Query\SelectQuery $q) use ($filter) {
+				'Actions' => function (SelectQuery $q) use ($filter) {
 					if ($filter === 'public') {
 						return $q->where(['Actions.is_public' => true]);
 					}

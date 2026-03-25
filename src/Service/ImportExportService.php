@@ -55,9 +55,9 @@ class ImportExportService {
 
 		/** @var \TinyAuthBackend\Model\Entity\TinyauthController $controller */
 		foreach ($controllers as $controller) {
-			$path = ($controller->plugin ? $controller->plugin . '.' : '') .
-				($controller->prefix ? $controller->prefix . '/' : '') .
-				$controller->name;
+			$path = ($controller->plugin ? $controller->plugin . '.' : '')
+				. ($controller->prefix ? $controller->prefix . '/' : '')
+				. $controller->name;
 
 			$lines[] = "[{$path}]";
 
@@ -98,9 +98,9 @@ class ImportExportService {
 				continue;
 			}
 
-			$path = ($controller->plugin ? $controller->plugin . '.' : '') .
-				($controller->prefix ? $controller->prefix . '/' : '') .
-				$controller->name;
+			$path = ($controller->plugin ? $controller->plugin . '.' : '')
+				. ($controller->prefix ? $controller->prefix . '/' : '')
+				. $controller->name;
 
 			$actions = array_map(fn ($a) => $a->name, $controller->actions);
 			$lines[] = "{$path} = " . implode(', ', $actions);
@@ -130,9 +130,9 @@ class ImportExportService {
 
 		/** @var \TinyAuthBackend\Model\Entity\TinyauthController $controller */
 		foreach ($controllers as $controller) {
-			$path = ($controller->plugin ? $controller->plugin . '.' : '') .
-				($controller->prefix ? $controller->prefix . '/' : '') .
-				$controller->name;
+			$path = ($controller->plugin ? $controller->plugin . '.' : '')
+				. ($controller->prefix ? $controller->prefix . '/' : '')
+				. $controller->name;
 
 			foreach ($controller->actions as $action) {
 				$row = ['"' . $path . '"', $action->name];

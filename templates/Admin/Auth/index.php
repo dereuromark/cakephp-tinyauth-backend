@@ -1,4 +1,7 @@
 <?php
+
+use TinyAuthBackend\Utility\AdapterConfig;
+
 /**
  * @var \App\View\AppView $this
  */
@@ -12,7 +15,7 @@
 <p>What actions are public and which ones are protected?</p>
 
 <?php
-if (\TinyAuthBackend\Utility\AdapterConfig::isAllowEnabled()) {
+if (AdapterConfig::isAllowEnabled()) {
 	echo $this->Html->link('Manage Allow rules', ['controller' => 'Allow', 'action' => 'index']);
 } else {
 	echo '<i>disabled</i>';
@@ -25,9 +28,8 @@ if (\TinyAuthBackend\Utility\AdapterConfig::isAllowEnabled()) {
 <p>Who can access which protected action?</p>
 
 <?php
-if (\TinyAuthBackend\Utility\AdapterConfig::isAclEnabled()) {
+if (AdapterConfig::isAclEnabled()) {
 	echo $this->Html->link('Manage ACL rules', ['controller' => 'Acl', 'action' => 'index']);
 } else {
 	echo '<i>disabled</i>';
 }
-?>

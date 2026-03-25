@@ -33,9 +33,18 @@
 					default => '&#9675;',
 				};
 	?>
+				<?php
+				$nextType = match ($type) {
+					'none' => 'allow',
+					'allow' => 'deny',
+					default => 'none',
+				};
+	?>
 			<td id="cell-<?= $action->id ?>-<?= $role->id ?>"
 				class="matrix-cell <?= h($type) ?>"
-				onclick="window.TinyAuth.togglePermission(<?= $action->id ?>, <?= $role->id ?>, '<?= h($type) ?>')">
+				hx-post="<?= $this->Url->build(['action' => 'toggle']) ?>"
+				hx-vals='<?= json_encode(['action_id' => $action->id, 'role_id' => $role->id, 'type' => $nextType]) ?>'
+				hx-swap="outerHTML">
 				<?= $symbol ?>
 			</td>
 			<?php } ?>

@@ -14,7 +14,7 @@ trait ValidationTrait {
 	 *
 	 * @return bool
 	 */
-	protected function assertValidPath($path) {
+	protected function assertValidPath(string $path): bool {
 		$array = RulePath::parse($path);
 
 		if (!$array['controller'] || Utility::camelizeTokenString(Utility::underscoreTokenString($array['controller'], '/'), '/') !== $array['controller']) {
@@ -39,7 +39,7 @@ trait ValidationTrait {
 	 *
 	 * @return string
 	 */
-	protected function normalizePath($path) {
+	protected function normalizePath(string $path): string {
 		$array = RulePath::parse($path);
 
 		return RulePath::build($array);

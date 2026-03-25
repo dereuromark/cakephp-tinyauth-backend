@@ -35,9 +35,9 @@ $newCount = count(array_filter($diff, fn ($d) => $d['status'] === 'new'));
                         </td>
                         <td class="p-3">
                             <?php
-							$path = ($item['plugin'] ? $item['plugin'] . '.' : '') .
-									($item['prefix'] ? $item['prefix'] . '/' : '') .
-									$item['name'];
+							$path = ($item['plugin'] ? $item['plugin'] . '.' : '')
+									. ($item['prefix'] ? $item['prefix'] . '/' : '')
+									. $item['name'];
 							?>
                             <?= h($path) ?>
                         </td>

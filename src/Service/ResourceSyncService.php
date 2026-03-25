@@ -111,9 +111,10 @@ class ResourceSyncService {
 					'entity_class' => $item['entity_class'],
 					'table_name' => $item['table_name'],
 				]);
-				$resourcesTable->save($resource);
-				$existing = $resource;
-				$result['added']++;
+				if ($resourcesTable->save($resource)) {
+					$existing = $resource;
+					$result['added']++;
+				}
 			}
 
 			if ($existing && $addDefaultAbilities) {
@@ -130,8 +131,9 @@ class ResourceSyncService {
 							'resource_id' => $existing->id,
 							'name' => $abilityName,
 						]);
-						$abilitiesTable->save($ability);
-						$result['abilities_added']++;
+						if ($abilitiesTable->save($ability)) {
+							$result['abilities_added']++;
+						}
 					}
 				}
 			}

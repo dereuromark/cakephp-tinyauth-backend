@@ -12,22 +12,22 @@ if (isset($error)) { ?>
 	<span title="<?= h($error) ?>">!</span>
 </td>
 <?php } else {
-$scopeName = $scope?->name;
-$display = match ($type) {
-	'allow' => $scopeName ? '●(' . h($scopeName) . ')' : '●',
-	'deny' => '✕',
-	default => '○',
-};
-$class = match ($type) {
-	'allow' => 'text-green-500',
-	'deny' => 'text-red-500',
-	default => 'text-gray-400',
-};
-?>
+	$scopeName = $scope?->name;
+	$display = match ($type) {
+		'allow' => $scopeName ? '●(' . h($scopeName) . ')' : '●',
+		'deny' => '✕',
+		default => '○',
+	};
+	$class = match ($type) {
+		'allow' => 'text-green-500',
+		'deny' => 'text-red-500',
+		default => 'text-gray-400',
+	};
+	?>
 <td id="rcell-<?= $abilityId ?>-<?= $roleId ?>"
 	class="matrix-cell <?= h($class) ?>"
 	x-data="{ showMenu: false }"
 	@click="showMenu = !showMenu">
 	<span><?= h($display) ?></span>
 </td>
-<?php } ?>
+<?php }

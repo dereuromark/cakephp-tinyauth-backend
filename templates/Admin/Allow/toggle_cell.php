@@ -17,4 +17,4 @@
     <span><?= $action->is_public ? '&#9679;' : '&#9675;' ?></span>
     <span><?= h($action->name) ?></span>
 </div>
-<?php } ?>
+<?php }

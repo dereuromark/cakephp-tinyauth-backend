@@ -29,21 +29,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Namespace for TinyAuth functions
 window.TinyAuth = window.TinyAuth || {};
-
-// Matrix cell toggle
-window.TinyAuth.togglePermission = function(actionId, roleId, currentState) {
-    const states = ['none', 'allow', 'deny'];
-    const nextIndex = (states.indexOf(currentState) + 1) % states.length;
-    const nextState = states[nextIndex];
-
-    htmx.ajax('POST', window.TinyAuth.urls.aclToggle, {
-        values: {
-            action_id: actionId,
-            role_id: roleId,
-            type: nextState
-        },
-        target: '#cell-' + actionId + '-' + roleId,
-        swap: 'outerHTML'
-    });
-};
-

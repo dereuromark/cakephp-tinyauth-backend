@@ -25,7 +25,7 @@
 				<?= h($ability->name) ?>
 			</td>
 			<?php foreach ($roles as $role) { ?>
-			<?php
+				<?php
 				$perm = $permissions[$ability->id][$role->id] ?? null;
 				$type = $perm['type'] ?? 'none';
 				$scopeName = $perm['scope_name'] ?? null;
@@ -41,7 +41,7 @@
 					'deny' => 'text-red-500',
 					default => 'text-gray-400',
 				};
-			?>
+	?>
 			<td id="rcell-<?= $ability->id ?>-<?= $role->id ?>"
 				class="matrix-cell <?= h($class) ?>"
 				x-data="{ showMenu: false }"
@@ -56,7 +56,7 @@
 						<div class="text-xs font-medium text-gray-500 mb-1">Permission</div>
 						<button class="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm"
 								hx-post="<?= $this->Url->build(['action' => 'toggle']) ?>"
-								hx-vals='{"ability_id": <?= $ability->id ?>, "role_id": <?= $role->id ?>, "type": "allow", "scope_id": ""}'
+								hx-vals='<?= json_encode(['ability_id' => $ability->id, 'role_id' => $role->id, 'type' => 'allow', 'scope_id' => '']) ?>'
 								hx-target="#rcell-<?= $ability->id ?>-<?= $role->id ?>"
 								hx-swap="outerHTML">
 							<span class="text-green-500">●</span> Full access
@@ -64,7 +64,7 @@
 						<?php foreach ($scopes as $scope) { ?>
 						<button class="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm"
 								hx-post="<?= $this->Url->build(['action' => 'toggle']) ?>"
-								hx-vals='{"ability_id": <?= $ability->id ?>, "role_id": <?= $role->id ?>, "type": "allow", "scope_id": "<?= $scope->id ?>"}'
+								hx-vals='<?= json_encode(['ability_id' => $ability->id, 'role_id' => $role->id, 'type' => 'allow', 'scope_id' => $scope->id]) ?>'
 								hx-target="#rcell-<?= $ability->id ?>-<?= $role->id ?>"
 								hx-swap="outerHTML">
 							<span class="text-green-500">●</span> <?= h($scope->name) ?>
@@ -72,14 +72,14 @@
 						<?php } ?>
 						<button class="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm"
 								hx-post="<?= $this->Url->build(['action' => 'toggle']) ?>"
-								hx-vals='{"ability_id": <?= $ability->id ?>, "role_id": <?= $role->id ?>, "type": "deny", "scope_id": ""}'
+								hx-vals='<?= json_encode(['ability_id' => $ability->id, 'role_id' => $role->id, 'type' => 'deny', 'scope_id' => '']) ?>'
 								hx-target="#rcell-<?= $ability->id ?>-<?= $role->id ?>"
 								hx-swap="outerHTML">
 							<span class="text-red-500">✕</span> Deny
 						</button>
 						<button class="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm"
 								hx-post="<?= $this->Url->build(['action' => 'toggle']) ?>"
-								hx-vals='{"ability_id": <?= $ability->id ?>, "role_id": <?= $role->id ?>, "type": "none", "scope_id": ""}'
+								hx-vals='<?= json_encode(['ability_id' => $ability->id, 'role_id' => $role->id, 'type' => 'none', 'scope_id' => '']) ?>'
 								hx-target="#rcell-<?= $ability->id ?>-<?= $role->id ?>"
 								hx-swap="outerHTML">
 							<span class="text-gray-400">○</span> Remove

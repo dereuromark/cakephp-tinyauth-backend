@@ -17,6 +17,7 @@ if ($selectedId !== null) {
 					if ($prefix !== '_root') {
 						$expandedNodes[$plugin . '_' . $prefix] = true;
 					}
+
 					break 3;
 				}
 			}
@@ -53,14 +54,14 @@ $expandedJson = json_encode((object)$expandedNodes);
                     <?php } ?>
                 </div>
             </div>
-            <?php } else { ?>
+                <?php } else { ?>
 					<?php foreach ($prefixData['controllers'] as $controller) { ?>
                 <a href="<?= $this->Url->build(['action' => 'index', '?' => ['controller_id' => $controller->id]]) ?>"
                    class="tree-item block text-sm <?= (int)$controller->id === $selectedId ? 'active' : '' ?>">
 						<?= h($controller->name) ?>
                 </a>
+                    <?php } ?>
                 <?php } ?>
-            <?php } ?>
             <?php } ?>
         </div>
     </div>

@@ -63,7 +63,7 @@ class RoleSourceService {
 	 *
 	 * Only available when using tinyauth_roles table. Returns simple objects for external sources.
 	 *
-	 * @return array<\TinyAuthBackend\Model\Entity\Role|object>
+	 * @return array<object>
 	 */
 	public function getRoleEntities(): array {
 		$roleSource = Configure::read('TinyAuthBackend.roleSource');
@@ -87,13 +87,17 @@ class RoleSourceService {
 		}
 
 		// Default: fetch from table with hierarchy
+		/** @var \TinyAuthBackend\Model\Table\RolesTable $rolesTable */
 		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
 
-		return $rolesTable->find()
+		/** @var array<\TinyAuthBackend\Model\Entity\Role> $entities */
+		$entities = $rolesTable->find()
 			->contain(['ParentRoles'])
 			->orderBy(['sort_order' => 'ASC', 'name' => 'ASC'])
 			->all()
 			->toArray();
+
+		return $entities;
 	}
 
 	/**
@@ -123,8 +127,11 @@ class RoleSourceService {
 		try {
 			$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
 
-			return $rolesTable->find('list', keyField: 'alias', valueField: 'id')
+			/** @var array<string, int> $roles */
+			$roles = $rolesTable->find('list', keyField: 'alias', valueField: 'id')
 				->toArray();
+
+			return $roles;
 		} catch (Exception $e) {
 			return [];
 		}

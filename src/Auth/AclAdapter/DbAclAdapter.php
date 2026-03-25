@@ -24,6 +24,7 @@ class DbAclAdapter implements AclAdapterInterface {
 			->all();
 
 		$acl = [];
+		/** @var \TinyAuthBackend\Model\Entity\AclPermission $permission */
 		foreach ($permissions as $permission) {
 			$action = $permission->action;
 			if (!$action || !$action->tinyauth_controller) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Service;
 
 use Cake\Core\Configure;
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Exception;
 
@@ -164,6 +165,9 @@ class FeatureService {
 	protected function tableExists(string $tableName): bool {
 		try {
 			$connection = ConnectionManager::get('default');
+			if (!$connection instanceof Connection) {
+				return false;
+			}
 			$tables = $connection->getSchemaCollection()->listTables();
 
 			return in_array($tableName, $tables, true);

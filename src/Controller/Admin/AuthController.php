@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
@@ -19,7 +20,7 @@ class AuthController extends AppController {
 	/**
 	 * @return void
 	 */
-	public function index() {
+	public function index(): void {
 		$availableRoles = (new TinyAuth())->getAvailableRoles();
 
 		$this->set(compact('availableRoles'));

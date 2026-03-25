@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Utility;
 
@@ -7,9 +8,9 @@ class RulePath {
 	/**
 	 * @param string $path
 	 *
-	 * @return array
+	 * @return array{plugin: string|null, prefix: string|null, controller: string, action: string|null}
 	 */
-	public static function parse($path) {
+	public static function parse(string $path): array {
 		$controller = $path;
 		$action = null;
 		if (strpos($controller, '::') !== false) {
@@ -39,11 +40,11 @@ class RulePath {
 	 *
 	 * e.g.: MyVendor.MyPrefix/MyController::myAction
 	 *
-	 * @param array $array
+	 * @param array{plugin: string|null, prefix: string|null, controller: string, action: string|null} $array
 	 *
 	 * @return string
 	 */
-	public static function build(array $array) {
+	public static function build(array $array): string {
 		$result = $array['controller'];
 		if ($array['action']) {
 			$result .= '::' . $array['action'];
@@ -64,11 +65,11 @@ class RulePath {
 	 *
 	 * e.g.: MyVendor.my_prefix/MyController
 	 *
-	 * @param array $array
+	 * @param array{plugin: string|null, prefix: string|null, controller: string, action?: string|null} $array
 	 *
 	 * @return string
 	 */
-	public static function key(array $array) {
+	public static function key(array $array): string {
 		$result = $array['controller'];
 		if ($array['prefix']) {
 			$prefix = Utility::underscoreTokenString($array['prefix'], '/');

@@ -165,7 +165,9 @@ class TinyAuthService {
 
 			// Build scope condition
 			$scope = $rule->scope;
-			$conditions[] = [$scope->entity_field => $user->get($scope->user_field)];
+			if ($scope) {
+				$conditions[] = [$scope->entity_field => $user->get($scope->user_field)];
+			}
 		}
 
 		if ($hasFullAccess) {
@@ -219,7 +221,14 @@ class TinyAuthService {
 		// Multi-role: get from user's roles association
 		$roles = $user->get('roles') ?? [];
 
-		return array_map(fn ($r) => is_object($r) ? $r->alias : $r, $roles);
+		return array_map(function ($r): string {
+			if (is_object($r)) {
+				/** @var \TinyAuthBackend\Model\Entity\Role $r */
+				return $r->alias;
+			}
+
+			return (string)$r;
+		}, $roles);
 	}
 
 }

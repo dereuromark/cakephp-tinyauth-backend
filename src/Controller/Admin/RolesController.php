@@ -30,6 +30,7 @@ class RolesController extends Controller {
 		// Build hierarchy only if managed (has parent_id)
 		$hierarchy = [];
 		if ($isManaged) {
+			/** @var \TinyAuthBackend\Model\Table\RolesTable $rolesTable */
 			$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 			$hierarchy = $rolesTable->findHierarchy();
 		}
@@ -140,13 +141,14 @@ class RolesController extends Controller {
 
 		if (!$this->roleSource->isManaged()) {
 			return $this->response->withType('application/json')
-				->withStringBody(json_encode(['success' => false, 'error' => 'Roles are managed externally']));
+				->withStringBody((string)json_encode(['success' => false, 'error' => 'Roles are managed externally']));
 		}
 
 		$roleId = (int)$this->request->getData('role_id');
 		$newParentId = $this->request->getData('parent_id');
 		$newOrder = (int)$this->request->getData('sort_order');
 
+		/** @var \TinyAuthBackend\Model\Table\RolesTable $rolesTable */
 		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 		$role = $rolesTable->get($roleId);
 
@@ -157,11 +159,11 @@ class RolesController extends Controller {
 			$this->roleSource->clearCache();
 
 			return $this->response->withType('application/json')
-				->withStringBody(json_encode(['success' => true]));
+				->withStringBody((string)json_encode(['success' => true]));
 		}
 
 		return $this->response->withType('application/json')
-			->withStringBody(json_encode(['success' => false, 'error' => 'Failed to save']));
+			->withStringBody((string)json_encode(['success' => false, 'error' => 'Failed to save']));
 	}
 
 }

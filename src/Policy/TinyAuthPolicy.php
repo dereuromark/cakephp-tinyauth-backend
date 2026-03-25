@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Policy;
 
+use Authorization\IdentityInterface;
 use Authorization\Policy\BeforePolicyInterface;
 use BadMethodCallException;
 use Cake\Datasource\EntityInterface;
@@ -41,13 +42,18 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	/**
 	 * Before hook - allows early bypass for super admin roles.
 	 *
-	 * @param \Cake\Datasource\EntityInterface|null $user The user entity.
+	 * @param \Authorization\IdentityInterface|null $identity The identity (user).
 	 * @param mixed $resource The resource being accessed.
 	 * @param string $action The action being performed.
 	 * @return bool|null True to allow, false to deny, null to continue to specific checks.
 	 */
-	public function before(?EntityInterface $user, mixed $resource, string $action): ?bool {
-		if (!$user) {
+	public function before(?IdentityInterface $identity, mixed $resource, string $action): ?bool {
+		if (!$identity) {
+			return false;
+		}
+
+		$user = $identity->getOriginalData();
+		if (!$user instanceof EntityInterface) {
 			return false;
 		}
 
@@ -134,7 +140,7 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	 * Allows calling canPublish(), canArchive(), etc. without defining each method.
 	 *
 	 * @param string $method The method name being called.
-	 * @param array $args The method arguments.
+	 * @param array<mixed> $args The method arguments.
 	 * @throws \BadMethodCallException When method doesn't start with 'can'.
 	 * @return bool Whether access is allowed.
 	 */

@@ -31,7 +31,7 @@ class TinyAuthBackendPlugin extends BasePlugin {
 	protected bool $routesEnabled = true;
 
 	/**
-	 * @param \Cake\Core\PluginApplicationInterface $app The application instance
+	 * @param \Cake\Core\PluginApplicationInterface<\Cake\Core\HttpApplicationInterface> $app The application instance
 	 * @return void
 	 */
 	public function bootstrap(PluginApplicationInterface $app): void {

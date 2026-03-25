@@ -7,20 +7,20 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @method \TinyAuthBackend\Model\Entity\Scope get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \TinyAuthBackend\Model\Entity\Scope newEntity(array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Scope> newEntities(array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Scope|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Scope patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Scope> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Scope findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Scope saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Scope get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TinyAuthBackend\Model\Entity\Scope newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Scope> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Scope|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Scope patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Scope> patchEntities(iterable<\TinyAuthBackend\Model\Entity\Scope> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Scope findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Scope saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ScopesTable extends Table {
 
 	/**
-	 * @param array $config The configuration for the Table.
+	 * @param array<string, mixed> $config The configuration for the Table.
 	 *
 	 * @return void
 	 */

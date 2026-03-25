@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Service;
 
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use DirectoryIterator;
+use RegexIterator;
 
 /**
  * Service for scanning app/plugin entities and syncing to database with default abilities.
@@ -57,11 +58,11 @@ class ResourceSyncService {
 			return $found;
 		}
 
-		$folder = new Folder($path);
-		$files = $folder->find('.*\.php');
+		$iterator = new DirectoryIterator($path);
+		$files = new RegexIterator($iterator, '/^.*\.php$/');
 
 		foreach ($files as $file) {
-			$entityName = str_replace('.php', '', $file);
+			$entityName = str_replace('.php', '', $file->getFilename());
 			$className = $namespace . '\\Model\\Entity\\' . $entityName;
 
 			if (!class_exists($className)) {

@@ -7,21 +7,21 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @method \TinyAuthBackend\Model\Entity\Resource get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \TinyAuthBackend\Model\Entity\Resource newEntity(array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Resource> newEntities(array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Resource|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Resource patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Resource> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Resource findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Resource saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @property \TinyAuthBackend\Model\Table\ResourceAbilitiesTable&\Cake\ORM\Association\HasMany $ResourceAbilities
+ * @method \TinyAuthBackend\Model\Entity\Resource get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TinyAuthBackend\Model\Entity\Resource newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Resource> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Resource|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Resource patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Resource> patchEntities(iterable<\TinyAuthBackend\Model\Entity\Resource> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Resource findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Resource saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @property \TinyAuthBackend\Model\Table\ResourceAbilitiesTable $ResourceAbilities
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ResourcesTable extends Table {
 
 	/**
-	 * @param array $config The configuration for the Table.
+	 * @param array<string, mixed> $config The configuration for the Table.
 	 *
 	 * @return void
 	 */

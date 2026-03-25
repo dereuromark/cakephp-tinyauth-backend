@@ -11,6 +11,8 @@ use TinyAuthBackend\Service\FeatureService;
  * Helper for TinyAuth views.
  *
  * Wraps FeatureService for view layer access without direct service instantiation.
+ *
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class TinyAuthHelper extends Helper {
 

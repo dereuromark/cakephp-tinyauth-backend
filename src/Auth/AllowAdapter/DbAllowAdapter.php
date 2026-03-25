@@ -22,8 +22,12 @@ class DbAllowAdapter implements AllowAdapterInterface {
 			->all();
 
 		$allow = [];
+		/** @var \TinyAuthBackend\Model\Entity\Action $action */
 		foreach ($actions as $action) {
 			$controller = $action->tinyauth_controller;
+			if (!$controller) {
+				continue;
+			}
 			$key = $this->buildKey($controller->plugin, $controller->prefix, $controller->name);
 
 			if (!isset($allow[$key])) {

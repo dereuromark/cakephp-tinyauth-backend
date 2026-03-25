@@ -7,24 +7,25 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @method \TinyAuthBackend\Model\Entity\Role get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \TinyAuthBackend\Model\Entity\Role newEntity(array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Role> newEntities(array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Role|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Role patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Role> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Role findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Role saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @property \TinyAuthBackend\Model\Table\RolesTable&\Cake\ORM\Association\BelongsTo $ParentRoles
- * @property \TinyAuthBackend\Model\Table\RolesTable&\Cake\ORM\Association\HasMany $ChildRoles
- * @property \TinyAuthBackend\Model\Table\AclPermissionsTable&\Cake\ORM\Association\HasMany $AclPermissions
- * @property \TinyAuthBackend\Model\Table\ResourceAclTable&\Cake\ORM\Association\HasMany $ResourceAcl
+ * @method \TinyAuthBackend\Model\Entity\Role get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TinyAuthBackend\Model\Entity\Role newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Role> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Role|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Role patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Role> patchEntities(iterable<\TinyAuthBackend\Model\Entity\Role> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Role findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Role saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Role> findHierarchy()
+ * @property \TinyAuthBackend\Model\Table\RolesTable $ParentRoles
+ * @property \TinyAuthBackend\Model\Table\RolesTable $ChildRoles
+ * @property \TinyAuthBackend\Model\Table\AclPermissionsTable $AclPermissions
+ * @property \TinyAuthBackend\Model\Table\ResourceAclTable $ResourceAcl
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class RolesTable extends Table {
 
 	/**
-	 * @param array $config The configuration for the Table.
+	 * @param array<string, mixed> $config The configuration for the Table.
 	 *
 	 * @return void
 	 */
@@ -87,7 +88,7 @@ class RolesTable extends Table {
 
 		$validator
 			->integer('sort_order')
-			->notEmpty('sort_order');
+			->notEmptyString('sort_order');
 
 		return $validator;
 	}
@@ -96,6 +97,7 @@ class RolesTable extends Table {
 	 * @return array<\TinyAuthBackend\Model\Entity\Role>
 	 */
 	public function findHierarchy(): array {
+		/** @var array<\TinyAuthBackend\Model\Entity\Role> $roles */
 		$roles = $this->find()
 			->orderBy(['parent_id' => 'ASC', 'sort_order' => 'ASC'])
 			->all()

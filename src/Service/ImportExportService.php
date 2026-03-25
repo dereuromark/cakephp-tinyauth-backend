@@ -53,6 +53,7 @@ class ImportExportService {
 
 		$lines = ['; TinyAuth ACL Export', '; Generated: ' . date('Y-m-d H:i:s'), ''];
 
+		/** @var \TinyAuthBackend\Model\Entity\TinyauthController $controller */
 		foreach ($controllers as $controller) {
 			$path = ($controller->plugin ? $controller->plugin . '.' : '') .
 				($controller->prefix ? $controller->prefix . '/' : '') .
@@ -63,7 +64,7 @@ class ImportExportService {
 			foreach ($controller->actions as $action) {
 				$roles = [];
 				foreach ($action->acl_permissions as $perm) {
-					if ($perm->type === 'allow') {
+					if ($perm->type === 'allow' && $perm->role) {
 						$roles[] = $perm->role->alias;
 					}
 				}
@@ -91,6 +92,7 @@ class ImportExportService {
 
 		$lines = ['; TinyAuth Allow Export', '; Generated: ' . date('Y-m-d H:i:s'), ''];
 
+		/** @var \TinyAuthBackend\Model\Entity\TinyauthController $controller */
 		foreach ($controllers as $controller) {
 			if (!$controller->actions) {
 				continue;
@@ -122,9 +124,11 @@ class ImportExportService {
 			->all();
 
 		// Header row
+		/** @var array<\TinyAuthBackend\Model\Entity\Role> $roles */
 		$roleNames = array_map(fn ($r) => '"' . str_replace('"', '""', $r->alias) . '"', $roles);
 		$lines = ['Controller,Action,' . implode(',', $roleNames)];
 
+		/** @var \TinyAuthBackend\Model\Entity\TinyauthController $controller */
 		foreach ($controllers as $controller) {
 			$path = ($controller->plugin ? $controller->plugin . '.' : '') .
 				($controller->prefix ? $controller->prefix . '/' : '') .
@@ -167,6 +171,7 @@ class ImportExportService {
 
 		// Build role lookup
 		$roleLookup = [];
+		/** @var \TinyAuthBackend\Model\Entity\Role $role */
 		foreach ($rolesTable->find()->all() as $role) {
 			$roleLookup[$role->alias] = $role->id;
 		}

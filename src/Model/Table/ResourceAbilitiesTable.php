@@ -7,22 +7,22 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @method \TinyAuthBackend\Model\Entity\ResourceAbility get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \TinyAuthBackend\Model\Entity\ResourceAbility newEntity(array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\ResourceAbility> newEntities(array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\ResourceAbility|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\ResourceAbility patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\ResourceAbility> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\ResourceAbility findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\ResourceAbility saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @property \TinyAuthBackend\Model\Table\ResourcesTable&\Cake\ORM\Association\BelongsTo $Resources
- * @property \TinyAuthBackend\Model\Table\ResourceAclTable&\Cake\ORM\Association\HasMany $ResourceAcl
+ * @method \TinyAuthBackend\Model\Entity\ResourceAbility get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TinyAuthBackend\Model\Entity\ResourceAbility newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\ResourceAbility> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\ResourceAbility|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\ResourceAbility patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\ResourceAbility> patchEntities(iterable<\TinyAuthBackend\Model\Entity\ResourceAbility> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\ResourceAbility findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\ResourceAbility saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @property \TinyAuthBackend\Model\Table\ResourcesTable $Resources
+ * @property \TinyAuthBackend\Model\Table\ResourceAclTable $ResourceAcl
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ResourceAbilitiesTable extends Table {
 
 	/**
-	 * @param array $config The configuration for the Table.
+	 * @param array<string, mixed> $config The configuration for the Table.
 	 *
 	 * @return void
 	 */
@@ -56,7 +56,7 @@ class ResourceAbilitiesTable extends Table {
 		$validator
 			->integer('resource_id')
 			->requirePresence('resource_id', 'create')
-			->notEmpty('resource_id');
+			->notEmptyString('resource_id');
 
 		$validator
 			->scalar('name')

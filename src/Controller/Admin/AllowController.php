@@ -65,6 +65,7 @@ class AllowController extends Controller {
 			return $this->render('toggle_cell');
 		}
 
+		/** @var \TinyAuthBackend\Model\Table\ActionsTable $actionsTable */
 		$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
 		$action = $actionsTable->get($actionId);
 

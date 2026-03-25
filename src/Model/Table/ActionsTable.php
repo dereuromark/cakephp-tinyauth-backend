@@ -11,22 +11,22 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @method \TinyAuthBackend\Model\Entity\Action get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \TinyAuthBackend\Model\Entity\Action newEntity(array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Action> newEntities(array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Action|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Action patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\Action> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Action findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\Action saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable&\Cake\ORM\Association\BelongsTo $TinyauthControllers
- * @property \TinyAuthBackend\Model\Table\AclPermissionsTable&\Cake\ORM\Association\HasMany $AclPermissions
+ * @method \TinyAuthBackend\Model\Entity\Action get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TinyAuthBackend\Model\Entity\Action newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Action> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Action|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Action patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\Action> patchEntities(iterable<\TinyAuthBackend\Model\Entity\Action> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Action findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\Action saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
+ * @property \TinyAuthBackend\Model\Table\AclPermissionsTable $AclPermissions
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ActionsTable extends Table {
 
 	/**
-	 * @param array $config The configuration for the Table.
+	 * @param array<string, mixed> $config The configuration for the Table.
 	 *
 	 * @return void
 	 */
@@ -60,7 +60,7 @@ class ActionsTable extends Table {
 		$validator
 			->integer('controller_id')
 			->requirePresence('controller_id', 'create')
-			->notEmpty('controller_id');
+			->notEmptyString('controller_id');
 
 		$validator
 			->scalar('name')
@@ -70,15 +70,15 @@ class ActionsTable extends Table {
 
 		$validator
 			->boolean('is_public')
-			->notEmpty('is_public');
+			->notEmptyString('is_public');
 
 		return $validator;
 	}
 
 	/**
-	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
 	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \ArrayObject $options
+	 * @param \ArrayObject<string, mixed> $options
 	 *
 	 * @return void
 	 */
@@ -89,9 +89,9 @@ class ActionsTable extends Table {
 	}
 
 	/**
-	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
 	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \ArrayObject $options
+	 * @param \ArrayObject<string, mixed> $options
 	 *
 	 * @return void
 	 */

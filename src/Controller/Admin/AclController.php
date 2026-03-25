@@ -24,6 +24,7 @@ class AclController extends Controller {
 	 * @return void
 	 */
 	public function index(): void {
+		/** @var \TinyAuthBackend\Model\Table\TinyauthControllersTable $controllersTable */
 		$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
 		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 
@@ -49,6 +50,7 @@ class AclController extends Controller {
 					->where(['action_id IN' => $actionIds])
 					->all();
 
+				/** @var \TinyAuthBackend\Model\Entity\AclPermission $perm */
 				foreach ($perms as $perm) {
 					$permissions[$perm->action_id][$perm->role_id] = $perm->type;
 				}
@@ -86,6 +88,7 @@ class AclController extends Controller {
 				}
 			}
 		} else {
+			/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
 			if ($existing) {
 				$existing->type = $type;
 				if (!$permissionsTable->save($existing)) {

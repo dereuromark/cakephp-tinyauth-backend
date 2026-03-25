@@ -49,6 +49,7 @@ class SyncController extends Controller {
 			->toArray();
 
 		$existingKeys = [];
+		/** @var \TinyAuthBackend\Model\Entity\TinyauthController $c */
 		foreach ($existing as $c) {
 			$key = ($c->plugin ?? '') . '/' . ($c->prefix ?? '') . '/' . $c->name;
 			$existingKeys[$key] = $c;

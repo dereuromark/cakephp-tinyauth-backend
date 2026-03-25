@@ -54,6 +54,7 @@ class ResourcesController extends Controller {
 					->where(['resource_ability_id IN' => $abilityIds])
 					->all();
 
+				/** @var \TinyAuthBackend\Model\Entity\ResourceAcl $perm */
 				foreach ($perms as $perm) {
 					$permissions[$perm->resource_ability_id][$perm->role_id] = [
 						'type' => $perm->type,
@@ -98,6 +99,7 @@ class ResourcesController extends Controller {
 				}
 			}
 		} else {
+			/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
 			if ($existing) {
 				$existing->type = $type;
 				$existing->scope_id = $scopeId;

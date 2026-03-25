@@ -54,11 +54,13 @@ class HierarchyService {
 		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
 		$roles = $rolesTable->find()->all();
 
+		/** @var \TinyAuthBackend\Model\Entity\Role $role */
 		foreach ($roles as $role) {
 			$this->roleAliasById[$role->id] = $role->alias;
 		}
 
 		// Build parent map using aliases
+		/** @var \TinyAuthBackend\Model\Entity\Role $role */
 		foreach ($roles as $role) {
 			if ($role->parent_id !== null && isset($this->roleAliasById[$role->parent_id])) {
 				$this->roleParents[$role->alias] = $this->roleAliasById[$role->parent_id];
@@ -132,6 +134,7 @@ class HierarchyService {
 		$this->ensureHierarchyLoaded();
 
 		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
+		/** @var \TinyAuthBackend\Model\Entity\Role|null $parent */
 		$parent = $rolesTable->find()->where(['alias' => $parentAlias])->first();
 
 		if (!$parent) {
@@ -156,6 +159,7 @@ class HierarchyService {
 	protected function collectChildren(int $parentId, array &$children, array $availableRoles, Table $rolesTable): void {
 		$childRoles = $rolesTable->find()->where(['parent_id' => $parentId])->all();
 
+		/** @var \TinyAuthBackend\Model\Entity\Role $child */
 		foreach ($childRoles as $child) {
 			if (isset($availableRoles[$child->alias])) {
 				$children[$child->alias] = $availableRoles[$child->alias];

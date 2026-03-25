@@ -11,22 +11,22 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @method \TinyAuthBackend\Model\Entity\AclPermission get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \TinyAuthBackend\Model\Entity\AclPermission newEntity(array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\AclPermission> newEntities(array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\AclPermission|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\AclPermission patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\AclPermission> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\AclPermission findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\AclPermission saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @property \TinyAuthBackend\Model\Table\ActionsTable&\Cake\ORM\Association\BelongsTo $Actions
- * @property \TinyAuthBackend\Model\Table\RolesTable&\Cake\ORM\Association\BelongsTo $Roles
+ * @method \TinyAuthBackend\Model\Entity\AclPermission get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TinyAuthBackend\Model\Entity\AclPermission newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\AclPermission> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\AclPermission|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\AclPermission patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\AclPermission> patchEntities(iterable<\TinyAuthBackend\Model\Entity\AclPermission> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\AclPermission findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\AclPermission saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @property \TinyAuthBackend\Model\Table\ActionsTable $Actions
+ * @property \TinyAuthBackend\Model\Table\RolesTable $Roles
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class AclPermissionsTable extends Table {
 
 	/**
-	 * @param array $config The configuration for the Table.
+	 * @param array<string, mixed> $config The configuration for the Table.
 	 *
 	 * @return void
 	 */
@@ -59,12 +59,12 @@ class AclPermissionsTable extends Table {
 		$validator
 			->integer('action_id')
 			->requirePresence('action_id', 'create')
-			->notEmpty('action_id');
+			->notEmptyString('action_id');
 
 		$validator
 			->integer('role_id')
 			->requirePresence('role_id', 'create')
-			->notEmpty('role_id');
+			->notEmptyString('role_id');
 
 		$validator
 			->scalar('type')
@@ -75,9 +75,9 @@ class AclPermissionsTable extends Table {
 	}
 
 	/**
-	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
 	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \ArrayObject $options
+	 * @param \ArrayObject<string, mixed> $options
 	 *
 	 * @return void
 	 */
@@ -86,9 +86,9 @@ class AclPermissionsTable extends Table {
 	}
 
 	/**
-	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
 	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \ArrayObject $options
+	 * @param \ArrayObject<string, mixed> $options
 	 *
 	 * @return void
 	 */

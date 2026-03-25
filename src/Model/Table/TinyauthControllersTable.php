@@ -7,21 +7,22 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @method \TinyAuthBackend\Model\Entity\TinyauthController get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \TinyAuthBackend\Model\Entity\TinyauthController newEntity(array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\TinyauthController> newEntities(array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\TinyauthController|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\TinyauthController patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method array<\TinyAuthBackend\Model\Entity\TinyauthController> patchEntities(iterable $entities, array $data, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\TinyauthController findOrCreate($search, ?callable $callback = null, array $options = [])
- * @method \TinyAuthBackend\Model\Entity\TinyauthController saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @property \TinyAuthBackend\Model\Table\ActionsTable&\Cake\ORM\Association\HasMany $Actions
+ * @method \TinyAuthBackend\Model\Entity\TinyauthController get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \TinyAuthBackend\Model\Entity\TinyauthController newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\TinyauthController> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\TinyauthController|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\TinyauthController patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\TinyAuthBackend\Model\Entity\TinyauthController> patchEntities(iterable<\TinyAuthBackend\Model\Entity\TinyauthController> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\TinyauthController findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \TinyAuthBackend\Model\Entity\TinyauthController saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method array<string, array<string, mixed>> findTree()
+ * @property \TinyAuthBackend\Model\Table\ActionsTable $Actions
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class TinyauthControllersTable extends Table {
 
 	/**
-	 * @param array $config The configuration for the Table.
+	 * @param array<string, mixed> $config The configuration for the Table.
 	 *
 	 * @return void
 	 */
@@ -70,6 +71,7 @@ class TinyauthControllersTable extends Table {
 	 * @return array<string, array<string, mixed>>
 	 */
 	public function findTree(): array {
+		/** @var array<\TinyAuthBackend\Model\Entity\TinyauthController> $controllers */
 		$controllers = $this->find()
 			->contain(['Actions'])
 			->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'name' => 'ASC'])

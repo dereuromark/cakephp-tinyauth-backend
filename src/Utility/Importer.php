@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Utility;
 
@@ -18,7 +19,7 @@ class Importer {
 	 *
 	 * @return void
 	 */
-	public function importAllow($file) {
+	public function importAllow(string $file): void {
 		$config = [
 			'filePath' => dirname($file) . DS,
 			'file' => basename($file),
@@ -45,11 +46,11 @@ class Importer {
 
 	/**
 	 * @param string $action
-	 * @param array $row
+	 * @param array<string, mixed> $row
 	 *
 	 * @return string
 	 */
-	protected function path($action, array $row) {
+	protected function path(string $action, array $row): string {
 		$controller = $row['controller'];
 		if ($row['prefix']) {
 			$controller = $row['prefix'] . '/' . $controller;
@@ -62,11 +63,11 @@ class Importer {
 	}
 
 	/**
-	 * @param array $data
+	 * @param array<string, mixed> $data
 	 *
 	 * @return void
 	 */
-	protected function addAllow(array $data) {
+	protected function addAllow(array $data): void {
 		$AllowRules = $this->fetchModel('TinyAuthBackend.AllowRules');
 
 		$allowRule = $AllowRules->newEntity($data);
@@ -78,7 +79,7 @@ class Importer {
 	 *
 	 * @return void
 	 */
-	public function importAcl($file) {
+	public function importAcl(string $file): void {
 		$config = [
 			'filePath' => dirname($file) . DS,
 			'file' => basename($file),
@@ -121,11 +122,11 @@ class Importer {
 	}
 
 	/**
-	 * @param array $data
+	 * @param array<string, mixed> $data
 	 *
 	 * @return void
 	 */
-	protected function addAcl(array $data) {
+	protected function addAcl(array $data): void {
 		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
 
 		$aclRule = $AclRules->newEntity($data);
@@ -139,7 +140,7 @@ class Importer {
 	 *
 	 * @return void
 	 */
-	public function initializeAcl($role) {
+	public function initializeAcl(string $role): void {
 		$paths = [
 			'TinyAuthBackend.Auth::*',
 			'TinyAuthBackend.Allow::*',

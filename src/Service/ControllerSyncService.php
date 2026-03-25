@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Service;
 
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
 use Cake\ORM\TableRegistry;
+use DirectoryIterator;
 use ReflectionClass;
 use ReflectionMethod;
+use RegexIterator;
 
 /**
  * Service for scanning app/plugin controllers and syncing to database.
@@ -84,11 +85,12 @@ class ControllerSyncService {
 			return $found;
 		}
 
-		$folder = new Folder($path);
-		$files = $folder->find('.*Controller\.php');
+		// Find controller files
+		$iterator = new DirectoryIterator($path);
+		$files = new RegexIterator($iterator, '/^.*Controller\.php$/');
 
 		foreach ($files as $file) {
-			$controllerName = str_replace('Controller.php', '', $file);
+			$controllerName = str_replace('Controller.php', '', $file->getFilename());
 			if ($controllerName === 'App') {
 				continue;
 			}
@@ -98,6 +100,7 @@ class ControllerSyncService {
 				continue;
 			}
 
+			/** @var class-string $className */
 			$actions = $this->getControllerActions($className);
 			$found[] = [
 				'plugin' => $plugin,
@@ -108,7 +111,7 @@ class ControllerSyncService {
 		}
 
 		// Scan subdirectories as prefixes
-		$subDirs = $folder->subdirectories();
+		$subDirs = $this->getSubdirectories($path);
 		foreach ($subDirs as $subDir) {
 			$subPrefix = basename($subDir);
 			$newPrefix = $prefix ? $prefix . '/' . $subPrefix : $subPrefix;
@@ -116,6 +119,25 @@ class ControllerSyncService {
 		}
 
 		return $found;
+	}
+
+	/**
+	 * Get subdirectories of a path.
+	 *
+	 * @param string $path The path to scan.
+	 * @return array<string> Array of subdirectory paths.
+	 */
+	protected function getSubdirectories(string $path): array {
+		$subDirs = [];
+		$iterator = new DirectoryIterator($path);
+
+		foreach ($iterator as $item) {
+			if ($item->isDir() && !$item->isDot()) {
+				$subDirs[] = $item->getPathname();
+			}
+		}
+
+		return $subDirs;
 	}
 
 	/**
@@ -139,7 +161,7 @@ class ControllerSyncService {
 	/**
 	 * Get public action methods from a controller class.
 	 *
-	 * @param string $className The fully qualified controller class name.
+	 * @param class-string $className The fully qualified controller class name.
 	 * @return array<string> Array of action method names.
 	 */
 	protected function getControllerActions(string $className): array {

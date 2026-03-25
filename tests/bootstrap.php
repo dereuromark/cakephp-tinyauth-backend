@@ -62,6 +62,10 @@ define('CAKE_CORE_INCLUDE_PATH', $vendorPath . '/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . APP_DIR . DS);
 
+<<<<<<< HEAD
+=======
+/** @var \Composer\Autoload\ClassLoader $autoloader */
+>>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
 $autoloader = require $vendorPath . '/autoload.php';
 $autoloader->addPsr4('TinyAuthBackend\\Test\\', ROOT . DS . 'tests' . DS);
 $autoloader->addPsr4('TestApp\\', ROOT . DS . 'tests' . DS . 'test_app' . DS . 'src' . DS);

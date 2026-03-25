@@ -23,7 +23,7 @@ if ($selectedId !== null) {
 		}
 	}
 }
-$expandedJson = json_encode($expandedNodes);
+$expandedJson = json_encode((object)$expandedNodes);
 ?>
 <div x-data="{ expanded: <?= $expandedJson ?> }">
     <?php foreach ($tree as $plugin => $pluginData) { ?>

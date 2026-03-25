@@ -1,0 +1,225 @@
+<?php
+declare(strict_types=1);
+
+namespace TinyAuthBackend\Service;
+
+use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
+use Cake\ORM\TableRegistry;
+use TinyAuthBackend\Model\Entity\ResourceAcl;
+use TinyAuthBackend\Model\Entity\Scope;
+
+/**
+ * Main service for checking resource-level permissions with scope evaluation.
+ */
+class TinyAuthService {
+
+	/**
+	 * @var \TinyAuthBackend\Service\HierarchyService
+	 */
+	protected HierarchyService $hierarchyService;
+
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		$this->hierarchyService = new HierarchyService();
+	}
+
+	/**
+	 * Check if role(s) have ability on resource with scope evaluation.
+	 *
+	 * @param array<string>|string $roles Single role alias or array of role aliases (multi-role).
+	 * @param string $resource The resource name (e.g., 'Article', 'Comment').
+	 * @param string $ability The ability name (e.g., 'view', 'edit', 'delete').
+	 * @param \Cake\Datasource\EntityInterface|null $entity The entity being accessed (for scope evaluation).
+	 * @param \Cake\Datasource\EntityInterface|null $user The current user (for scope evaluation).
+	 * @return bool Whether access is allowed.
+	 */
+	public function canAccess(
+		string|array $roles,
+		string $resource,
+		string $ability,
+		?EntityInterface $entity = null,
+		?EntityInterface $user = null,
+	): bool {
+		$roles = (array)$roles;
+
+		foreach ($roles as $role) {
+			if ($this->checkRoleAccess($role, $resource, $ability, $entity, $user)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check access for a single role.
+	 *
+	 * @param string $role The role alias.
+	 * @param string $resource The resource name.
+	 * @param string $ability The ability name.
+	 * @param \Cake\Datasource\EntityInterface|null $entity The entity being accessed.
+	 * @param \Cake\Datasource\EntityInterface|null $user The current user.
+	 * @return bool Whether access is allowed.
+	 */
+	protected function checkRoleAccess(
+		string $role,
+		string $resource,
+		string $ability,
+		?EntityInterface $entity,
+		?EntityInterface $user,
+	): bool {
+		$rule = $this->getResourcePermission($role, $resource, $ability);
+
+		if (!$rule || $rule->type === 'deny') {
+			// Check parent roles if hierarchy enabled
+			if (Configure::read('TinyAuthBackend.roleHierarchy')) {
+				$parentRoles = $this->hierarchyService->getParentRoles($role);
+				foreach ($parentRoles as $parentRole) {
+					$parentRule = $this->getResourcePermission($parentRole, $resource, $ability);
+					if ($parentRule && $parentRule->type === 'allow') {
+						$rule = $parentRule;
+
+						break;
+					}
+				}
+			}
+
+			if (!$rule || $rule->type === 'deny') {
+				return false;
+			}
+		}
+
+		// No scope = full access
+		if ($rule->scope_id === null) {
+			return true;
+		}
+
+		// Evaluate scope condition
+		return $this->evaluateScope($rule->scope, $entity, $user);
+	}
+
+	/**
+	 * Get the resource permission rule for a role/resource/ability combination.
+	 *
+	 * @param string $role The role alias.
+	 * @param string $resource The resource name.
+	 * @param string $ability The ability name.
+	 * @return \TinyAuthBackend\Model\Entity\ResourceAcl|null The permission rule or null if not found.
+	 */
+	public function getResourcePermission(string $role, string $resource, string $ability): ?ResourceAcl {
+		$resourceAclTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.ResourceAcl');
+
+		/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $result */
+		$result = $resourceAclTable->find()
+			->contain(['ResourceAbilities.Resources', 'Roles', 'Scopes'])
+			->matching('ResourceAbilities.Resources', function ($q) use ($resource) {
+				return $q->where(['Resources.name' => $resource]);
+			})
+			->matching('ResourceAbilities', function ($q) use ($ability) {
+				return $q->where(['ResourceAbilities.name' => $ability]);
+			})
+			->matching('Roles', function ($q) use ($role) {
+				return $q->where(['Roles.alias' => $role]);
+			})
+			->first();
+
+		return $result;
+	}
+
+	/**
+	 * Get scope condition for query filtering.
+	 *
+	 * Returns null for no access, empty array for full access, or conditions array for scoped access.
+	 *
+	 * @param array<string>|string $roles Single role or array of roles.
+	 * @param string $resource The resource name.
+	 * @param string $ability The ability name.
+	 * @param \Cake\Datasource\EntityInterface $user The current user.
+	 * @return array<string, mixed>|null Null = no access, empty array = full access, array = conditions.
+	 */
+	public function getScopeCondition(
+		string|array $roles,
+		string $resource,
+		string $ability,
+		EntityInterface $user,
+	): ?array {
+		$roles = (array)$roles;
+		$conditions = [];
+		$hasFullAccess = false;
+
+		foreach ($roles as $role) {
+			$rule = $this->getResourcePermission($role, $resource, $ability);
+
+			if (!$rule || $rule->type === 'deny') {
+				continue;
+			}
+
+			if ($rule->scope_id === null) {
+				$hasFullAccess = true;
+
+				break;
+			}
+
+			// Build scope condition
+			$scope = $rule->scope;
+			$conditions[] = [$scope->entity_field => $user->get($scope->user_field)];
+		}
+
+		if ($hasFullAccess) {
+			return []; // Empty = no restrictions
+		}
+
+		if (!$conditions) {
+			return null; // No access
+		}
+
+		// Combine with OR for multi-role
+		return count($conditions) === 1 ? $conditions[0] : ['OR' => $conditions];
+	}
+
+	/**
+	 * Evaluate a scope condition against an entity and user.
+	 *
+	 * @param \TinyAuthBackend\Model\Entity\Scope|null $scope The scope to evaluate.
+	 * @param \Cake\Datasource\EntityInterface|null $entity The entity being accessed.
+	 * @param \Cake\Datasource\EntityInterface|null $user The current user.
+	 * @return bool Whether the scope condition is satisfied.
+	 */
+	protected function evaluateScope(?Scope $scope, ?EntityInterface $entity, ?EntityInterface $user): bool {
+		if (!$entity || !$user || !$scope) {
+			return false;
+		}
+
+		$entityValue = $entity->get($scope->entity_field);
+		$userValue = $user->get($scope->user_field);
+
+		return $entityValue !== null && $entityValue === $userValue;
+	}
+
+	/**
+	 * Get user's roles based on config.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $user The user entity.
+	 * @return array<string> Array of role aliases.
+	 */
+	public function getUserRoles(EntityInterface $user): array {
+		$multiRole = Configure::read('TinyAuthBackend.multiRole');
+
+		if (!$multiRole) {
+			$roleColumn = Configure::read('TinyAuthBackend.roleColumn') ?: 'role_id';
+			$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
+			$role = $rolesTable->find()->where(['id' => $user->get($roleColumn)])->first();
+
+			return $role ? [$role->alias] : [];
+		}
+
+		// Multi-role: get from user's roles association
+		$roles = $user->get('roles') ?? [];
+
+		return array_map(fn ($r) => is_object($r) ? $r->alias : $r, $roles);
+	}
+
+}

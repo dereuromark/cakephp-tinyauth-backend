@@ -44,4 +44,14 @@ class ResourceAcl extends Entity {
 		'scope' => true,
 	];
 
+	/**
+	 * @return array<string, string>
+	 */
+	public static function types(): array {
+		return [
+			static::TYPE_ALLOW => __('Allow'),
+			static::TYPE_DENY => __('Deny'),
+		];
+	}
+
 }

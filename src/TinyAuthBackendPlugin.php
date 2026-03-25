@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Routing\RouteBuilder;
 use TinyAuthBackend\Command\ImportCommand;
 use TinyAuthBackend\Command\InitCommand;
@@ -13,22 +15,43 @@ use TinyAuthBackend\Command\InitCommand;
  */
 class TinyAuthBackendPlugin extends BasePlugin {
 
-	protected bool $bootstrapEnabled = false;
+	/**
+	 * @var bool
+	 */
+	protected bool $middlewareEnabled = false;
+
+	/**
+	 * @var bool
+	 */
+	protected bool $bootstrapEnabled = true;
+
+	/**
+	 * @var bool
+	 */
+	protected bool $routesEnabled = true;
+
+	/**
+	 * @param \Cake\Core\PluginApplicationInterface $app The application instance
+	 * @return void
+	 */
+	public function bootstrap(PluginApplicationInterface $app): void {
+		parent::bootstrap($app);
+	}
 
 	/**
 	 * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
 	 * @return void
 	 */
 	public function routes(RouteBuilder $routes): void {
-		$routes->prefix('Admin', function (RouteBuilder $routes): void {
-			$routes->plugin(
-				'TinyAuthBackend',
-				['path' => '/auth'],
-				function (RouteBuilder $routes): void {
-					$routes->connect('/', ['controller' => 'Auth', 'action' => 'index']);
-					$routes->fallbacks();
-				},
-			);
+		$routes->plugin('TinyAuthBackend', ['path' => '/admin/tinyauth'], function (RouteBuilder $builder) {
+			$builder->connect('/', ['controller' => 'Acl', 'action' => 'index', 'prefix' => 'Admin']);
+			$builder->connect('/acl', ['controller' => 'Acl', 'action' => 'index', 'prefix' => 'Admin']);
+			$builder->connect('/allow', ['controller' => 'Allow', 'action' => 'index', 'prefix' => 'Admin']);
+			$builder->connect('/roles', ['controller' => 'Roles', 'action' => 'index', 'prefix' => 'Admin']);
+			$builder->connect('/resources', ['controller' => 'Resources', 'action' => 'index', 'prefix' => 'Admin']);
+			$builder->connect('/scopes', ['controller' => 'Scopes', 'action' => 'index', 'prefix' => 'Admin']);
+			$builder->connect('/sync', ['controller' => 'Sync', 'action' => 'index', 'prefix' => 'Admin']);
+			$builder->fallbacks();
 		});
 	}
 

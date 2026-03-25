@@ -84,7 +84,8 @@ class RolesController extends AppController {
 		$role = $rolesTable->get($id);
 
 		if ($this->request->is(['post', 'put', 'patch'])) {
-			$role = $rolesTable->patchEntity($role, $this->request->getData());
+			$data = $this->request->getData() + ['id' => $id];
+			$role = $rolesTable->patchEntity($role, $data);
 			if ($rolesTable->save($role)) {
 				$this->roleSource->clearCache();
 				$this->Flash->success(__('Role updated.'));
@@ -176,8 +177,19 @@ class RolesController extends AppController {
 		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 		$role = $rolesTable->get($roleId);
 
-		$role->parent_id = $newParentId ?: null;
-		$role->sort_order = $newOrder;
+		$role = $rolesTable->patchEntity($role, [
+			'id' => $roleId,
+			'parent_id' => $newParentId ?: null,
+			'sort_order' => $newOrder,
+		]);
+
+		if ($role->hasErrors()) {
+			$parentErrors = $role->getError('parent_id');
+			$error = $parentErrors ? implode(' ', array_map('strval', $parentErrors)) : 'Invalid role hierarchy';
+
+			return $this->response->withType('application/json')
+				->withStringBody((string)json_encode(['success' => false, 'error' => $error]));
+		}
 
 		if ($rolesTable->save($role)) {
 			$this->roleSource->clearCache();

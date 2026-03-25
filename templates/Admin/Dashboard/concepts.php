@@ -128,7 +128,7 @@ $this->assign('title', 'Concepts');
 
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">
                     <strong>Flow:</strong> If the action is not public, TinyAuth checks if the user is logged in and if their role has permission for that action.
-                    Roles can inherit permissions from parent roles.
+                    Higher roles can inherit permissions from lower roles.
                 </p>
             </div>
             <?php if ($features['acl']) { ?>

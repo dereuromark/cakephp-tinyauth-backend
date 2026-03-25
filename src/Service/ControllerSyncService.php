@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Service;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\TableRegistry;
 use DirectoryIterator;
@@ -54,9 +55,10 @@ class ControllerSyncService {
 	 */
 	public function scan(): array {
 		$found = [];
+		$appNamespace = (string)(Configure::read('App.namespace') ?: 'App');
 
 		// Scan app controllers
-		$found = array_merge($found, $this->scanPath(APP . 'Controller' . DS, null));
+		$found = array_merge($found, $this->scanPath(APP . 'Controller' . DS, $appNamespace));
 
 		// Scan plugin controllers
 		$plugins = Plugin::loaded();
@@ -149,7 +151,8 @@ class ControllerSyncService {
 	 * @return string The fully qualified class name.
 	 */
 	protected function buildClassName(string $controller, ?string $plugin, ?string $prefix): string {
-		$namespace = $plugin ? $plugin . '\\' : 'App\\';
+		$appNamespace = (string)(Configure::read('App.namespace') ?: 'App');
+		$namespace = $plugin ? $plugin . '\\' : $appNamespace . '\\';
 		$namespace .= 'Controller\\';
 		if ($prefix) {
 			$namespace .= str_replace('/', '\\', $prefix) . '\\';

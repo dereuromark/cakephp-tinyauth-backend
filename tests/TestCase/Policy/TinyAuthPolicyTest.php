@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Test\TestCase\Policy;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
@@ -19,17 +20,23 @@ class TinyAuthPolicyTest extends TestCase {
 use ArrayAccess;
 use Authorization\IdentityInterface;
 use Authorization\Policy\ResultInterface;
+=======
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 use Cake\Core\Configure;
-use Cake\Datasource\EntityInterface;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\Article;
 use TinyAuthBackend\Policy\TinyAuthPolicy;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class TinyAuthPolicyTest extends TestCase {
 
+<<<<<<< HEAD
 >>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
+=======
+	use DatabaseTestTrait;
+
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
 		'plugin.TinyAuthBackend.TinyAuthResources',
@@ -102,6 +109,7 @@ class TinyAuthPolicyTest extends TestCase {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	protected function insertRow(string $table, array $data): void {
 		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
@@ -147,4 +155,6 @@ class TestIdentity implements IdentityInterface {
 	}
 
 >>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
+=======
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

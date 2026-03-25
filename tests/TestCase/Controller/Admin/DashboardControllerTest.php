@@ -5,6 +5,7 @@ namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
 use Cake\Core\Configure;
 <<<<<<< HEAD
+<<<<<<< HEAD
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Service\RoleSourceService;
@@ -15,13 +16,20 @@ class DashboardControllerTest extends TestCase {
 	use DatabaseTestTrait;
 =======
 use Cake\ORM\TableRegistry;
+=======
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Service\RoleSourceService;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class DashboardControllerTest extends TestCase {
 
+<<<<<<< HEAD
 >>>>>>> 58f62ec (Add coverage for remaining admin controllers)
+=======
+	use DatabaseTestTrait;
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 	use IntegrationTestTrait;
 
 	protected array $fixtures = [
@@ -91,10 +99,13 @@ class DashboardControllerTest extends TestCase {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	protected function insertRow(string $table, array $data): void {
 		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
 	}
 
 >>>>>>> 58f62ec (Add coverage for remaining admin controllers)
+=======
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

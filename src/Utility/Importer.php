@@ -8,9 +8,13 @@ use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 use TinyAuth\Utility\TinyAuth;
 <<<<<<< HEAD
+<<<<<<< HEAD
 use TinyAuthBackend\Service\ControllerSyncService;
 =======
 >>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
+=======
+use TinyAuthBackend\Service\ControllerSyncService;
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 use TinyAuthBackend\Service\RoleSourceService;
 
 class Importer {
@@ -110,10 +114,14 @@ class Importer {
 		}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		$controllerSyncService = new ControllerSyncService();
 =======
 		$controllerSyncService = new \TinyAuthBackend\Service\ControllerSyncService();
 >>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
+=======
+		$controllerSyncService = new ControllerSyncService();
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 		$controllerSyncService->sync();
 
 		/** @var \TinyAuthBackend\Model\Table\TinyauthControllersTable $controllersTable */

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
@@ -73,6 +72,7 @@ class AllowControllerTest extends TestCase {
 =======
 	}
 
+<<<<<<< HEAD
 	protected function insertRow(string $table, array $data): void {
 		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
 	}
@@ -82,4 +82,6 @@ class AllowControllerTest extends TestCase {
 >>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 	}
 
+=======
+>>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

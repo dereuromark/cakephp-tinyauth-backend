@@ -135,7 +135,7 @@ class TinyAuthService {
 		$resourceAclTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.ResourceAcl');
 
 		/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $result */
-			$result = $resourceAclTable->find()
+		$result = $resourceAclTable->find()
 			->contain(['ResourceAbilities.Resources', 'Roles', 'Scopes'])
 			->matching('ResourceAbilities.Resources', function ($q) use ($resource) {
 				return $q->where([

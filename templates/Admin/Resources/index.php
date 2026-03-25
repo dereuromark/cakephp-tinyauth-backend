@@ -25,8 +25,9 @@ $this->assign('title', 'Resource Permissions');
 				<?php foreach ($resources as $resource) { ?>
 				<a href="<?= $this->Url->build(['action' => 'index', '?' => ['resource_id' => $resource->id]]) ?>"
 				   class="tree-item block <?= $selectedResource && $selectedResource->id === $resource->id ? 'active' : '' ?>">
-					<?= h($resource->name) ?>
-					<span class="text-xs text-gray-400">(<?= count($resource->resource_abilities) ?>)</span>
+					<div class="font-medium"><?= h($resource->name) ?></div>
+					<div class="text-xs text-gray-400"><?= h($resource->entity_class) ?></div>
+					<div class="text-xs text-gray-400">(<?= count($resource->resource_abilities) ?>)</div>
 				</a>
 				<?php } ?>
 			</div>

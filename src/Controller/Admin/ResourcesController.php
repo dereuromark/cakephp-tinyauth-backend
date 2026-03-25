@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
+use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use TinyAuthBackend\Service\RoleSourceService;
@@ -18,10 +19,10 @@ class ResourcesController extends AppController {
 
 		$query = $resourcesTable->find()
 			->contain(['ResourceAbilities'])
-			->orderBy(['name' => 'ASC']);
+			->orderBy(['name' => 'ASC', 'entity_class' => 'ASC']);
 
 		// Filter to App namespace by default (configurable)
-		$namespaceFilter = \Cake\Core\Configure::read('TinyAuthBackend.resourceNamespaceFilter') ?? 'App\\';
+		$namespaceFilter = Configure::read('TinyAuthBackend.resourceNamespaceFilter') ?? 'App\\';
 		if ($namespaceFilter) {
 			$query->where(['entity_class LIKE' => $namespaceFilter . '%']);
 		}

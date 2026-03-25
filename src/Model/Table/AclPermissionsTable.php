@@ -59,12 +59,12 @@ class AclPermissionsTable extends Table {
 		$validator
 			->integer('action_id')
 			->requirePresence('action_id', 'create')
-			->notEmptyString('action_id');
+			->notEmpty('action_id');
 
 		$validator
 			->integer('role_id')
 			->requirePresence('role_id', 'create')
-			->notEmptyString('role_id');
+			->notEmpty('role_id');
 
 		$validator
 			->scalar('type')

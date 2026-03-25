@@ -60,7 +60,7 @@ class ActionsTable extends Table {
 		$validator
 			->integer('controller_id')
 			->requirePresence('controller_id', 'create')
-			->notEmptyString('controller_id');
+			->notEmpty('controller_id');
 
 		$validator
 			->scalar('name')
@@ -70,7 +70,7 @@ class ActionsTable extends Table {
 
 		$validator
 			->boolean('is_public')
-			->notEmptyString('is_public');
+			->notEmpty('is_public');
 
 		return $validator;
 	}
@@ -86,6 +86,17 @@ class ActionsTable extends Table {
 		if ($entity->isDirty('is_public')) {
 			Cache::delete('TinyAuth.allow');
 		}
+	}
+
+	/**
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
+	 *
+	 * @return void
+	 */
+	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		Cache::delete('TinyAuth.allow');
 	}
 
 }

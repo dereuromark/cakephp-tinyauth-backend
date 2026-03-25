@@ -65,12 +65,12 @@ class ResourceAclTable extends Table {
 		$validator
 			->integer('resource_ability_id')
 			->requirePresence('resource_ability_id', 'create')
-			->notEmptyString('resource_ability_id');
+			->notEmpty('resource_ability_id');
 
 		$validator
 			->integer('role_id')
 			->requirePresence('role_id', 'create')
-			->notEmptyString('role_id');
+			->notEmpty('role_id');
 
 		$validator
 			->scalar('type')

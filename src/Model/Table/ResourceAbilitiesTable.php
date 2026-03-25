@@ -56,7 +56,7 @@ class ResourceAbilitiesTable extends Table {
 		$validator
 			->integer('resource_id')
 			->requirePresence('resource_id', 'create')
-			->notEmptyString('resource_id');
+			->notEmpty('resource_id');
 
 		$validator
 			->scalar('name')

@@ -87,7 +87,7 @@ class RolesTable extends Table {
 
 		$validator
 			->integer('sort_order')
-			->notEmptyString('sort_order');
+			->notEmpty('sort_order');
 
 		return $validator;
 	}

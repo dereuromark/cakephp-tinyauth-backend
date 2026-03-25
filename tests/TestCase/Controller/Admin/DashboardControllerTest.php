@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
 use Cake\Core\Configure;
+<<<<<<< HEAD
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Service\RoleSourceService;
@@ -12,6 +13,15 @@ use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 class DashboardControllerTest extends TestCase {
 
 	use DatabaseTestTrait;
+=======
+use Cake\ORM\TableRegistry;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
+use TinyAuthBackend\Service\RoleSourceService;
+
+class DashboardControllerTest extends TestCase {
+
+>>>>>>> 58f62ec (Add coverage for remaining admin controllers)
 	use IntegrationTestTrait;
 
 	protected array $fixtures = [
@@ -80,4 +90,11 @@ class DashboardControllerTest extends TestCase {
 		$this->assertResponseContains('Concepts');
 	}
 
+<<<<<<< HEAD
+=======
+	protected function insertRow(string $table, array $data): void {
+		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
+	}
+
+>>>>>>> 58f62ec (Add coverage for remaining admin controllers)
 }

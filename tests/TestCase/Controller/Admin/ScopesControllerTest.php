@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
+<<<<<<< HEAD
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
@@ -10,6 +11,14 @@ use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 class ScopesControllerTest extends TestCase {
 
 	use DatabaseTestTrait;
+=======
+use Cake\ORM\TableRegistry;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
+
+class ScopesControllerTest extends TestCase {
+
+>>>>>>> 58f62ec (Add coverage for remaining admin controllers)
 	use IntegrationTestTrait;
 
 	protected array $fixtures = [
@@ -69,4 +78,15 @@ class ScopesControllerTest extends TestCase {
 		$this->assertSame(0, $this->countRows('tinyauth_scopes', ['id' => 1]));
 	}
 
+<<<<<<< HEAD
+=======
+	protected function insertRow(string $table, array $data): void {
+		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
+	}
+
+	protected function countRows(string $table, array $conditions): int {
+		return TableRegistry::getTableLocator()->get($table)->find()->where($conditions)->count();
+	}
+
+>>>>>>> 58f62ec (Add coverage for remaining admin controllers)
 }

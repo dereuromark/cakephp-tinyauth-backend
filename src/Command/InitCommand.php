@@ -25,15 +25,15 @@ class InitCommand extends Command {
 		$role = $args->getArgument('role');
 		$availableRoles = $this->_getAvailableRoles();
 		if (!in_array($role, $availableRoles, true)) {
-			$this->io->abort('Role ' . $role . ' does not seem to exist. Available: ' . implode(', ', $availableRoles));
+			$io->abort('Role ' . $role . ' does not seem to exist. Available: ' . implode(', ', $availableRoles));
 		}
 
 		$importer = new Importer();
 		$importer->initializeAcl($role);
 
-		$url = Router::url(['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin', 'controller' => 'Auth', 'action' => 'index'], true);
+		$url = Router::url(['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin', 'controller' => 'Dashboard', 'action' => 'index'], true);
 
-		$this->io->success('Necessary ACL rules stored. Using a user with this `' . $role . '` role you can now navigate to the backend `' . $url . '`.');
+		$io->success('Necessary ACL rules stored. Using a user with this `' . $role . '` role you can now navigate to the backend `' . $url . '`.');
 
 		return static::CODE_SUCCESS;
 	}

@@ -65,7 +65,7 @@ class TinyAuthService {
 	public function canAccessResource(EntityInterface $user, EntityInterface $entity, string $ability): bool {
 		return $this->canAccess(
 			$this->getUserRoles($user),
-			$this->getResourceName($entity),
+			$this->getResourceIdentifier($entity),
 			$ability,
 			$entity,
 			$user,
@@ -127,10 +127,15 @@ class TinyAuthService {
 		$resourceAclTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.ResourceAcl');
 
 		/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $result */
-		$result = $resourceAclTable->find()
+			$result = $resourceAclTable->find()
 			->contain(['ResourceAbilities.Resources', 'Roles', 'Scopes'])
 			->matching('ResourceAbilities.Resources', function ($q) use ($resource) {
-				return $q->where(['Resources.name' => $resource]);
+				return $q->where([
+					'OR' => [
+						'Resources.name' => $resource,
+						'Resources.entity_class' => $resource,
+					],
+				]);
 			})
 			->matching('ResourceAbilities', function ($q) use ($ability) {
 				return $q->where(['ResourceAbilities.name' => $ability]);
@@ -250,11 +255,8 @@ class TinyAuthService {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return string
 	 */
-	protected function getResourceName(EntityInterface $entity): string {
-		$className = get_class($entity);
-		$parts = explode('\\', $className);
-
-		return end($parts) ?: '';
+	protected function getResourceIdentifier(EntityInterface $entity): string {
+		return get_class($entity);
 	}
 
 	/**
@@ -274,8 +276,9 @@ class TinyAuthService {
 			return $role ? [$role->alias] : [];
 		}
 
-		// Multi-role: get from user's roles association
-		$roles = $user->get('roles') ?? [];
+		// Multi-role: get from configured association/property on the user entity
+		$rolesProperty = (string)(Configure::read('TinyAuthBackend.rolesTable') ?: 'roles');
+		$roles = $user->get($rolesProperty) ?? $user->get('roles') ?? [];
 
 		return array_map(function ($r): string {
 			if (is_object($r)) {

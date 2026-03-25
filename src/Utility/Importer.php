@@ -7,8 +7,7 @@ use Cake\Datasource\ModelAwareTrait;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 use TinyAuth\Utility\TinyAuth;
-use TinyAuthBackend\Model\Entity\AclRule;
-use TinyAuthBackend\Model\Entity\AllowRule;
+use TinyAuthBackend\Service\RoleSourceService;
 
 class Importer {
 
@@ -28,18 +27,12 @@ class Importer {
 
 		foreach ($allowData as $allowRow) {
 			foreach ($allowRow['allow'] as $action) {
-				$data = [
-					'type' => AllowRule::TYPE_ALLOW,
-					'path' => $this->path($action, $allowRow),
-				];
-				$this->addAllow($data);
+				[$controllerId, $actionId] = $this->ensureAction($allowRow, $action);
+				$this->setPublicFlag($actionId, true);
 			}
 			foreach ($allowRow['deny'] as $action) {
-				$data = [
-					'type' => AllowRule::TYPE_DENY,
-					'path' => $this->path($action, $allowRow),
-				];
-				$this->addAllow($data);
+				[$controllerId, $actionId] = $this->ensureAction($allowRow, $action);
+				$this->setPublicFlag($actionId, false);
 			}
 		}
 	}
@@ -63,21 +56,7 @@ class Importer {
 	}
 
 	/**
-	 * @param array<string, mixed> $data
-	 *
-	 * @return void
-	 */
-	protected function addAllow(array $data): void {
-		/** @var \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules */
-		$AllowRules = $this->fetchModel('TinyAuthBackend.AllowRules');
-
-		$allowRule = $AllowRules->newEntity($data);
-		$AllowRules->saveOrFail($allowRule);
-	}
-
-	/**
 	 * @param string $file
-	 *
 	 * @return void
 	 */
 	public function importAcl(string $file): void {
@@ -96,12 +75,8 @@ class Importer {
 				}
 
 				foreach ($roles as $role => $id) {
-					$data = [
-						'type' => AclRule::TYPE_ALLOW,
-						'path' => $this->path($action, $aclRow),
-						'role' => $role,
-					];
-					$this->addAcl($data);
+					[$controllerId, $actionId] = $this->ensureAction($aclRow, $action);
+					$this->upsertAclPermission($actionId, $role, 'allow');
 				}
 			}
 			foreach ($aclRow['deny'] as $action => $roles) {
@@ -111,54 +86,133 @@ class Importer {
 				}
 
 				foreach ($roles as $role => $id) {
-					$data = [
-						'type' => AclRule::TYPE_DENY,
-						'path' => $this->path($action, $aclRow),
-						'role' => $role,
-					];
-					$this->addAcl($data);
+					[$controllerId, $actionId] = $this->ensureAction($aclRow, $action);
+					$this->upsertAclPermission($actionId, $role, 'deny');
 				}
 			}
 		}
 	}
 
 	/**
-	 * @param array<string, mixed> $data
+	 * Initialize ACL for specific role to have initial access to the backend.
 	 *
+	 * @param string $roleAlias
 	 * @return void
 	 */
-	protected function addAcl(array $data): void {
-		/** @var \TinyAuthBackend\Model\Table\AclRulesTable $AclRules */
-		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
+	public function initializeAcl(string $roleAlias): void {
+		$roleId = (new RoleSourceService())->getRoles()[$roleAlias] ?? null;
+		if ($roleId === null) {
+			return;
+		}
 
-		$aclRule = $AclRules->newEntity($data);
-		$AclRules->saveOrFail($aclRule);
+		$controllerSyncService = new \TinyAuthBackend\Service\ControllerSyncService();
+		$controllerSyncService->sync();
+
+		/** @var \TinyAuthBackend\Model\Table\TinyauthControllersTable $controllersTable */
+		$controllersTable = $this->fetchModel('TinyAuthBackend.TinyauthControllers');
+		$controllers = $controllersTable->find()
+			->contain(['Actions'])
+			->where([
+				'plugin' => 'TinyAuthBackend',
+				'prefix' => 'Admin',
+			])
+			->all();
+
+		/** @var \TinyAuthBackend\Model\Entity\TinyauthController $controller */
+		foreach ($controllers as $controller) {
+			foreach ($controller->actions as $action) {
+				$this->upsertAclPermission($action->id, $roleAlias, 'allow');
+			}
+		}
 	}
 
 	/**
-	 * Initialize ACL for specific role to have initial access to the backend.
-	 *
-	 * @param string $role
-	 *
+	 * @param array<string, mixed> $row
+	 * @param string $actionName
+	 * @return array{0: int, 1: int}
+	 */
+	protected function ensureAction(array $row, string $actionName): array {
+		/** @var \TinyAuthBackend\Model\Table\TinyauthControllersTable $controllersTable */
+		$controllersTable = $this->fetchModel('TinyAuthBackend.TinyauthControllers');
+		/** @var \TinyAuthBackend\Model\Table\ActionsTable $actionsTable */
+		$actionsTable = $this->fetchModel('TinyAuthBackend.Actions');
+
+		$controller = $controllersTable->find()
+			->where([
+				'plugin IS' => $row['plugin'],
+				'prefix IS' => $row['prefix'],
+				'name' => $row['controller'],
+			])
+			->first();
+
+		if (!$controller) {
+			$controller = $controllersTable->newEntity([
+				'plugin' => $row['plugin'],
+				'prefix' => $row['prefix'],
+				'name' => $row['controller'],
+			]);
+			$controllersTable->saveOrFail($controller);
+		}
+
+		$action = $actionsTable->find()
+			->where([
+				'controller_id' => $controller->id,
+				'name' => $actionName,
+			])
+			->first();
+
+		if (!$action) {
+			$action = $actionsTable->newEntity([
+				'controller_id' => $controller->id,
+				'name' => $actionName,
+				'is_public' => false,
+			]);
+			$actionsTable->saveOrFail($action);
+		}
+
+		return [$controller->id, $action->id];
+	}
+
+	/**
+	 * @param int $actionId
+	 * @param bool $isPublic
 	 * @return void
 	 */
-	public function initializeAcl(string $role): void {
-		$paths = [
-			'TinyAuthBackend.Auth::*',
-			'TinyAuthBackend.Allow::*',
-			'TinyAuthBackend.Acl::*',
-		];
+	protected function setPublicFlag(int $actionId, bool $isPublic): void {
+		/** @var \TinyAuthBackend\Model\Table\ActionsTable $actionsTable */
+		$actionsTable = $this->fetchModel('TinyAuthBackend.Actions');
+		$action = $actionsTable->get($actionId);
+		$action->is_public = $isPublic;
+		$actionsTable->saveOrFail($action);
+	}
 
-		/** @var \TinyAuthBackend\Model\Table\AclRulesTable $AclRules */
-		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
-		foreach ($paths as $path) {
-			$aclRule = $AclRules->newEntity([
-				'type' => AclRule::TYPE_ALLOW,
-				'role' => $role,
-				'path' => $path,
-			]);
-			$AclRules->saveOrFail($aclRule);
+	/**
+	 * @param int $actionId
+	 * @param string $roleAlias
+	 * @param string $type
+	 * @return void
+	 */
+	protected function upsertAclPermission(int $actionId, string $roleAlias, string $type): void {
+		$roleId = (new RoleSourceService())->getRoles()[$roleAlias] ?? null;
+		if ($roleId === null || $roleAlias === '*') {
+			return;
 		}
+
+		/** @var \TinyAuthBackend\Model\Table\AclPermissionsTable $permissionsTable */
+		$permissionsTable = $this->fetchModel('TinyAuthBackend.AclPermissions');
+		$permission = $permissionsTable->find()
+			->where(['action_id' => $actionId, 'role_id' => $roleId])
+			->first();
+
+		if (!$permission) {
+			$permission = $permissionsTable->newEntity([
+				'action_id' => $actionId,
+				'role_id' => $roleId,
+			]);
+		}
+
+		$permission->type = $type;
+		$permissionsTable->saveOrFail($permission);
 	}
 
 }

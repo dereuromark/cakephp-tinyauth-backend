@@ -72,11 +72,3 @@ Those adapters are specifically for TinyAuth's controller/action flow.
     ],
 ],
 ```
-
-### Good Fit
-
-Choose this mode if:
-
-- your app already uses CakePHP Authorization policies
-- you want a permission admin UI but not TinyAuth's runtime model
-- you mainly care about entity/resource authorization

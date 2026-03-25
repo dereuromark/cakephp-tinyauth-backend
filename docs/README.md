@@ -30,13 +30,16 @@ Common sections:
 
 ### Which Guide Should I Read?
 
-- [Adapter-Only Strategy](AdapterOnly.md)
+- [Strategies Overview](Strategies/README.md)
+- [Adapter-Only Strategy](Strategies/AdapterOnly.md)
+- [Full TinyAuthBackend Strategy](Strategies/FullBackend.md)
+- [Native CakePHP Auth Strategy](Strategies/NativeAuth.md)
+- [External Role Source Strategy](Strategies/ExternalRoles.md)
 - [Authorization Integration](Authorization.md)
 - [Resource Permissions](Resources.md)
 - [Roles and Hierarchy](Roles.md)
 - [Scopes](Scopes.md)
 - [Services API](Services.md)
-- [Native CakePHP Auth Strategy](NativeAuth.md)
 
 ### Feature Flags
 

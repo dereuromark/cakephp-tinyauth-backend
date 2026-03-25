@@ -1,23 +1,53 @@
-## Backend: Authentication
+## Authentication And Public Actions
 
-This is for "allow" management.
+This section is about the backend's **Allow** feature: actions that should be reachable without authentication.
 
-### Schema
-The tables currently expect the following fields:
-- type (`AllowRule::TYPE_ALLOW`, `AllowRule::TYPE_DENY`)
-- path (`VendorName/PluginName.Prefix/ControllerName::actionName`)
+### What It Controls
 
-### Important info
-`deny` always trumps `allow` rules for the same path.
+The normalized backend stores public action flags in:
 
-### Prefix casing
-In TinyAuth and for CakePHP 3+ routing params multi-word prefixes are supposed to be dashed.
-For a nested prefix for `\App\MyPrefix\MySubPrefix\MyTestController` controller class,
-it would be `my-prefix/my-sub-prefix`.
-For path syntax however, it is the namespace elements, thus `MyPrefix/MySubPrefix`.
+- `tinyauth_controllers`
+- `tinyauth_actions`
 
-For BC reasons and usability it will auto-inflect when saving.
-So both cases are accepted as input.
+An action is public when `tinyauth_actions.is_public = true`.
 
-### TODO
-Check if we can make a more normalized DB structure and a better UI selection for defining the rules.
+### Runtime Use
+
+If you use TinyAuth at runtime, point it to the DB allow adapter:
+
+```php
+'TinyAuth' => [
+    'allowAdapter' => \TinyAuthBackend\Auth\AllowAdapter\DbAllowAdapter::class,
+],
+```
+
+`DbAllowAdapter` reads public actions from the database and feeds them into TinyAuth's request-level allow logic.
+
+### Backend UI
+
+Manage public actions at:
+
+```text
+/admin/auth/allow
+```
+
+You can:
+
+- toggle individual actions
+- bulk-toggle all actions for one controller
+- sync controllers/actions from code first, then mark public endpoints in the UI
+
+### Migration From Legacy INI
+
+If you used TinyAuth's file-based allow rules before, import them once:
+
+```bash
+bin/cake tiny_auth_backend import allow
+```
+
+### Important Note
+
+This doc is only about **public request access**.
+
+For role-based controller/action ACL use [Acl.md](Acl.md).
+For entity/resource authorization use [Resources.md](Resources.md).

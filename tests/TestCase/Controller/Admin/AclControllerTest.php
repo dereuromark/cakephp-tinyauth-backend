@@ -1,26 +1,19 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
 use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Auth\AclAdapter\DbAclAdapter;
+use TinyAuthBackend\Service\RoleSourceService;
 
-/**
- * TinyAuthBackend\Controller\TinyAuthAclRulesController Test Case
- *
- * @uses \TinyAuthBackend\Controller\Admin\AclController
- */
 class AclControllerTest extends TestCase {
 
 	use IntegrationTestTrait;
 
-	/**
-	 * Fixtures
-	 *
-	 * @var array
-	 */
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
 		'plugin.TinyAuthBackend.TinyAuthControllers',
@@ -28,70 +21,94 @@ class AclControllerTest extends TestCase {
 		'plugin.TinyAuthBackend.TinyAuthAclPermissions',
 	];
 
-	/**
-	 * @return void
-	 */
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->loadPlugins(['TinyAuthBackend']);
-
-		Configure::write('Roles', [
-			'user' => ROLE_USER,
-			'moderator' => ROLE_MODERATOR,
-			'admin' => ROLE_ADMIN,
-		]);
-
 		Configure::write('TinyAuth.aclAdapter', DbAclAdapter::class);
+		Configure::write('TinyAuthBackend.roleSource', null);
+		(new RoleSourceService())->clearCache();
+
+		$this->insertRow('tinyauth_roles', [
+			'id' => 1,
+			'name' => 'User',
+			'alias' => 'user',
+			'parent_id' => null,
+			'sort_order' => 1,
+		]);
+		$this->insertRow('tinyauth_roles', [
+			'id' => 2,
+			'name' => 'Admin',
+			'alias' => 'admin',
+			'parent_id' => null,
+			'sort_order' => 2,
+		]);
+		$this->insertRow('tinyauth_controllers', [
+			'id' => 1,
+			'plugin' => null,
+			'prefix' => 'Admin',
+			'name' => 'Articles',
+		]);
+		$this->insertRow('tinyauth_actions', [
+			'id' => 1,
+			'controller_id' => 1,
+			'name' => 'index',
+			'is_public' => false,
+		]);
 	}
 
-	/**
-	 * Test index method
-	 *
-	 * @return void
-	 */
-	public function testIndex() {
+	public function testIndex(): void {
 		$this->disableErrorHandlerMiddleware();
 
-		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl']);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
 
 		$this->assertResponseCode(200);
+		$this->assertResponseContains('Articles');
+		$this->assertResponseContains('index');
 	}
 
-	/**
-	 * Test view method
-	 *
-	 * @return void
-	 */
-	public function testView() {
-		$this->markTestIncomplete('Not implemented yet.');
+	public function testToggleCreatesPermission(): void {
+		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+
+		$this->assertResponseCode(200);
+		$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 1, 'type' => 'allow']));
 	}
 
-	/**
-	 * Test add method
-	 *
-	 * @return void
-	 */
-	public function testAdd() {
-		$this->markTestIncomplete('Not implemented yet.');
+	public function testToggleUpdatesPermission(): void {
+		$this->insertRow('tinyauth_acl_permissions', [
+			'id' => 1,
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+
+		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'deny',
+		]);
+
+		$this->assertResponseCode(200);
+		$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 1, 'type' => 'deny']));
 	}
 
-	/**
-	 * Test edit method
-	 *
-	 * @return void
-	 */
-	public function testEdit() {
-		$this->markTestIncomplete('Not implemented yet.');
+	public function testSearchReturnsMatchingInternalRecords(): void {
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'search', '?' => ['q' => 'ind']]);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('index');
 	}
 
-	/**
-	 * Test delete method
-	 *
-	 * @return void
-	 */
-	public function testDelete() {
-		$this->markTestIncomplete('Not implemented yet.');
+	protected function insertRow(string $table, array $data): void {
+		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
+	}
+
+	protected function countRows(string $table, array $conditions): int {
+		return TableRegistry::getTableLocator()->get($table)->find()->where($conditions)->count();
 	}
 
 }

@@ -50,7 +50,7 @@ bin/cake tiny_auth_backend import allow
 bin/cake tiny_auth_backend import acl
 ```
 
-Or initialize only the backend entry permissions for an admin role:
+Or initialize backend access for an admin role:
 
 ```bash
 bin/cake tiny_auth_backend init admin
@@ -69,11 +69,3 @@ You can ignore:
 - `tinyauth_resource_abilities`
 - `tinyauth_scopes`
 - `tinyauth_resource_acl`
-
-### Good Fit
-
-Choose this mode if:
-
-- you already use TinyAuth today
-- you do not want to redesign your permission model
-- you only want to move rule storage and editing into the database/backend UI

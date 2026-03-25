@@ -140,6 +140,59 @@ class TinyAuthServiceTest extends TestCase {
 		$this->assertTrue($result);
 	}
 
+	public function testCanAccessResourceUsesEntityClassToAvoidNameCollisions(): void {
+		$this->insertRow('tinyauth_resources', [
+			'id' => 2,
+			'name' => 'Article',
+			'entity_class' => 'Other\\Plugin\\Model\\Entity\\Article',
+			'table_name' => 'other_articles',
+		]);
+		$this->insertRow('tinyauth_resource_abilities', [
+			'id' => 2,
+			'resource_id' => 2,
+			'name' => 'edit',
+			'description' => null,
+		]);
+		$this->insertRow('tinyauth_resource_acl', [
+			'id' => 1,
+			'resource_ability_id' => 2,
+			'role_id' => 1,
+			'type' => 'deny',
+			'scope_id' => null,
+		]);
+		$this->insertRow('tinyauth_resource_acl', [
+			'id' => 2,
+			'resource_ability_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+			'scope_id' => null,
+		]);
+
+		$service = new TinyAuthService();
+		$user = new Entity(['id' => 7, 'role_id' => 1]);
+
+		$result = $service->canAccessResource($user, new Article(['user_id' => 7]), 'edit');
+
+		$this->assertTrue($result);
+	}
+
+	public function testGetUserRolesUsesConfiguredMultiRoleProperty(): void {
+		Configure::write('TinyAuthBackend.multiRole', true);
+		Configure::write('TinyAuthBackend.rolesTable', 'memberships');
+
+		$service = new TinyAuthService();
+		$user = new Entity([
+			'memberships' => [
+				new Entity(['alias' => 'user']),
+				new Entity(['alias' => 'admin']),
+			],
+		]);
+
+		$result = $service->getUserRoles($user);
+
+		$this->assertSame(['user', 'admin'], $result);
+	}
+
 	protected function insertRow(string $table, array $data): void {
 		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
 	}

@@ -100,9 +100,9 @@ class ResourceSyncService {
 		$scanned = $this->scan();
 		$result = ['added' => 0, 'abilities_added' => 0];
 
-		foreach ($scanned as $item) {
+			foreach ($scanned as $item) {
 			$existing = $resourcesTable->find()
-				->where(['name' => $item['name']])
+				->where(['entity_class' => $item['entity_class']])
 				->first();
 
 			if (!$existing && $addNew) {

@@ -51,14 +51,14 @@ class ResourcesTable extends Table {
 			->scalar('name')
 			->maxLength('name', 100)
 			->requirePresence('name', 'create')
-			->notEmptyString('name')
-			->add('name', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+			->notEmptyString('name');
 
 		$validator
 			->scalar('entity_class')
 			->maxLength('entity_class', 200)
 			->requirePresence('entity_class', 'create')
-			->notEmptyString('entity_class');
+			->notEmptyString('entity_class')
+			->add('entity_class', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
 		$validator
 			->scalar('table_name')

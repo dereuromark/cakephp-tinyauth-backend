@@ -25,10 +25,10 @@ class ImportCommand extends Command {
 		$type = $args->getArgument('type');
 		$file = $args->getArgument('file');
 		if (!$type || $type === 'allow') {
-			$this->importAllow($file);
+			$this->importAllow($file, $io);
 		}
 		if (!$type || $type === 'acl') {
-			$this->importAcl($file);
+			$this->importAcl($file, $io);
 		}
 
 		return static::CODE_SUCCESS;
@@ -56,12 +56,12 @@ class ImportCommand extends Command {
 
 	/**
 	 * @param string|null $file
-	 *
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
 	 */
-	protected function importAllow(?string $file): void {
+	protected function importAllow(?string $file, ConsoleIo $io): void {
 		if (!AdapterConfig::isAllowEnabled()) {
-			$this->io->error('Allow not enabled, skipping');
+			$io->error('Allow not enabled, skipping');
 
 			return;
 		}
@@ -74,7 +74,7 @@ class ImportCommand extends Command {
 			$file = $path . $fileName;
 		}
 		if (!file_exists($file)) {
-			$this->io->error($fileName . ' does not exist or cannot be found, skipping');
+			$io->error($fileName . ' does not exist or cannot be found, skipping');
 
 			return;
 		}
@@ -82,17 +82,17 @@ class ImportCommand extends Command {
 		$importer = new Importer();
 		$importer->importAllow($file);
 
-		$this->io->success('Imported: ' . $fileName);
+		$io->success('Imported: ' . $fileName);
 	}
 
 	/**
 	 * @param string|null $file
-	 *
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
 	 */
-	protected function importAcl(?string $file): void {
+	protected function importAcl(?string $file, ConsoleIo $io): void {
 		if (!AdapterConfig::isAclEnabled()) {
-			$this->io->error('ACL not enabled, skipping');
+			$io->error('ACL not enabled, skipping');
 
 			return;
 		}
@@ -105,7 +105,7 @@ class ImportCommand extends Command {
 			$file = $path . $fileName;
 		}
 		if (!file_exists($file)) {
-			$this->io->error($fileName . ' does not exist or cannot be found, skipping');
+			$io->error($fileName . ' does not exist or cannot be found, skipping');
 
 			return;
 		}
@@ -113,7 +113,7 @@ class ImportCommand extends Command {
 		$importer = new Importer();
 		$importer->importAcl($file);
 
-		$this->io->success('Imported: ' . $fileName);
+		$io->success('Imported: ' . $fileName);
 	}
 
 }

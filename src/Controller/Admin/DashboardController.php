@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Controller\Admin;
 
 use TinyAuthBackend\Service\FeatureService;
+use TinyAuthBackend\Service\RoleSourceService;
 
 class DashboardController extends AppController {
 
@@ -14,14 +15,14 @@ class DashboardController extends AppController {
 		// Gather statistics
 		$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
 		$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
-		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 		$aclPermissionsTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
+		$roleSource = new RoleSourceService();
 
 		$stats = [
 			'controllers' => $controllersTable->find()->count(),
 			'actions' => $actionsTable->find()->count(),
 			'public_actions' => $actionsTable->find()->where(['is_public' => true])->count(),
-			'roles' => $rolesTable->find()->count(),
+			'roles' => count($roleSource->getRoles()),
 			'acl_permissions' => $aclPermissionsTable->find()->count(),
 		];
 

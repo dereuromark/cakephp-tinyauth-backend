@@ -5,6 +5,7 @@ namespace TinyAuthBackend\Controller\Admin;
 
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
+use TinyAuthBackend\Service\RoleSourceService;
 
 /**
  * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
@@ -17,10 +18,10 @@ class AclController extends AppController {
 	public function index(): void {
 		/** @var \TinyAuthBackend\Model\Table\TinyauthControllersTable $controllersTable */
 		$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
-		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
+		$roleSource = new RoleSourceService();
 
 		$tree = $controllersTable->findTree();
-		$roles = $rolesTable->find()->orderBy(['sort_order' => 'ASC'])->all()->toArray();
+		$roles = $roleSource->getRoleEntities();
 
 		// Get selected controller
 		$controllerId = $this->request->getQuery('controller_id');
@@ -63,6 +64,9 @@ class AclController extends AppController {
 
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
 			throw new BadRequestException('Invalid permission type');
+		}
+		if (!in_array($roleId, array_values((new RoleSourceService())->getRoles()), true)) {
+			throw new BadRequestException('Invalid role');
 		}
 
 		$permissionsTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
@@ -119,7 +123,6 @@ class AclController extends AppController {
 		if (strlen($q) >= 2) {
 			$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
 			$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
-			$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 
 			$results['controllers'] = $controllersTable->find()
 				->where(['name LIKE' => "%{$q}%"])
@@ -134,11 +137,13 @@ class AclController extends AppController {
 				->all()
 				->toArray();
 
-			$results['roles'] = $rolesTable->find()
-				->where(['OR' => ['name LIKE' => "%{$q}%", 'alias LIKE' => "%{$q}%"]])
-				->limit(5)
-				->all()
-				->toArray();
+			$roles = (new RoleSourceService())->getRoleEntities();
+			$results['roles'] = array_slice(array_values(array_filter($roles, function (object $role) use ($q): bool {
+				$name = (string)($role->name ?? '');
+				$alias = (string)($role->alias ?? '');
+
+				return stripos($name, $q) !== false || stripos($alias, $q) !== false;
+			})), 0, 5);
 		}
 
 		$this->set('results', $results);

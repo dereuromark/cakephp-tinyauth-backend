@@ -16,6 +16,9 @@ $this->assign('title', $isEdit ? 'Edit Role' : 'Add Role');
 
         <div class="p-4">
             <?= $this->Form->create($role) ?>
+            <?php if ($isEdit) { ?>
+                <?= $this->Form->hidden('id') ?>
+            <?php } ?>
 
             <div class="mb-4">
                 <?= $this->Form->label('name', 'Display Name', ['class' => 'block text-sm font-medium mb-1']) ?>
@@ -34,14 +37,14 @@ $this->assign('title', $isEdit ? 'Edit Role' : 'Add Role');
                 <?php } ?>
             </div>
 
-            <div class="mb-4">
-                <?= $this->Form->label('parent_id', 'Parent Role', ['class' => 'block text-sm font-medium mb-1']) ?>
-                <?= $this->Form->select('parent_id', $parents, [
-                    'class' => 'form-select',
-                    'empty' => '(No parent - root level)',
-                ]) ?>
-                <p class="text-xs text-gray-500 mt-1">Child roles inherit permissions from parent.</p>
-            </div>
+			<div class="mb-4">
+				<?= $this->Form->label('parent_id', 'Parent Role', ['class' => 'block text-sm font-medium mb-1']) ?>
+				<?= $this->Form->select('parent_id', $parents, ['class' => 'form-select', 'empty' => '(No parent - root level)']) ?>
+				<p class="text-xs text-gray-500 mt-1">Higher roles inherit permissions from lower roles.</p>
+				<?php if ($role->hasErrors() && $role->getError('parent_id')) { ?>
+					<p class="text-xs text-red-500 mt-1"><?= h(implode(', ', $role->getError('parent_id'))) ?></p>
+				<?php } ?>
+			</div>
 
             <div class="mb-4">
                 <?= $this->Form->label('sort_order', 'Sort Order', ['class' => 'block text-sm font-medium mb-1']) ?>

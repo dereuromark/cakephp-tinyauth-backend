@@ -6,9 +6,11 @@ namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class SyncControllerTest extends TestCase {
 
+	use DatabaseTestTrait;
 	use IntegrationTestTrait;
 
 	protected array $fixtures = [
@@ -47,6 +49,21 @@ class SyncControllerTest extends TestCase {
 
 		$this->assertResponseCode(200);
 		$this->assertResponseContains('Sync');
+	}
+
+	public function testResourcesIndexMatchesExistingRowsByEntityClass(): void {
+		$this->insertRow('tinyauth_resources', [
+			'id' => 1,
+			'name' => 'Role',
+			'entity_class' => 'Other\\Plugin\\Model\\Entity\\Role',
+			'table_name' => 'other_roles',
+		]);
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Sync', 'action' => 'resources']);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('TinyAuthBackend\\Model\\Entity\\Role');
+		$this->assertResponseContains('+ NEW');
 	}
 
 	public function testResourcesSync(): void {

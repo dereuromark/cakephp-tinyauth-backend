@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Service;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -28,9 +29,10 @@ class ResourceSyncService {
 	 */
 	public function scan(): array {
 		$found = [];
+		$appNamespace = (string)(Configure::read('App.namespace') ?: 'App');
 
 		// Scan app entities
-		$found = array_merge($found, $this->scanPath(APP . 'Model' . DS . 'Entity' . DS, 'App'));
+		$found = array_merge($found, $this->scanPath(APP . 'Model' . DS . 'Entity' . DS, $appNamespace));
 
 		// Scan plugin entities
 		$plugins = Plugin::loaded();

@@ -84,11 +84,11 @@ class SyncController extends AppController {
 		// Compare with existing
 		$resourcesTable = $this->fetchTable('TinyAuthBackend.Resources');
 		$existing = $resourcesTable->find()->all()->toArray();
-		$existingNames = array_column($existing, 'name');
+		$existingClasses = array_column($existing, 'entity_class');
 
 		$diff = [];
 		foreach ($scanned as $item) {
-			$status = in_array($item['name'], $existingNames, true) ? 'existing' : 'new';
+			$status = in_array($item['entity_class'], $existingClasses, true) ? 'existing' : 'new';
 			$diff[] = array_merge($item, ['status' => $status]);
 		}
 

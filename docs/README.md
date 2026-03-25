@@ -1,77 +1,138 @@
 ## TinyAuth Backend
 
-DB backend and adapters for TinyAuth.
+A database-backed administration interface for TinyAuth with a modern, responsive UI.
 
-These adapters are very simple and in line with the INI files in terms of denormalized structure.
-If you need a more normalized DB table approach, create your own ones.
+### Features
 
-### Enable the plugin
+- **Normalized Database Schema**: 8 tables for roles, controllers, actions, permissions, resources, and scopes
+- **Tree+Matrix UI**: Controller tree navigation with permission matrix view
+- **Role Hierarchy**: Drag-and-drop role ordering with parent/child relationships
+- **HTMX+Alpine.js Frontend**: Reactive UI with minimal JavaScript
+- **Standalone Layout**: Self-contained with Tailwind CSS (CDN), dark/light theme support
+- **Authorization Integration**: TinyAuthPolicy for cakephp/authorization
+- **DB Adapters**: DbAllowAdapter and DbAclAdapter for TinyAuth integration
+- **Controller Sync**: Auto-discovery of controllers and actions from the application
 
-Load the plugin by running
-```
+### Enable the Plugin
+
+```bash
 bin/cake plugin load TinyAuthBackend
 ```
 
-### Enable the adapters
-If you need only Authentication or Authorization or both, add those as needed in your global Configure settings:
+### Run Migrations
+
+Create the required database tables:
+
+```bash
+bin/cake migrations migrate -p TinyAuthBackend
+```
+
+This creates the following tables:
+
+| Table | Purpose |
+|-------|---------|
+| `tinyauth_roles` | User roles with hierarchy support |
+| `tinyauth_controllers` | Discovered controllers (plugin/prefix/name) |
+| `tinyauth_actions` | Controller actions with public flag |
+| `tinyauth_acl_permissions` | Role-to-action permission mappings |
+| `tinyauth_resources` | Entity resources for resource-based auth |
+| `tinyauth_resource_abilities` | Resource abilities (view, edit, delete, etc.) |
+| `tinyauth_scopes` | Reusable permission conditions |
+| `tinyauth_resource_acl` | Resource-to-role permission mappings |
+
+### Enable the Adapters
+
+Configure TinyAuth to use the database adapters:
+
 ```php
+// In config/app.php or config/app_local.php
 'TinyAuth' => [
     'allowAdapter' => \TinyAuthBackend\Auth\AllowAdapter\DbAllowAdapter::class,
     'aclAdapter' => \TinyAuthBackend\Auth\AclAdapter\DbAclAdapter::class,
 ],
 ```
-Only if those point to the adapters of this plugin, the respective GUI part gets activated.
 
+### Initialize Roles
 
-### Run migration
-or provide your own tables.
+Add your application's roles to the database:
 
-This uses Migrations plugin:
-```
-bin/cake migrations migrate -p TinyAuthBackend
-```
-
-### Initialize
-Add the required ACL rule for the new backend
-```
+```bash
 bin/cake tiny_auth_backend init {admin-role-name}
 ```
-This way, you can now access the backend with your admin role.
 
-If you use the `'superAdminRole' => ROLE_SUPERADMIN,` config, this is not necessary, as the
-superadmin role has automatically access to all routes.
+Or configure roles in `config/roles.php`:
 
-#### Import
-There is a convenience shell command to import existing INI files,
-in case you are migrating from file based approach, or if you want
-to have some "seed" defaults this way:
-```
-bin/cake tiny_auth_backend import [allow/acl]
+```php
+<?php
+return [
+    'Roles' => [
+        'user' => 1,
+        'moderator' => 2,
+        'admin' => 3,
+    ],
+];
 ```
 
-You can also directly pass a file to be imported if needed, e.g. for "acl":
+### Admin Panel
+
+Navigate to the admin panel:
+
 ```
+/admin/tinyauth/admin/
+```
+
+#### Available Sections
+
+| URL | Purpose |
+|-----|---------|
+| `/admin/tinyauth/admin/acl` | ACL permission matrix (main view) |
+| `/admin/tinyauth/admin/allow` | Public action management |
+| `/admin/tinyauth/admin/roles` | Role management with hierarchy |
+| `/admin/tinyauth/admin/resources` | Resource-based permissions |
+| `/admin/tinyauth/admin/scopes` | Reusable permission scopes |
+| `/admin/tinyauth/admin/sync` | Sync controllers from application |
+
+### Import from INI Files
+
+If migrating from file-based TinyAuth:
+
+```bash
+# Import allow rules
+bin/cake tiny_auth_backend import allow
+
+# Import ACL rules
+bin/cake tiny_auth_backend import acl
+
+# Import from specific file
 bin/cake tiny_auth_backend import acl /path/to/file.ini
 ```
 
-This is useful for batch importing.
+### Detailed Documentation
 
+- [ACL Management](Acl.md) - Permission matrix and role-based access
+- [Allow Management](Allow.md) - Public action configuration
+- [Roles](Roles.md) - Role hierarchy and management
+- [Resources](Resources.md) - Entity-level permissions
+- [Scopes](Scopes.md) - Conditional permission rules
+- [Services](Services.md) - Programmatic API
+- [Authorization](Authorization.md) - cakephp/authorization integration
 
-### Test run
-Navigate to `/admin/auth` backend. It should show the dashboard.
+### Caching
 
-If you didn't include the plugin's default routes, you need to define them similarly on app level.
+Permissions are cached automatically. Clear the cache after manual database changes:
 
-You can now start adding rules for authentication and authorization.
+```php
+use Cake\Cache\Cache;
 
-Note: Every change automatically busts the internal TinyAuth cache.
+Cache::delete('TinyAuth.allow');
+Cache::delete('TinyAuth.acl');
+```
 
-### Details
-See
-- [Authentication](Authentication.md) for "allow"
-- [Authorization](Authorization.md) for "acl"
+### Custom Theme
 
-### Custom theme/template
-TODO
+You can override templates by creating them in your app:
 
-For now you can also just create a custom theme folder in your app and it will take those templates instead.
+```
+templates/plugin/TinyAuthBackend/Admin/Acl/index.php
+templates/plugin/TinyAuthBackend/layout/tinyauth.php
+```

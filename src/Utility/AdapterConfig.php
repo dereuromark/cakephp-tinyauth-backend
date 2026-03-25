@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Utility;
 
@@ -11,7 +12,7 @@ class AdapterConfig {
 	/**
 	 * @return bool
 	 */
-	public static function isAllowEnabled() {
+	public static function isAllowEnabled(): bool {
 		$adapter = Configure::read('TinyAuth.allowAdapter');
 		if (!$adapter) {
 			return false;
@@ -23,7 +24,7 @@ class AdapterConfig {
 	/**
 	 * @return bool
 	 */
-	public static function isAclEnabled() {
+	public static function isAclEnabled(): bool {
 		$adapter = Configure::read('TinyAuth.aclAdapter');
 		if (!$adapter) {
 			return false;

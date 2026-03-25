@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
@@ -7,9 +8,11 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * @uses \TinyAuthBackend\Controller\Admin\AuthController
+ * TinyAuthBackend\Controller\Admin\RolesController Test Case
+ *
+ * @uses \TinyAuthBackend\Controller\Admin\RolesController
  */
-class AuthControllerTest extends TestCase {
+class RolesControllerTest extends TestCase {
 
 	use IntegrationTestTrait;
 
@@ -19,8 +22,7 @@ class AuthControllerTest extends TestCase {
 	 * @var array
 	 */
 	protected array $fixtures = [
-		'plugin.TinyAuthBackend.TinyAuthAllowRules',
-		'plugin.TinyAuthBackend.TinyAuthAclRules',
+		'plugin.TinyAuthBackend.TinyAuthRoles',
 	];
 
 	/**
@@ -43,12 +45,13 @@ class AuthControllerTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function testIndex() {
+	public function testIndex(): void {
 		$this->disableErrorHandlerMiddleware();
 
-		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Auth']);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Roles']);
 
 		$this->assertResponseCode(200);
+		$this->assertResponseContains('Roles');
 	}
 
 }

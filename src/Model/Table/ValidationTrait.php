@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Model\Table;
 
@@ -13,7 +14,7 @@ trait ValidationTrait {
 	 *
 	 * @return bool
 	 */
-	protected function assertValidPath($path) {
+	protected function assertValidPath(string $path): bool {
 		$array = RulePath::parse($path);
 
 		if (!$array['controller'] || Utility::camelizeTokenString(Utility::underscoreTokenString($array['controller'], '/'), '/') !== $array['controller']) {
@@ -23,7 +24,7 @@ trait ValidationTrait {
 			return false;
 		}
 
-		if ($array['prefix'] && !preg_match('#[A-Za-u0-9/_]#', $array['prefix'])) {
+		if ($array['prefix'] && !preg_match('#^[A-Za-z0-9/_]+$#', $array['prefix'])) {
 			return false;
 		}
 		if ($array['plugin'] && Utility::camelizeTokenString(Utility::underscoreTokenString($array['plugin'], '/'), '/') !== $array['plugin']) {
@@ -38,7 +39,7 @@ trait ValidationTrait {
 	 *
 	 * @return string
 	 */
-	protected function normalizePath($path) {
+	protected function normalizePath(string $path): string {
 		$array = RulePath::parse($path);
 
 		return RulePath::build($array);

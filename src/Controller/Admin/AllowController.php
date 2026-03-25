@@ -1,128 +1,105 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use App\Controller\AppController;
-use Cake\Event\EventInterface;
-use TinyAuth\Utility\TinyAuth;
-use TinyAuthBackend\Utility\AdapterConfig;
+use Cake\Cache\Cache;
+use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 /**
- * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
- * @method \Cake\Datasource\ResultSetInterface<\TinyAuthBackend\Model\Entity\AllowRule> paginate($object = null, array $settings = [])
+ * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
  */
 class AllowController extends AppController {
 
 	/**
-	 * @var string|null
-	 */
-	protected ?string $defaultTable = 'TinyAuthBackend.AllowRules';
-
-	/**
-	 * @param \Cake\Event\EventInterface $event
-	 *
 	 * @return void
 	 */
-	public function beforeFilter(EventInterface $event): void {
-		if (!AdapterConfig::isAllowEnabled()) {
-			$this->Flash->error('Not enabled');
+	public function index(): void {
+		$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
 
-			$event->setResult($this->redirect(['controller' => 'Auth']));
+		$filter = $this->request->getQuery('filter', 'all');
+
+		$query = $controllersTable->find()
+			->contain([
+				'Actions' => function (SelectQuery $q) use ($filter) {
+					if ($filter === 'public') {
+						return $q->where(['Actions.is_public' => true]);
+					}
+					if ($filter === 'protected') {
+						return $q->where(['Actions.is_public' => false]);
+					}
+
+					return $q;
+				},
+			])
+			->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'name' => 'ASC']);
+
+		$controllers = $query->all()->toArray();
+
+		$this->set(compact('controllers', 'filter'));
+	}
+
+	/**
+	 * @return \Cake\Http\Response|null
+	 */
+	public function toggle(): ?Response {
+		$this->request->allowMethod(['post']);
+
+		$actionId = (int)$this->request->getData('action_id');
+		$isPublic = filter_var($this->request->getData('is_public'), FILTER_VALIDATE_BOOLEAN);
+
+		if (!$actionId) {
+			$this->response = $this->response->withStatus(400);
+			$this->viewBuilder()->disableAutoLayout();
+			$this->set('error', 'Invalid action ID');
+
+			return $this->render('toggle_cell');
 		}
-	}
 
-	/**
-	 * @param \Cake\Event\EventInterface $event
-	 *
-	 * @return void
-	 */
-	public function beforeRender(EventInterface $event): void {
-		$availableRoles = (new TinyAuth())->getAvailableRoles();
-		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
-		$roles['*'] = '*';
+		/** @var \TinyAuthBackend\Model\Table\ActionsTable $actionsTable */
+		$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
+		$action = $actionsTable->get($actionId);
 
-		$this->set(compact('roles'));
-	}
+		$action->is_public = $isPublic;
 
-	/**
-	 * Index method
-	 *
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function index() {
-		$allowRules = $this->paginate($this->AllowRules);
-
-		$this->set(compact('allowRules'));
-	}
-
-	/**
-	 * View method
-	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function view($id = null) {
-		$allowRule = $this->AllowRules->get($id);
-
-		$this->set('allowRule', $allowRule);
-	}
-
-	/**
-	 * Add method
-	 *
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function add() {
-		$allowRule = $this->AllowRules->newEmptyEntity();
-		if ($this->request->is('post')) {
-			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
-			if ($this->AllowRules->save($allowRule)) {
-				$this->Flash->success(__('The tiny auth allow rule has been saved.'));
-
-				return $this->redirect(['action' => 'index']);
-			}
-			$this->Flash->error(__('The tiny auth allow rule could not be saved. Please, try again.'));
-		}
-		$this->set(compact('allowRule'));
-	}
-
-	/**
-	 * Edit method
-	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function edit($id = null) {
-		$allowRule = $this->AllowRules->get($id);
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$allowRule = $this->AllowRules->patchEntity($allowRule, (array)$this->request->getData());
-			if ($this->AllowRules->save($allowRule)) {
-				$this->Flash->success(__('The tiny auth allow rule has been saved.'));
-
-				return $this->redirect(['action' => 'index']);
-			}
-			$this->Flash->error(__('The tiny auth allow rule could not be saved. Please, try again.'));
-		}
-		$this->set(compact('allowRule'));
-	}
-
-	/**
-	 * Delete method
-	 *
-	 * @param string|null $id Tiny Auth Allow Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null Redirects to index.
-	 */
-	public function delete($id = null) {
-		$this->request->allowMethod(['post', 'delete']);
-		$allowRule = $this->AllowRules->get($id);
-		if ($this->AllowRules->delete($allowRule)) {
-			$this->Flash->success(__('The tiny auth allow rule has been deleted.'));
+		if ($actionsTable->save($action)) {
+			Cache::delete('TinyAuth.allow');
 		} else {
-			$this->Flash->error(__('The tiny auth allow rule could not be deleted. Please, try again.'));
+			$this->response = $this->response->withStatus(500);
+			$this->set('error', 'Failed to update action');
 		}
+
+		$this->viewBuilder()->disableAutoLayout();
+		$this->set(compact('action'));
+
+		return $this->render('toggle_cell');
+	}
+
+	/**
+	 * @return \Cake\Http\Response|null
+	 */
+	public function bulkToggle(): ?Response {
+		$this->request->allowMethod(['post']);
+
+		$controllerId = (int)$this->request->getData('controller_id');
+		$isPublic = filter_var($this->request->getData('is_public'), FILTER_VALIDATE_BOOLEAN);
+
+		if (!$controllerId) {
+			$this->Flash->error(__('Invalid controller.'));
+
+			return $this->redirect(['action' => 'index']);
+		}
+
+		$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
+		$actionsTable->updateAll(
+			['is_public' => $isPublic],
+			['controller_id' => $controllerId],
+		);
+
+		Cache::delete('TinyAuth.allow');
+
+		$this->Flash->success(__('Actions updated.'));
 
 		return $this->redirect(['action' => 'index']);
 	}

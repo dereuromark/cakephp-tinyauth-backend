@@ -22,7 +22,10 @@ class AclControllerTest extends TestCase {
 	 * @var array
 	 */
 	protected array $fixtures = [
-		'plugin.TinyAuthBackend.TinyAuthAclRules',
+		'plugin.TinyAuthBackend.TinyAuthRoles',
+		'plugin.TinyAuthBackend.TinyAuthControllers',
+		'plugin.TinyAuthBackend.TinyAuthActions',
+		'plugin.TinyAuthBackend.TinyAuthAclPermissions',
 	];
 
 	/**

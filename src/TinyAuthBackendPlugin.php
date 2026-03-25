@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Routing\RouteBuilder;
 use TinyAuthBackend\Command\ImportCommand;
 use TinyAuthBackend\Command\InitCommand;
@@ -13,22 +15,48 @@ use TinyAuthBackend\Command\InitCommand;
  */
 class TinyAuthBackendPlugin extends BasePlugin {
 
-	protected bool $bootstrapEnabled = false;
+	/**
+	 * @var bool
+	 */
+	protected bool $middlewareEnabled = false;
+
+	/**
+	 * @var bool
+	 */
+	protected bool $bootstrapEnabled = true;
+
+	/**
+	 * @var bool
+	 */
+	protected bool $routesEnabled = true;
+
+	/**
+	 * @param \Cake\Core\PluginApplicationInterface<\Cake\Core\HttpApplicationInterface> $app The application instance
+	 * @return void
+	 */
+	public function bootstrap(PluginApplicationInterface $app): void {
+		parent::bootstrap($app);
+	}
 
 	/**
 	 * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
 	 * @return void
 	 */
 	public function routes(RouteBuilder $routes): void {
-		$routes->prefix('Admin', function (RouteBuilder $routes): void {
-			$routes->plugin(
-				'TinyAuthBackend',
-				['path' => '/auth'],
-				function (RouteBuilder $routes): void {
-					$routes->connect('/', ['controller' => 'Auth', 'action' => 'index']);
-					$routes->fallbacks();
-				},
-			);
+		$routes->plugin('TinyAuthBackend', ['path' => '/admin/auth'], function (RouteBuilder $builder): void {
+			$builder->prefix('Admin', ['path' => ''], function (RouteBuilder $prefixBuilder): void {
+				$prefixBuilder->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
+				$prefixBuilder->connect('/dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
+				$prefixBuilder->connect('/acl', ['controller' => 'Acl', 'action' => 'index']);
+				$prefixBuilder->connect('/allow', ['controller' => 'Allow', 'action' => 'index']);
+				$prefixBuilder->connect('/roles', ['controller' => 'Roles', 'action' => 'index']);
+				$prefixBuilder->connect('/resources', ['controller' => 'Resources', 'action' => 'index']);
+				$prefixBuilder->connect('/scopes', ['controller' => 'Scopes', 'action' => 'index']);
+				$prefixBuilder->connect('/sync', ['controller' => 'Sync', 'action' => 'controllers']);
+				$prefixBuilder->connect('/sync/controllers', ['controller' => 'Sync', 'action' => 'controllers']);
+				$prefixBuilder->connect('/sync/resources', ['controller' => 'Sync', 'action' => 'resources']);
+				$prefixBuilder->fallbacks();
+			});
 		});
 	}
 

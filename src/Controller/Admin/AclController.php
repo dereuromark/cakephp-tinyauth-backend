@@ -1,130 +1,147 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use App\Controller\AppController;
-use Cake\Event\EventInterface;
-use TinyAuth\Utility\TinyAuth;
-use TinyAuthBackend\Utility\AdapterConfig;
+use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response;
 
 /**
- * @property \TinyAuthBackend\Model\Table\AclRulesTable $AclRules
- * @method \Cake\Datasource\ResultSetInterface<\TinyAuthBackend\Model\Entity\AclRule> paginate($object = null, array $settings = [])
+ * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
  */
 class AclController extends AppController {
 
 	/**
-	 * @var string|null
-	 */
-	protected ?string $defaultTable = 'TinyAuthBackend.AclRules';
-
-	/**
-	 * @param \Cake\Event\EventInterface $event
-	 *
 	 * @return void
 	 */
-	public function beforeFilter(EventInterface $event): void {
-		if (!AdapterConfig::isAclEnabled()) {
-			$this->Flash->error('Not enabled');
+	public function index(): void {
+		/** @var \TinyAuthBackend\Model\Table\TinyauthControllersTable $controllersTable */
+		$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
+		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 
-			$event->setResult($this->redirect(['controller' => 'Auth']));
-		}
-	}
+		$tree = $controllersTable->findTree();
+		$roles = $rolesTable->find()->orderBy(['sort_order' => 'ASC'])->all()->toArray();
 
-	/**
-	 * @param \Cake\Event\EventInterface $event
-	 *
-	 * @return void
-	 */
-	public function beforeRender(EventInterface $event): void {
-		$availableRoles = (new TinyAuth())->getAvailableRoles();
-		$roles = (array)array_combine(array_keys($availableRoles), array_keys($availableRoles));
-		$roles['*'] = '*';
+		// Get selected controller
+		$controllerId = $this->request->getQuery('controller_id');
+		$selectedController = null;
+		$actions = [];
+		$permissions = [];
 
-		$this->set(compact('roles'));
-	}
+		if ($controllerId) {
+			$selectedController = $controllersTable->get($controllerId, contain: ['Actions']);
+			$actions = $selectedController->actions ?? [];
 
-	/**
-	 * Index method
-	 *
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function index() {
-		$aclRules = $this->paginate($this->AclRules);
+			// Load permissions for this controller's actions
+			$permissionsTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
+			$actionIds = array_map(fn ($a) => $a->id, $actions);
 
-		$this->set(compact('aclRules'));
-	}
+			if ($actionIds) {
+				$perms = $permissionsTable->find()
+					->where(['action_id IN' => $actionIds])
+					->all();
 
-	/**
-	 * View method
-	 *
-	 * @param string|null $id Tiny Auth Acl Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function view($id = null) {
-		$aclRule = $this->AclRules->get($id);
-
-		$this->set('aclRule', $aclRule);
-	}
-
-	/**
-	 * Add method
-	 *
-	 * @return \Cake\Http\Response|null|void
-	 */
-	public function add() {
-		$aclRule = $this->AclRules->newEmptyEntity();
-		if ($this->request->is('post')) {
-			$aclRule = $this->AclRules->patchEntity($aclRule, (array)$this->request->getData());
-			if ($this->AclRules->save($aclRule)) {
-				$this->Flash->success(__('The tiny auth acl rule has been saved.'));
-
-				return $this->redirect(['action' => 'index']);
+				/** @var \TinyAuthBackend\Model\Entity\AclPermission $perm */
+				foreach ($perms as $perm) {
+					$permissions[$perm->action_id][$perm->role_id] = $perm->type;
+				}
 			}
-			$this->Flash->error(__('The tiny auth acl rule could not be saved. Please, try again.'));
 		}
-		$this->set(compact('aclRule'));
+
+		$this->set(compact('tree', 'roles', 'selectedController', 'actions', 'permissions'));
 	}
 
 	/**
-	 * Edit method
-	 *
-	 * @param string|null $id Tiny Auth Acl Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null|void
+	 * @return \Cake\Http\Response|null
 	 */
-	public function edit($id = null) {
-		$aclRule = $this->AclRules->get($id);
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$aclRule = $this->AclRules->patchEntity($aclRule, (array)$this->request->getData());
-			if ($this->AclRules->save($aclRule)) {
-				$this->Flash->success(__('The tiny auth acl rule has been saved.'));
+	public function toggle(): ?Response {
+		$this->request->allowMethod(['post']);
 
-				return $this->redirect(['action' => 'index']);
+		$actionId = (int)$this->request->getData('action_id');
+		$roleId = (int)$this->request->getData('role_id');
+		$type = $this->request->getData('type');
+
+		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
+			throw new BadRequestException('Invalid permission type');
+		}
+
+		$permissionsTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
+
+		$existing = $permissionsTable->find()
+			->where(['action_id' => $actionId, 'role_id' => $roleId])
+			->first();
+
+		if ($type === 'none') {
+			if ($existing) {
+				if (!$permissionsTable->delete($existing)) {
+					$this->response = $this->response->withStatus(500);
+					$this->set('error', 'Failed to delete permission');
+				}
 			}
-			$this->Flash->error(__('The tiny auth acl rule could not be saved. Please, try again.'));
-		}
-		$this->set(compact('aclRule'));
-	}
-
-	/**
-	 * Delete method
-	 *
-	 * @param string|null $id Tiny Auth Acl Rule id.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @return \Cake\Http\Response|null Redirects to index.
-	 */
-	public function delete($id = null) {
-		$this->request->allowMethod(['post', 'delete']);
-		$aclRule = $this->AclRules->get($id);
-		if ($this->AclRules->delete($aclRule)) {
-			$this->Flash->success(__('The tiny auth acl rule has been deleted.'));
 		} else {
-			$this->Flash->error(__('The tiny auth acl rule could not be deleted. Please, try again.'));
+			/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
+			if ($existing) {
+				$existing->type = $type;
+				if (!$permissionsTable->save($existing)) {
+					$this->response = $this->response->withStatus(500);
+					$this->set('error', 'Failed to update permission');
+				}
+			} else {
+				$permission = $permissionsTable->newEntity([
+					'action_id' => $actionId,
+					'role_id' => $roleId,
+					'type' => $type,
+				]);
+				if (!$permissionsTable->save($permission)) {
+					$this->response = $this->response->withStatus(500);
+					$this->set('error', 'Failed to save permission');
+				}
+			}
 		}
 
-		return $this->redirect(['action' => 'index']);
+		// Return updated cell HTML
+		$this->viewBuilder()->disableAutoLayout();
+		$this->set(compact('actionId', 'roleId', 'type'));
+
+		return $this->render('toggle_cell');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function search(): void {
+		$this->viewBuilder()->disableAutoLayout();
+
+		$q = $this->request->getQuery('q', '');
+		$q = substr($q, 0, 100); // Limit search query length
+		$results = ['controllers' => [], 'actions' => [], 'roles' => []];
+
+		if (strlen($q) >= 2) {
+			$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
+			$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
+			$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
+
+			$results['controllers'] = $controllersTable->find()
+				->where(['name LIKE' => "%{$q}%"])
+				->limit(5)
+				->all()
+				->toArray();
+
+			$results['actions'] = $actionsTable->find()
+				->contain(['TinyauthControllers'])
+				->where(['Actions.name LIKE' => "%{$q}%"])
+				->limit(5)
+				->all()
+				->toArray();
+
+			$results['roles'] = $rolesTable->find()
+				->where(['OR' => ['name LIKE' => "%{$q}%", 'alias LIKE' => "%{$q}%"]])
+				->limit(5)
+				->all()
+				->toArray();
+		}
+
+		$this->set('results', $results);
 	}
 
 }

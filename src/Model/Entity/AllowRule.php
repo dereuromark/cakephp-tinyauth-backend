@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Model\Entity;
 
@@ -41,9 +42,9 @@ class AllowRule extends Entity {
 
 	/**
 	 * @param int|null $value
-	 * @return array|string|null
+	 * @return array<int|string, mixed>|string|null
 	 */
-	public static function types($value = null) {
+	public static function types(?int $value = null): array|string|null {
 		$options = [
 			static::TYPE_ALLOW => __('allow'),
 			static::TYPE_DENY => __('deny'),

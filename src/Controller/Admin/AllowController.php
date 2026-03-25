@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
+use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Http\Response;
 
@@ -29,7 +30,7 @@ class AllowController extends Controller {
 
 		$query = $controllersTable->find()
 			->contain([
-				'Actions' => function ($q) use ($filter) {
+				'Actions' => function (\Cake\ORM\Query\SelectQuery $q) use ($filter) {
 					if ($filter === 'public') {
 						return $q->where(['Actions.is_public' => true]);
 					}
@@ -100,6 +101,8 @@ class AllowController extends Controller {
 			['is_public' => $isPublic],
 			['controller_id' => $controllerId],
 		);
+
+		Cache::delete('TinyAuth.allow');
 
 		$this->Flash->success(__('Actions updated.'));
 

@@ -93,7 +93,7 @@ class AclRulesTable extends Table {
 	 *
 	 * @return bool
 	 */
-	public function validatePath($path) {
+	public function validatePath(string $path): bool {
 		return $this->assertValidPath($path);
 	}
 

@@ -114,7 +114,7 @@ class ResourcesController extends AppController {
 
 		// Return updated cell
 		$scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');
-		$scope = $scopeId ? $scopesTable->get((int)$scopeId) : null;
+		$scope = $scopeId ? $scopesTable->find()->where(['id' => $scopeId])->first() : null;
 
 		$this->viewBuilder()->disableAutoLayout();
 		$this->set(compact('abilityId', 'roleId', 'type', 'scope'));

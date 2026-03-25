@@ -24,7 +24,7 @@ trait ValidationTrait {
 			return false;
 		}
 
-		if ($array['prefix'] && !preg_match('#[A-Za-u0-9/_]#', $array['prefix'])) {
+		if ($array['prefix'] && !preg_match('#^[A-Za-z0-9/_]+$#', $array['prefix'])) {
 			return false;
 		}
 		if ($array['plugin'] && Utility::camelizeTokenString(Utility::underscoreTokenString($array['plugin'], '/'), '/') !== $array['plugin']) {

@@ -68,10 +68,11 @@ class Importer {
 	 * @return void
 	 */
 	protected function addAllow(array $data): void {
+		/** @var \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules */
 		$AllowRules = $this->fetchModel('TinyAuthBackend.AllowRules');
 
 		$allowRule = $AllowRules->newEntity($data);
-		$AllowRules->save($allowRule);
+		$AllowRules->saveOrFail($allowRule);
 	}
 
 	/**
@@ -127,10 +128,11 @@ class Importer {
 	 * @return void
 	 */
 	protected function addAcl(array $data): void {
+		/** @var \TinyAuthBackend\Model\Table\AclRulesTable $AclRules */
 		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
 
 		$aclRule = $AclRules->newEntity($data);
-		$AclRules->save($aclRule);
+		$AclRules->saveOrFail($aclRule);
 	}
 
 	/**

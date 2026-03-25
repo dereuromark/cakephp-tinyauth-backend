@@ -19,6 +19,7 @@ Configure::write('TinyAuthBackend', [
 		'allow' => null, // Public action management
 		'roles' => null, // Role management with hierarchy
 		'resources' => null, // Entity-level permissions (for Authorization)
+		'scopes' => null, // Conditional permissions (field-based restrictions)
 	],
 
 	// Role source configuration

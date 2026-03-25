@@ -132,10 +132,10 @@ function reorderRole(targetId, sourceId) {
     fetch('<?= $this->Url->build(['action' => 'reorder']) ?>', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRF-Token': '<?= $this->request->getAttribute('csrfToken') ?>'
         },
-        body: JSON.stringify({
+        body: new URLSearchParams({
             role_id: sourceId,
             parent_id: targetId,
             sort_order: 0

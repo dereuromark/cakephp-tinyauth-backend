@@ -90,6 +90,7 @@ class RoleSourceService {
 		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
 
 		return $rolesTable->find()
+			->contain(['ParentRoles'])
 			->orderBy(['sort_order' => 'ASC', 'name' => 'ASC'])
 			->all()
 			->toArray();

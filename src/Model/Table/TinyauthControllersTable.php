@@ -76,7 +76,7 @@ class TinyauthControllersTable extends Table {
 			->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'name' => 'ASC']);
 
 		// Filter out excluded plugins (default: DebugKit, TinyAuthBackend)
-		$excludedPlugins = \Cake\Core\Configure::read('TinyAuthBackend.excludedPlugins') ?? ['DebugKit', 'TinyAuthBackend'];
+		$excludedPlugins = \Cake\Core\Configure::read('TinyAuthBackend.excludedPlugins') ?? ['DebugKit'];
 		if ($excludedPlugins) {
 			$query->where([
 				'OR' => [

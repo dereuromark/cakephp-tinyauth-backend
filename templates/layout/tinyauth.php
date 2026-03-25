@@ -55,7 +55,7 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
             <div class="flex items-center justify-between h-14">
                 <!-- Logo -->
                 <div class="flex items-center gap-4">
-                    <a href="<?= $this->Url->build(['plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'index', 'prefix' => 'Admin']) ?>"
+                    <a href="<?= $this->Url->build(['plugin' => 'TinyAuthBackend', 'controller' => 'Dashboard', 'action' => 'index', 'prefix' => 'Admin']) ?>"
                        class="font-semibold text-lg">
                         TinyAuth
                     </a>

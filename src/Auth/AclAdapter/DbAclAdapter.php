@@ -1,103 +1,83 @@
 <?php
+declare(strict_types=1);
 
 namespace TinyAuthBackend\Auth\AclAdapter;
 
-use Cake\Datasource\ModelAwareTrait;
+use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
-use TinyAuthBackend\Model\Entity\AclRule;
-use TinyAuthBackend\Model\Table\AclRulesTable;
+use TinyAuthBackend\Service\HierarchyService;
 
 class DbAclAdapter implements AclAdapterInterface {
 
-	use ModelAwareTrait;
-
-	protected AclRulesTable $AclRules;
-
 	/**
-	 * @var array<string>
-	 */
-	protected static array $typeMap = [
-		AclRule::TYPE_ALLOW => 'allow',
-		AclRule::TYPE_DENY => 'deny',
-	];
-
-	/**
-	 * {@inheritDoc}
+	 * @param array<string, int> $availableRoles
+	 * @param array<string, mixed> $config
 	 *
-	 * @return array
+	 * @return array<string, array<string, mixed>>
 	 */
 	public function getAcl(array $availableRoles, array $config): array {
-		$acl = [];
+		$permissionsTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.AclPermissions');
 
-		$aclRules = $this->getRules();
-		foreach ($aclRules as $aclRule) {
-			[$key, $action] = explode('::', $aclRule->path);
-			$ruleType = static::$typeMap[$aclRule->type];
+		$permissions = $permissionsTable->find()
+			->contain(['Actions.TinyauthControllers', 'Roles'])
+			->all();
+
+		$acl = [];
+		foreach ($permissions as $permission) {
+			$action = $permission->action;
+			$controller = $action->tinyauth_controller;
+			$key = $this->buildKey($controller->plugin, $controller->prefix, $controller->name);
+
 			if (!isset($acl[$key])) {
-				$acl[$key] = $this->buildArray($key);
-				foreach (static::$typeMap as $type) {
-					$acl[$key][$type] = [];
-				}
+				$acl[$key] = [
+					'plugin' => $controller->plugin,
+					'prefix' => $controller->prefix,
+					'controller' => $controller->name,
+					'allow' => [],
+					'deny' => [],
+				];
 			}
-			$acl[$key][$ruleType][$action] = $this->buildRoleArray($availableRoles, $aclRule->role);
+
+			$type = $permission->type === 'allow' ? 'allow' : 'deny';
+			$roleAlias = $permission->role->alias;
+			$roleId = $availableRoles[$roleAlias] ?? null;
+
+			if ($roleId !== null) {
+				if (!isset($acl[$key][$type][$action->name])) {
+					$acl[$key][$type][$action->name] = [];
+				}
+				$acl[$key][$type][$action->name][$roleAlias] = $roleId;
+			}
+		}
+
+		// Apply hierarchy if enabled
+		if (Configure::read('TinyAuthBackend.roleHierarchy')) {
+			$hierarchyService = new HierarchyService();
+			$acl = $hierarchyService->applyInheritance($acl, $availableRoles);
 		}
 
 		return $acl;
 	}
 
 	/**
-	 * @return array<\TinyAuthBackend\Model\Entity\AclRule>
-	 */
-	protected function getRules() {
-		$AclRules = $this->fetchModel('TinyAuthBackend.AclRules');
-
-		return $AclRules->find()
-			->select(['type', 'role', 'path'])
-			->all()
-			->toArray();
-	}
-
-	/**
-	 * @param string $key
+	 * @param string|null $plugin
+	 * @param string|null $prefix
+	 * @param string $controller
 	 *
-	 * @return array
+	 * @return string
 	 */
-	protected function buildArray($key) {
-		$prefix = $plugin = null;
-		if (strpos($key, '.') !== false) {
-			[$plugin, $key] = explode('.', $key, 2);
+	protected function buildKey(?string $plugin, ?string $prefix, string $controller): string {
+		$key = '';
+		if ($plugin) {
+			$key .= $plugin . '.';
 		}
-		if (strpos($key, '/') !== false) {
-			$pos = (int)strrpos($key, '/');
-			$prefix = substr($key, 0, $pos);
-			$key = substr($key, $pos + 1);
+		if ($prefix) {
+			$key .= $prefix . '/';
 		}
+		$key .= $controller;
 
-		return [
-			'plugin' => $plugin,
-			'prefix' => $prefix,
-			'controller' => $key,
-		];
-	}
-
-	/**
-	 * @param array<int> $availableRoles
-	 * @param string $role
-	 *
-	 * @return array<int>
-	 */
-	protected function buildRoleArray(array $availableRoles, $role) {
-		if (isset($availableRoles[$role])) {
-			return [
-				$role => $availableRoles[$role],
-			];
-		}
-
-		if ($role !== '*') {
-			return [];
-		}
-
-		return $availableRoles;
+		return $key;
 	}
 
 }

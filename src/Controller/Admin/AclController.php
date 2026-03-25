@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Controller\Admin;
 
 use Cake\Controller\Controller;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 
 /**
@@ -67,6 +68,10 @@ class AclController extends Controller {
 		$roleId = (int)$this->request->getData('role_id');
 		$type = $this->request->getData('type');
 
+		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
+			throw new BadRequestException('Invalid permission type');
+		}
+
 		$permissionsTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
 
 		$existing = $permissionsTable->find()
@@ -75,19 +80,28 @@ class AclController extends Controller {
 
 		if ($type === 'none') {
 			if ($existing) {
-				$permissionsTable->delete($existing);
+				if (!$permissionsTable->delete($existing)) {
+					$this->response = $this->response->withStatus(500);
+					$this->set('error', 'Failed to delete permission');
+				}
 			}
 		} else {
 			if ($existing) {
 				$existing->type = $type;
-				$permissionsTable->save($existing);
+				if (!$permissionsTable->save($existing)) {
+					$this->response = $this->response->withStatus(500);
+					$this->set('error', 'Failed to update permission');
+				}
 			} else {
 				$permission = $permissionsTable->newEntity([
 					'action_id' => $actionId,
 					'role_id' => $roleId,
 					'type' => $type,
 				]);
-				$permissionsTable->save($permission);
+				if (!$permissionsTable->save($permission)) {
+					$this->response = $this->response->withStatus(500);
+					$this->set('error', 'Failed to save permission');
+				}
 			}
 		}
 

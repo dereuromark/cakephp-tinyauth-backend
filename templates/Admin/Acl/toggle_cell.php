@@ -13,6 +13,6 @@ $symbol = match ($type) {
 ?>
 <td id="cell-<?= $actionId ?>-<?= $roleId ?>"
 	class="matrix-cell <?= $type ?>"
-	onclick="window.TinyAuth.togglePermission(<?= $actionId ?>, <?= $roleId ?>, '<?= $type ?>')">
+	onclick="window.TinyAuth.togglePermission(<?= $actionId ?>, <?= $roleId ?>, '<?= h($type) ?>')">
 	<?= $symbol ?>
 </td>

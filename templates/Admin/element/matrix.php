@@ -34,8 +34,8 @@
 				};
 	?>
 			<td id="cell-<?= $action->id ?>-<?= $role->id ?>"
-				class="matrix-cell <?= $type ?>"
-				onclick="window.TinyAuth.togglePermission(<?= $action->id ?>, <?= $role->id ?>, '<?= $type ?>')">
+				class="matrix-cell <?= h($type) ?>"
+				onclick="window.TinyAuth.togglePermission(<?= $action->id ?>, <?= $role->id ?>, '<?= h($type) ?>')">
 				<?= $symbol ?>
 			</td>
 			<?php } ?>

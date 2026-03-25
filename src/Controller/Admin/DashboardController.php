@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use Cake\Core\Configure;
+use TinyAuthBackend\Service\FeatureService;
 
 class DashboardController extends AppController {
 
@@ -25,22 +25,18 @@ class DashboardController extends AppController {
 			'acl_permissions' => $aclPermissionsTable->find()->count(),
 		];
 
-		// Check enabled features
-		$features = [
-			'acl' => (bool)Configure::read('TinyAuthBackend.features.acl', true),
-			'allow' => (bool)Configure::read('TinyAuthBackend.features.allow', true),
-			'resources' => (bool)Configure::read('TinyAuthBackend.features.resources', false),
-			'scopes' => (bool)Configure::read('TinyAuthBackend.features.scopes', false),
-		];
+		// Check enabled features via service (auto-detects from database tables)
+		$featureService = new FeatureService();
+		$features = $featureService->getEnabledFeatures();
 
 		// Get resource stats if enabled
 		if ($features['resources']) {
 			$resourcesTable = $this->fetchTable('TinyAuthBackend.Resources');
-			$abilitiesTable = $this->fetchTable('TinyAuthBackend.Abilities');
-			$resourcePermissionsTable = $this->fetchTable('TinyAuthBackend.ResourcePermissions');
+			$resourceAbilitiesTable = $this->fetchTable('TinyAuthBackend.ResourceAbilities');
+			$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 			$stats['resources'] = $resourcesTable->find()->count();
-			$stats['abilities'] = $abilitiesTable->find()->count();
-			$stats['resource_permissions'] = $resourcePermissionsTable->find()->count();
+			$stats['abilities'] = $resourceAbilitiesTable->find()->count();
+			$stats['resource_permissions'] = $resourceAclTable->find()->count();
 		}
 
 		if ($features['scopes']) {

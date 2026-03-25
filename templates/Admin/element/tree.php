@@ -25,7 +25,7 @@ if ($selectedId !== null) {
 }
 $expandedJson = json_encode((object)$expandedNodes);
 ?>
-<div x-data="{ expanded: <?= $expandedJson ?> }">
+<div x-data="{ expanded: <?= h($expandedJson) ?> }">
     <?php foreach ($tree as $plugin => $pluginData) { ?>
     <div class="mb-2">
         <div class="tree-item flex items-center gap-1 cursor-pointer"

@@ -121,6 +121,32 @@ class RolesController extends AppController {
 		$rolesTable = $this->fetchTable('TinyAuthBackend.Roles');
 		$role = $rolesTable->get($id);
 
+		// Check for child roles
+		$childCount = $rolesTable->find()->where(['parent_id' => $id])->count();
+		if ($childCount > 0) {
+			$this->Flash->error(__('Cannot delete role. It has {0} child role(s).', $childCount));
+
+			return $this->redirect(['action' => 'index']);
+		}
+
+		// Check for ACL permissions using this role
+		$aclTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
+		$aclCount = $aclTable->find()->where(['role_id' => $id])->count();
+		if ($aclCount > 0) {
+			$this->Flash->error(__('Cannot delete role. It has {0} ACL permission(s).', $aclCount));
+
+			return $this->redirect(['action' => 'index']);
+		}
+
+		// Check for resource permissions using this role
+		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
+		$resourceCount = $resourceAclTable->find()->where(['role_id' => $id])->count();
+		if ($resourceCount > 0) {
+			$this->Flash->error(__('Cannot delete role. It has {0} resource permission(s).', $resourceCount));
+
+			return $this->redirect(['action' => 'index']);
+		}
+
 		if ($rolesTable->delete($role)) {
 			$this->roleSource->clearCache();
 			$this->Flash->success(__('Role deleted.'));
@@ -143,7 +169,7 @@ class RolesController extends AppController {
 		}
 
 		$roleId = (int)$this->request->getData('role_id');
-		$newParentId = $this->request->getData('parent_id');
+		$newParentId = $this->request->getData('parent_id') ? (int)$this->request->getData('parent_id') : null;
 		$newOrder = (int)$this->request->getData('sort_order');
 
 		/** @var \TinyAuthBackend\Model\Table\RolesTable $rolesTable */

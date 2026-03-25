@@ -38,7 +38,7 @@ $hasResults = !empty($results['controllers']) || !empty($results['actions']) || 
     <div class="p-2">
         <div class="text-xs font-semibold text-gray-400 uppercase px-2 py-1">Roles</div>
         <?php foreach ($results['roles'] as $role) { ?>
-        <a href="<?= $this->Url->build(['controller' => 'Roles', 'action' => 'view', $role->id]) ?>"
+        <a href="<?= $this->Url->build(['controller' => 'Roles', 'action' => 'edit', $role->id]) ?>"
            class="block px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm">
             <?= h($role->name) ?>
             <span class="text-gray-400 text-xs"><?= h($role->alias) ?></span>

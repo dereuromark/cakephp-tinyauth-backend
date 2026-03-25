@@ -47,7 +47,7 @@ class AllowController extends AppController {
 		$this->request->allowMethod(['post']);
 
 		$actionId = (int)$this->request->getData('action_id');
-		$isPublic = (bool)$this->request->getData('is_public');
+		$isPublic = filter_var($this->request->getData('is_public'), FILTER_VALIDATE_BOOLEAN);
 
 		if (!$actionId) {
 			$this->response = $this->response->withStatus(400);
@@ -81,7 +81,7 @@ class AllowController extends AppController {
 		$this->request->allowMethod(['post']);
 
 		$controllerId = (int)$this->request->getData('controller_id');
-		$isPublic = (bool)$this->request->getData('is_public');
+		$isPublic = filter_var($this->request->getData('is_public'), FILTER_VALIDATE_BOOLEAN);
 
 		if (!$controllerId) {
 			$this->Flash->error(__('Invalid controller.'));

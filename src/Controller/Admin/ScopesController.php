@@ -75,10 +75,19 @@ class ScopesController extends AppController {
 		$scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');
 		$scope = $scopesTable->get($id);
 
+		// Check if scope is in use
+		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
+		$usageCount = $resourceAclTable->find()->where(['scope_id' => $id])->count();
+		if ($usageCount > 0) {
+			$this->Flash->error(__('Cannot delete scope. It is used by {0} resource permission(s).', $usageCount));
+
+			return $this->redirect(['action' => 'index']);
+		}
+
 		if ($scopesTable->delete($scope)) {
 			$this->Flash->success(__('Scope deleted.'));
 		} else {
-			$this->Flash->error(__('Could not delete scope. It may be in use.'));
+			$this->Flash->error(__('Could not delete scope.'));
 		}
 
 		return $this->redirect(['action' => 'index']);

@@ -84,7 +84,31 @@ class RolesTable extends Table {
 
 		$validator
 			->integer('parent_id')
-			->allowEmptyString('parent_id');
+			->allowEmptyString('parent_id')
+			->add('parent_id', 'notSelf', [
+				'rule' => function ($value, $context) {
+					if (!$value) {
+						return true;
+					}
+					// Can't be your own parent
+					if (isset($context['data']['id']) && (int)$value === (int)$context['data']['id']) {
+						return false;
+					}
+
+					return true;
+				},
+				'message' => __('A role cannot be its own parent.'),
+			])
+			->add('parent_id', 'exists', [
+				'rule' => function ($value, $context) {
+					if (!$value) {
+						return true;
+					}
+
+					return $this->exists(['id' => $value]);
+				},
+				'message' => __('Parent role does not exist.'),
+			]);
 
 		$validator
 			->integer('sort_order')

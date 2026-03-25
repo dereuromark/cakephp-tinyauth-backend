@@ -56,13 +56,21 @@ class ScopesTable extends Table {
 			->scalar('entity_field')
 			->maxLength('entity_field', 100)
 			->requirePresence('entity_field', 'create')
-			->notEmptyString('entity_field');
+			->notEmptyString('entity_field')
+			->add('entity_field', 'validFieldName', [
+				'rule' => ['custom', '/^[a-zA-Z_][a-zA-Z0-9_]*$/'],
+				'message' => __('Invalid field name. Use only letters, numbers, and underscores.'),
+			]);
 
 		$validator
 			->scalar('user_field')
 			->maxLength('user_field', 100)
 			->requirePresence('user_field', 'create')
-			->notEmptyString('user_field');
+			->notEmptyString('user_field')
+			->add('user_field', 'validFieldName', [
+				'rule' => ['custom', '/^[a-zA-Z_][a-zA-Z0-9_]*$/'],
+				'message' => __('Invalid field name. Use only letters, numbers, and underscores.'),
+			]);
 
 		return $validator;
 	}

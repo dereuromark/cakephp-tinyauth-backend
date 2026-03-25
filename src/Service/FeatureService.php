@@ -38,6 +38,7 @@ class FeatureService {
 		'allow' => 'tinyauth_actions',
 		'roles' => 'tinyauth_roles',
 		'resources' => 'tinyauth_resources',
+		'scopes' => 'tinyauth_scopes',
 	];
 
 	/**
@@ -147,6 +148,12 @@ class FeatureService {
 				'label' => 'Resources',
 				'enabled' => $features['resources'] ?? false,
 				'route' => ['controller' => 'Resources', 'action' => 'index'],
+			],
+			[
+				'name' => 'scopes',
+				'label' => 'Scopes',
+				'enabled' => $features['scopes'] ?? false,
+				'route' => ['controller' => 'Scopes', 'action' => 'index'],
 			],
 		];
 

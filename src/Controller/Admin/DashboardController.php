@@ -54,4 +54,16 @@ class DashboardController extends AppController {
 		$this->set(compact('stats', 'features', 'recentControllers'));
 	}
 
+	/**
+	 * Concepts page explaining TinyAuth features.
+	 *
+	 * @return void
+	 */
+	public function concepts(): void {
+		$featureService = new FeatureService();
+		$features = $featureService->getEnabledFeatures();
+
+		$this->set(compact('features'));
+	}
+
 }

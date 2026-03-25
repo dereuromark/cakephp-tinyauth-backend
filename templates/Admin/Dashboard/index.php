@@ -51,18 +51,6 @@ $this->assign('title', 'Dashboard');
             <div class="p-4 space-y-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <span class="<?= $features['acl'] ? 'text-green-500' : 'text-gray-400' ?>">
-                            <?= $features['acl'] ? '&#10004;' : '&#10006;' ?>
-                        </span>
-                        <span>ACL Permissions</span>
-                    </div>
-                    <?php if ($features['acl']) { ?>
-                    <a href="<?= $this->Url->build(['controller' => 'Acl', 'action' => 'index']) ?>"
-                       class="text-primary text-sm">Manage &rarr;</a>
-                    <?php } ?>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
                         <span class="<?= $features['allow'] ? 'text-green-500' : 'text-gray-400' ?>">
                             <?= $features['allow'] ? '&#10004;' : '&#10006;' ?>
                         </span>
@@ -70,6 +58,18 @@ $this->assign('title', 'Dashboard');
                     </div>
                     <?php if ($features['allow']) { ?>
                     <a href="<?= $this->Url->build(['controller' => 'Allow', 'action' => 'index']) ?>"
+                       class="text-primary text-sm">Manage &rarr;</a>
+                    <?php } ?>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="<?= $features['acl'] ? 'text-green-500' : 'text-gray-400' ?>">
+                            <?= $features['acl'] ? '&#10004;' : '&#10006;' ?>
+                        </span>
+                        <span>ACL Permissions</span>
+                    </div>
+                    <?php if ($features['acl']) { ?>
+                    <a href="<?= $this->Url->build(['controller' => 'Acl', 'action' => 'index']) ?>"
                        class="text-primary text-sm">Manage &rarr;</a>
                     <?php } ?>
                 </div>
@@ -106,15 +106,15 @@ $this->assign('title', 'Dashboard');
                 <h2 class="font-semibold">Quick Actions</h2>
             </div>
             <div class="p-4 space-y-2">
+                <a href="<?= $this->Url->build(['controller' => 'Dashboard', 'action' => 'concepts']) ?>"
+                   class="block p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-800">
+                    <div class="font-medium text-blue-700 dark:text-blue-300">Learn Concepts</div>
+                    <div class="text-sm text-blue-600 dark:text-blue-400">Understand how TinyAuth works</div>
+                </a>
                 <a href="<?= $this->Url->build(['controller' => 'Sync', 'action' => 'controllers']) ?>"
                    class="block p-3 rounded-lg bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700">
                     <div class="font-medium">Sync Controllers</div>
                     <div class="text-sm text-gray-500">Discover new controllers and actions</div>
-                </a>
-                <a href="<?= $this->Url->build(['controller' => 'Roles', 'action' => 'index']) ?>"
-                   class="block p-3 rounded-lg bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700">
-                    <div class="font-medium">Manage Roles</div>
-                    <div class="text-sm text-gray-500">Configure role hierarchy</div>
                 </a>
                 <?php if ($features['resources']) { ?>
                 <a href="<?= $this->Url->build(['controller' => 'Sync', 'action' => 'resources']) ?>"

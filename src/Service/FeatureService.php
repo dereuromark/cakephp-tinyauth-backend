@@ -126,16 +126,16 @@ class FeatureService {
 				'route' => ['controller' => 'Dashboard', 'action' => 'index'],
 			],
 			[
-				'name' => 'acl',
-				'label' => 'ACL',
-				'enabled' => $features['acl'] ?? false,
-				'route' => ['controller' => 'Acl', 'action' => 'index'],
-			],
-			[
 				'name' => 'allow',
 				'label' => 'Allow',
 				'enabled' => $features['allow'] ?? false,
 				'route' => ['controller' => 'Allow', 'action' => 'index'],
+			],
+			[
+				'name' => 'acl',
+				'label' => 'ACL',
+				'enabled' => $features['acl'] ?? false,
+				'route' => ['controller' => 'Acl', 'action' => 'index'],
 			],
 			[
 				'name' => 'roles',

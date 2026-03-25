@@ -47,4 +47,4 @@ $hasResults = !empty($results['controllers']) || !empty($results['actions']) || 
     </div>
     <?php } ?>
 </div>
-<?php } ?>
+<?php }

@@ -5,14 +5,14 @@
  * @var int $roleId
  * @var string $type
  */
-$symbol = match($type) {
-    'allow' => '&#9679;',
-    'deny' => '&#10005;',
-    default => '&#9675;',
+$symbol = match ($type) {
+	'allow' => '&#9679;',
+	'deny' => '&#10005;',
+	default => '&#9675;',
 };
 ?>
 <td id="cell-<?= $actionId ?>-<?= $roleId ?>"
-    class="matrix-cell <?= $type ?>"
-    onclick="window.TinyAuth.togglePermission(<?= $actionId ?>, <?= $roleId ?>, '<?= $type ?>')">
-    <?= $symbol ?>
+	class="matrix-cell <?= $type ?>"
+	onclick="window.TinyAuth.togglePermission(<?= $actionId ?>, <?= $roleId ?>, '<?= $type ?>')">
+	<?= $symbol ?>
 </td>

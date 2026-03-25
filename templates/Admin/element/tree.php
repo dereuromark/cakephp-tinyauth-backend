@@ -16,7 +16,7 @@
 
         <div x-show="expanded['<?= $plugin ?>']" x-collapse class="ml-4">
             <?php foreach ($pluginData['prefixes'] as $prefix => $prefixData) { ?>
-            <?php if ($prefix !== '_root') { ?>
+				<?php if ($prefix !== '_root') { ?>
             <div class="mb-1">
                 <div class="tree-item flex items-center gap-1 text-sm cursor-pointer"
                      @click="expanded['<?= $plugin ?>_<?= $prefix ?>'] = !expanded['<?= $plugin ?>_<?= $prefix ?>']">
@@ -34,10 +34,10 @@
                 </div>
             </div>
             <?php } else { ?>
-                <?php foreach ($prefixData['controllers'] as $controller) { ?>
+					<?php foreach ($prefixData['controllers'] as $controller) { ?>
                 <a href="<?= $this->Url->build(['action' => 'index', '?' => ['controller_id' => $controller->id]]) ?>"
                    class="tree-item block text-sm <?= $controller->id === $selectedId ? 'active' : '' ?>">
-                    <?= h($controller->name) ?>
+						<?= h($controller->name) ?>
                 </a>
                 <?php } ?>
             <?php } ?>

@@ -34,10 +34,10 @@ $this->assign('title', 'ACL Permissions');
 
             <div class="p-4 overflow-x-auto">
                 <?= $this->element('TinyAuthBackend.matrix', [
-                    'actions' => $actions,
-                    'roles' => $roles,
-                    'permissions' => $permissions,
-                ]) ?>
+					'actions' => $actions,
+					'roles' => $roles,
+					'permissions' => $permissions,
+				]) ?>
             </div>
 
             <!-- Legend -->

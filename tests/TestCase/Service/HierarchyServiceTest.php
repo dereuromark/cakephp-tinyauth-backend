@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Service;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Service\HierarchyService;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class HierarchyServiceTest extends TestCase {
+
+	use DatabaseTestTrait;
 
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
@@ -63,10 +65,6 @@ class HierarchyServiceTest extends TestCase {
 			['user' => 3, 'moderator' => 2, 'admin' => 1],
 			$result['Articles']['allow']['edit'],
 		);
-	}
-
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
 	}
 
 }

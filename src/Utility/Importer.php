@@ -7,6 +7,7 @@ use Cake\Datasource\ModelAwareTrait;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
 use TinyAuth\Utility\TinyAuth;
+use TinyAuthBackend\Service\ControllerSyncService;
 use TinyAuthBackend\Service\RoleSourceService;
 
 class Importer {
@@ -105,7 +106,7 @@ class Importer {
 			return;
 		}
 
-		$controllerSyncService = new \TinyAuthBackend\Service\ControllerSyncService();
+		$controllerSyncService = new ControllerSyncService();
 		$controllerSyncService->sync();
 
 		/** @var \TinyAuthBackend\Model\Table\TinyauthControllersTable $controllersTable */

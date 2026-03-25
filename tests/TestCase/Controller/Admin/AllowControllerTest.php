@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class AllowControllerTest extends TestCase {
 
+	use DatabaseTestTrait;
 	use IntegrationTestTrait;
 
 	protected array $fixtures = [
@@ -67,14 +68,6 @@ class AllowControllerTest extends TestCase {
 
 		$this->assertResponseCode(302);
 		$this->assertSame(2, $this->countRows('tinyauth_actions', ['controller_id' => 1, 'is_public' => true]));
-	}
-
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
-	}
-
-	protected function countRows(string $table, array $conditions): int {
-		return TableRegistry::getTableLocator()->get($table)->find()->where($conditions)->count();
 	}
 
 }

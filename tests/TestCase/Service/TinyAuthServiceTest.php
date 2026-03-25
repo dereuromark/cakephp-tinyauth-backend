@@ -5,12 +5,14 @@ namespace TinyAuthBackend\Test\TestCase\Service;
 
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\Article;
 use TinyAuthBackend\Service\TinyAuthService;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class TinyAuthServiceTest extends TestCase {
+
+	use DatabaseTestTrait;
 
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
@@ -191,10 +193,6 @@ class TinyAuthServiceTest extends TestCase {
 		$result = $service->getUserRoles($user);
 
 		$this->assertSame(['user', 'admin'], $result);
-	}
-
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
 	}
 
 }

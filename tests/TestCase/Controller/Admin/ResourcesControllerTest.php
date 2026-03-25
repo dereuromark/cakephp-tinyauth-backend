@@ -4,13 +4,14 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
 use Cake\Core\Configure;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Service\RoleSourceService;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class ResourcesControllerTest extends TestCase {
 
+	use DatabaseTestTrait;
 	use IntegrationTestTrait;
 
 	protected array $fixtures = [
@@ -100,14 +101,6 @@ class ResourcesControllerTest extends TestCase {
 
 		$this->assertResponseCode(302);
 		$this->assertSame(0, $this->countRows('tinyauth_resource_abilities', ['id' => 1]));
-	}
-
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
-	}
-
-	protected function countRows(string $table, array $conditions): int {
-		return TableRegistry::getTableLocator()->get($table)->find()->where($conditions)->count();
 	}
 
 }

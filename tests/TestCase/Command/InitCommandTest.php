@@ -7,10 +7,12 @@ use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
 
 class InitCommandTest extends TestCase {
 
 	use ConsoleIntegrationTestTrait;
+	use DatabaseTestTrait;
 
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
@@ -41,10 +43,6 @@ class InitCommandTest extends TestCase {
 		$this->assertOutputContains('/admin/auth');
 		$this->assertOutputNotContains('/auth/index');
 		$this->assertGreaterThan(0, TableRegistry::getTableLocator()->get('tinyauth_acl_permissions')->find()->count());
-	}
-
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
 	}
 
 }

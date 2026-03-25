@@ -220,12 +220,13 @@ class ControllerSyncService {
 					'prefix' => $item['prefix'],
 					'name' => $item['name'],
 				]);
-				$controllersTable->save($controller);
-				$existing = $controller;
-				$result['added']++;
+				if ($controllersTable->save($controller)) {
+					$existing = $controller;
+					$result['added']++;
+				}
 			}
 
-			if ($existing && $addActions) {
+			if ($existing && $existing->id && $addActions) {
 				foreach ($item['actions'] as $actionName) {
 					$existingAction = $actionsTable->find()
 						->where([

@@ -66,7 +66,7 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
                     <input type="search"
                            placeholder="Search controllers, actions, roles..."
                            class="w-full px-3 py-1.5 text-sm bg-gray-100 dark:bg-slate-700 border-0 rounded-md focus:ring-2 focus:ring-primary"
-                           hx-get="<?= $this->Url->build(['action' => 'search']) ?>"
+                           hx-get="<?= $this->Url->build(['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin', 'controller' => 'Acl', 'action' => 'search']) ?>"
                            hx-trigger="keyup changed delay:300ms"
                            hx-target="#search-results"
                            name="q">

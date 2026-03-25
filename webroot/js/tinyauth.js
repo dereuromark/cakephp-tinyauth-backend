@@ -27,33 +27,36 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Namespace for TinyAuth functions
+window.TinyAuth = window.TinyAuth || {};
+
 // Matrix cell toggle
-function togglePermission(actionId, roleId, currentState) {
+window.TinyAuth.togglePermission = function(actionId, roleId, currentState) {
     const states = ['none', 'allow', 'deny'];
     const nextIndex = (states.indexOf(currentState) + 1) % states.length;
     const nextState = states[nextIndex];
 
-    htmx.ajax('POST', '/admin/tinyauth/acl/toggle', {
+    htmx.ajax('POST', window.TinyAuth.urls.aclToggle, {
         values: {
             action_id: actionId,
             role_id: roleId,
             type: nextState
         },
-        target: `#cell-${actionId}-${roleId}`,
+        target: '#cell-' + actionId + '-' + roleId,
         swap: 'outerHTML'
     });
-}
+};
 
 // Resource permission toggle (with scope)
-function toggleResourcePermission(abilityId, roleId, currentState, scopeId) {
-    htmx.ajax('POST', '/admin/tinyauth/resources/toggle', {
+window.TinyAuth.toggleResourcePermission = function(abilityId, roleId, currentState, scopeId) {
+    htmx.ajax('POST', window.TinyAuth.urls.resourceToggle, {
         values: {
             ability_id: abilityId,
             role_id: roleId,
             type: currentState === 'none' ? 'allow' : (currentState === 'allow' ? 'deny' : 'none'),
             scope_id: scopeId || ''
         },
-        target: `#rcell-${abilityId}-${roleId}`,
+        target: '#rcell-' + abilityId + '-' + roleId,
         swap: 'outerHTML'
     });
-}
+};

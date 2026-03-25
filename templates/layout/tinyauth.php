@@ -1,6 +1,11 @@
 <?php
 // plugins/TinyAuthBackend/templates/layout/tinyauth.php
 declare(strict_types=1);
+
+/**
+ * @var \Cake\View\View $this
+ */
+$this->loadHelper('TinyAuthBackend.TinyAuth');
 ?>
 <!DOCTYPE html>
 <html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
@@ -23,6 +28,14 @@ declare(strict_types=1);
             }
         }
     </script>
+    <script>
+        window.TinyAuth = {
+            urls: {
+                aclToggle: <?= json_encode($this->Url->build(['plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle', 'prefix' => 'Admin'])) ?>,
+                resourceToggle: <?= json_encode($this->Url->build(['plugin' => 'TinyAuthBackend', 'controller' => 'Resources', 'action' => 'toggle', 'prefix' => 'Admin'])) ?>
+            }
+        };
+    </script>
     <?= $this->Html->css('TinyAuthBackend.tinyauth') ?>
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100 min-h-screen">
@@ -39,7 +52,7 @@ declare(strict_types=1);
                 </div>
 
                 <!-- Search -->
-                <div class="flex-1 max-w-md mx-8">
+                <div class="flex-1 max-w-md mx-8 relative">
                     <input type="search"
                            placeholder="Search controllers, actions, roles..."
                            class="w-full px-3 py-1.5 text-sm bg-gray-100 dark:bg-slate-700 border-0 rounded-md focus:ring-2 focus:ring-primary"
@@ -53,11 +66,9 @@ declare(strict_types=1);
                 <!-- Navigation (feature-aware) -->
                 <nav class="flex items-center gap-1">
                     <?php
-                    // Get enabled features from FeatureService
-                    $featureService = new \TinyAuthBackend\Service\FeatureService();
-                    $navItems = $featureService->getNavigationItems();
+                    $navItems = $this->TinyAuth->getNavigationItems();
                     $currentController = $this->request->getParam('controller');
-                    foreach ($navItems as $item):
+                    foreach ($navItems as $item) {
                         $isActive = $currentController === $item['route']['controller'];
                         $route = $item['route'] + ['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin'];
                     ?>
@@ -65,7 +76,7 @@ declare(strict_types=1);
                        class="px-3 py-1.5 text-sm rounded-md <?= $isActive ? 'bg-primary text-white' : 'hover:bg-gray-100 dark:hover:bg-slate-700' ?>">
                         <?= h($item['label']) ?>
                     </a>
-                    <?php endforeach; ?>
+                    <?php } ?>
 
                     <!-- Theme toggle -->
                     <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)"

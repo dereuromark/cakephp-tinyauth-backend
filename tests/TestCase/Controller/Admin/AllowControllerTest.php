@@ -68,20 +68,6 @@ class AllowControllerTest extends TestCase {
 
 		$this->assertResponseCode(302);
 		$this->assertSame(2, $this->countRows('tinyauth_actions', ['controller_id' => 1, 'is_public' => true]));
-<<<<<<< HEAD
-=======
 	}
 
-<<<<<<< HEAD
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
-	}
-
-	protected function countRows(string $table, array $conditions): int {
-		return TableRegistry::getTableLocator()->get($table)->find()->where($conditions)->count();
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
-	}
-
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

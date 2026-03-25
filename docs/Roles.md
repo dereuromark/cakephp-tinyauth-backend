@@ -45,15 +45,7 @@ You do not have to manage roles in `tinyauth_roles`.
 When an external source is used:
 
 - the roles UI becomes read-only
-<<<<<<< HEAD
-<<<<<<< HEAD
 - external roles are mirrored into `tinyauth_roles` so ACL/resource assignments can still be stored with foreign keys
-=======
-- the backend still uses those aliases for ACL/resource assignments
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
-- external roles are mirrored into `tinyauth_roles` so ACL/resource assignments can still be stored with foreign keys
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 
 ### Example Config
 

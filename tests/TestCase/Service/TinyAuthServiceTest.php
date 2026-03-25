@@ -5,8 +5,6 @@ namespace TinyAuthBackend\Test\TestCase\Service;
 
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
-<<<<<<< HEAD
-<<<<<<< HEAD
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\Article;
 use TinyAuthBackend\Service\TinyAuthService;
@@ -16,23 +14,6 @@ class TinyAuthServiceTest extends TestCase {
 
 	use DatabaseTestTrait;
 
-=======
-use Cake\ORM\TableRegistry;
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
-use Cake\TestSuite\TestCase;
-use TestApp\Model\Entity\Article;
-use TinyAuthBackend\Service\TinyAuthService;
-use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
-
-class TinyAuthServiceTest extends TestCase {
-
-<<<<<<< HEAD
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
-	use DatabaseTestTrait;
-
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
 		'plugin.TinyAuthBackend.TinyAuthResources',
@@ -161,10 +142,6 @@ class TinyAuthServiceTest extends TestCase {
 		$this->assertTrue($result);
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 	public function testCanAccessResourceUsesEntityClassToAvoidNameCollisions(): void {
 		$this->insertRow('tinyauth_resources', [
 			'id' => 2,
@@ -216,18 +193,6 @@ class TinyAuthServiceTest extends TestCase {
 		$result = $service->getUserRoles($user);
 
 		$this->assertSame(['user', 'admin'], $result);
-<<<<<<< HEAD
-=======
-=======
 	}
 
-<<<<<<< HEAD
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-	}
-
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

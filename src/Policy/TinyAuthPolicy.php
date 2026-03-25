@@ -169,23 +169,9 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	 * @return string The resource name.
 	 */
 	protected function getResourceName(EntityInterface $entity): string {
-<<<<<<< HEAD
-<<<<<<< HEAD
 		return get_class($entity);
 	}
 
-=======
-		$className = get_class($entity);
-		$parts = explode('\\', $className);
-		$entityName = end($parts) ?: '';
-
-		return $entityName;
-=======
-		return get_class($entity);
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
-	}
-
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
 	/**
 	 * @return array<string>
 	 */

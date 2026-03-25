@@ -8,14 +8,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Auth\AclAdapter\DbAclAdapter;
 use TinyAuthBackend\Service\RoleSourceService;
-<<<<<<< HEAD
-<<<<<<< HEAD
 use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
-=======
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
-=======
-use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 
 class AclControllerTest extends TestCase {
 
@@ -106,26 +99,9 @@ class AclControllerTest extends TestCase {
 
 	public function testSearchReturnsMatchingInternalRecords(): void {
 		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'search', '?' => ['q' => 'ind']]);
-<<<<<<< HEAD
-
-		$this->assertResponseCode(200);
-		$this->assertResponseContains('index');
-=======
 
 		$this->assertResponseCode(200);
 		$this->assertResponseContains('index');
 	}
 
-<<<<<<< HEAD
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
-	}
-
-	protected function countRows(string $table, array $conditions): int {
-		return TableRegistry::getTableLocator()->get($table)->find()->where($conditions)->count();
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
-	}
-
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

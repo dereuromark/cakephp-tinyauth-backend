@@ -30,33 +30,16 @@ Common sections:
 
 ### Which Guide Should I Read?
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 - [Strategies Overview](Strategies/README.md)
 - [Adapter-Only Strategy](Strategies/AdapterOnly.md)
 - [Full TinyAuthBackend Strategy](Strategies/FullBackend.md)
 - [Native CakePHP Auth Strategy](Strategies/NativeAuth.md)
 - [External Role Source Strategy](Strategies/ExternalRoles.md)
-<<<<<<< HEAD
-=======
-- [Adapter-Only Strategy](AdapterOnly.md)
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 - [Authorization Integration](Authorization.md)
 - [Resource Permissions](Resources.md)
 - [Roles and Hierarchy](Roles.md)
 - [Scopes](Scopes.md)
 - [Services API](Services.md)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-- [Native CakePHP Auth Strategy](NativeAuth.md)
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 
 ### Feature Flags
 

@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Service;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Service\HierarchyService;
 use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
@@ -13,22 +11,6 @@ class HierarchyServiceTest extends TestCase {
 
 	use DatabaseTestTrait;
 
-=======
-use Cake\ORM\TableRegistry;
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
-use Cake\TestSuite\TestCase;
-use TinyAuthBackend\Service\HierarchyService;
-use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
-
-class HierarchyServiceTest extends TestCase {
-
-<<<<<<< HEAD
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
-	use DatabaseTestTrait;
-
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
 	];
@@ -85,14 +67,4 @@ class HierarchyServiceTest extends TestCase {
 		);
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
-	}
-
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

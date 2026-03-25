@@ -27,23 +27,15 @@ trait DatabaseTestTrait {
 
 	protected function syncPrimaryKeySequence(Table $tableObject, string $table): void {
 		$connection = $tableObject->getConnection();
-<<<<<<< HEAD
 		$driver = $connection->getDriver();
 		if (!($driver instanceof Postgres)) {
-=======
-		if (!($connection->getDriver() instanceof Postgres)) {
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 			return;
 		}
 		if (!$tableObject->getSchema()->hasColumn('id')) {
 			return;
 		}
 
-<<<<<<< HEAD
 		$quotedTable = $driver->quoteIdentifier($table);
-=======
-		$quotedTable = $connection->quoteIdentifier($table);
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 		$connection->execute(sprintf(
 			"SELECT setval(pg_get_serial_sequence('%s', 'id'), COALESCE((SELECT MAX(id) FROM %s), 1), true)",
 			$table,

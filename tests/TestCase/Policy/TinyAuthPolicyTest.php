@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Policy;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
@@ -16,27 +14,6 @@ class TinyAuthPolicyTest extends TestCase {
 
 	use DatabaseTestTrait;
 
-=======
-use ArrayAccess;
-use Authorization\IdentityInterface;
-use Authorization\Policy\ResultInterface;
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
-use Cake\Core\Configure;
-use Cake\ORM\Entity;
-use Cake\TestSuite\TestCase;
-use TestApp\Model\Entity\Article;
-use TinyAuthBackend\Policy\TinyAuthPolicy;
-use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
-
-class TinyAuthPolicyTest extends TestCase {
-
-<<<<<<< HEAD
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
-	use DatabaseTestTrait;
-
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 	protected array $fixtures = [
 		'plugin.TinyAuthBackend.TinyAuthRoles',
 		'plugin.TinyAuthBackend.TinyAuthResources',
@@ -108,53 +85,4 @@ class TinyAuthPolicyTest extends TestCase {
 		$this->assertTrue($result);
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-	protected function insertRow(string $table, array $data): void {
-		TableRegistry::getTableLocator()->get($table)->getConnection()->insert($table, $data);
-	}
-
-}
-
-class TestIdentity implements IdentityInterface {
-
-	public function __construct(protected EntityInterface&ArrayAccess $data) {
-	}
-
-	public function can(string $action, mixed $resource): bool {
-		return false;
-	}
-
-	public function canResult(string $action, mixed $resource): ResultInterface {
-		throw new \BadMethodCallException('Not implemented for this test double.');
-	}
-
-	public function applyScope(string $action, mixed $resource, mixed ...$optionalArgs): mixed {
-		return $resource;
-	}
-
-	public function getOriginalData(): ArrayAccess|array {
-		return $this->data;
-	}
-
-	public function offsetExists(mixed $offset): bool {
-		return $this->data->offsetExists($offset);
-	}
-
-	public function offsetGet(mixed $offset): mixed {
-		return $this->data->offsetGet($offset);
-	}
-
-	public function offsetSet(mixed $offset, mixed $value): void {
-		$this->data->offsetSet($offset, $value);
-	}
-
-	public function offsetUnset(mixed $offset): void {
-		$this->data->offsetUnset($offset);
-	}
-
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
->>>>>>> 9fc4af4 (Fix CI across databases and static checks)
 }

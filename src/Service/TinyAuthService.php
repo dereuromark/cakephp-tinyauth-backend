@@ -65,15 +65,7 @@ class TinyAuthService {
 	public function canAccessResource(EntityInterface $user, EntityInterface $entity, string $ability): bool {
 		return $this->canAccess(
 			$this->getUserRoles($user),
-<<<<<<< HEAD
-<<<<<<< HEAD
 			$this->getResourceIdentifier($entity),
-=======
-			$this->getResourceName($entity),
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
-			$this->getResourceIdentifier($entity),
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 			$ability,
 			$entity,
 			$user,
@@ -263,21 +255,8 @@ class TinyAuthService {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return string
 	 */
-<<<<<<< HEAD
-<<<<<<< HEAD
 	protected function getResourceIdentifier(EntityInterface $entity): string {
 		return get_class($entity);
-=======
-	protected function getResourceName(EntityInterface $entity): string {
-		$className = get_class($entity);
-		$parts = explode('\\', $className);
-
-		return end($parts) ?: '';
->>>>>>> 11f8781 (Fix auth hierarchy semantics and document usage modes)
-=======
-	protected function getResourceIdentifier(EntityInterface $entity): string {
-		return get_class($entity);
->>>>>>> af88ee6 (Finish role source support and replace placeholder tests)
 	}
 
 	/**

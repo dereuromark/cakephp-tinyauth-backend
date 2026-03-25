@@ -26,6 +26,9 @@ class DbAclAdapter implements AclAdapterInterface {
 		$acl = [];
 		foreach ($permissions as $permission) {
 			$action = $permission->action;
+			if (!$action || !$action->tinyauth_controller) {
+				continue; // Skip malformed permissions
+			}
 			$controller = $action->tinyauth_controller;
 			$key = $this->buildKey($controller->plugin, $controller->prefix, $controller->name);
 
@@ -37,6 +40,10 @@ class DbAclAdapter implements AclAdapterInterface {
 					'allow' => [],
 					'deny' => [],
 				];
+			}
+
+			if (!$permission->role) {
+				continue; // Skip permissions with missing roles
 			}
 
 			$type = $permission->type === 'allow' ? 'allow' : 'deny';

@@ -32,7 +32,7 @@ class DbAllowAdapter implements AllowAdapterInterface {
 					'prefix' => $controller->prefix,
 					'controller' => $controller->name,
 					'allow' => [],
-					'deny' => [],
+					'deny' => [], // Required by TinyAuth structure, not used for public actions
 				];
 			}
 

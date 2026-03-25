@@ -44,7 +44,7 @@ class TinyAuthBackendPlugin extends BasePlugin {
 	 */
 	public function routes(RouteBuilder $routes): void {
 		$routes->plugin('TinyAuthBackend', ['path' => '/admin/auth'], function (RouteBuilder $builder): void {
-			$builder->prefix('Admin', function (RouteBuilder $prefixBuilder): void {
+			$builder->prefix('Admin', ['path' => ''], function (RouteBuilder $prefixBuilder): void {
 				$prefixBuilder->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
 				$prefixBuilder->connect('/dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
 				$prefixBuilder->connect('/acl', ['controller' => 'Acl', 'action' => 'index']);

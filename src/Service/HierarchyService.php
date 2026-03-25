@@ -12,15 +12,37 @@ use Cake\ORM\TableRegistry;
 class HierarchyService {
 
 	/**
-	 * @var array<string, int|null>
+	 * @var array<string, string> alias => parent_alias
 	 */
 	protected array $roleParents = [];
 
 	/**
-	 * Constructor - loads role hierarchy on initialization.
+	 * @var array<int, string> id => alias
+	 */
+	protected array $roleAliasById = [];
+
+	/**
+	 * @var bool Whether the hierarchy has been loaded.
+	 */
+	protected bool $hierarchyLoaded = false;
+
+	/**
+	 * Constructor.
 	 */
 	public function __construct() {
-		$this->loadRoleHierarchy();
+		// Lazy loading - hierarchy loaded on first use
+	}
+
+	/**
+	 * Ensure role hierarchy is loaded.
+	 *
+	 * @return void
+	 */
+	protected function ensureHierarchyLoaded(): void {
+		if (!$this->hierarchyLoaded) {
+			$this->loadRoleHierarchy();
+			$this->hierarchyLoaded = true;
+		}
 	}
 
 	/**
@@ -33,7 +55,14 @@ class HierarchyService {
 		$roles = $rolesTable->find()->all();
 
 		foreach ($roles as $role) {
-			$this->roleParents[$role->alias] = $role->parent_id;
+			$this->roleAliasById[$role->id] = $role->alias;
+		}
+
+		// Build parent map using aliases
+		foreach ($roles as $role) {
+			if ($role->parent_id !== null && isset($this->roleAliasById[$role->parent_id])) {
+				$this->roleParents[$role->alias] = $this->roleAliasById[$role->parent_id];
+			}
 		}
 	}
 
@@ -44,14 +73,15 @@ class HierarchyService {
 	 * @return array<string> Array of parent role aliases.
 	 */
 	public function getParentRoles(string $roleAlias): array {
-		$parents = [];
-		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
+		$this->ensureHierarchyLoaded();
 
-		$role = $rolesTable->find()->where(['alias' => $roleAlias])->first();
-		while ($role && $role->parent_id) {
-			$parent = $rolesTable->get($role->parent_id);
-			$parents[] = $parent->alias;
-			$role = $parent;
+		$parents = [];
+		$currentAlias = $roleAlias;
+
+		while (isset($this->roleParents[$currentAlias])) {
+			$parentAlias = $this->roleParents[$currentAlias];
+			$parents[] = $parentAlias;
+			$currentAlias = $parentAlias;
 		}
 
 		return $parents;
@@ -65,6 +95,8 @@ class HierarchyService {
 	 * @return array<string, array<string, mixed>> The ACL with inherited permissions applied.
 	 */
 	public function applyInheritance(array $acl, array $availableRoles): array {
+		$this->ensureHierarchyLoaded();
+
 		foreach ($acl as $key => $controllerAcl) {
 			if (!isset($controllerAcl['allow'])) {
 				continue;
@@ -97,6 +129,8 @@ class HierarchyService {
 	 * @return array<string, int> Child roles as alias => id mapping.
 	 */
 	public function getChildRoles(string $parentAlias, array $availableRoles): array {
+		$this->ensureHierarchyLoaded();
+
 		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
 		$parent = $rolesTable->find()->where(['alias' => $parentAlias])->first();
 

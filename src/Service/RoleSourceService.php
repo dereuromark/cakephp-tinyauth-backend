@@ -71,16 +71,19 @@ class RoleSourceService {
 		if ($roleSource !== null) {
 			// External source - convert to simple objects
 			$roles = $this->getRoles();
+			$result = [];
 
-			return array_map(function ($alias, $id) {
-				return (object)[
+			foreach ($roles as $alias => $id) {
+				$result[] = (object)[
 					'id' => $id,
 					'alias' => $alias,
-					'name' => ucfirst($alias),
+					'name' => ucfirst((string)$alias),
 					'parent_id' => null,
 					'sort_order' => 0,
 				];
-			}, array_keys($roles), array_values($roles));
+			}
+
+			return $result;
 		}
 
 		// Default: fetch from table with hierarchy

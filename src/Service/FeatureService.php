@@ -168,6 +168,8 @@ class FeatureService {
 
 			return in_array($tableName, $tables, true);
 		} catch (Exception $e) {
+			// Treat connection errors as "table missing" - conservative approach
+			// Logging could be added here if debugging is needed
 			return false;
 		}
 	}

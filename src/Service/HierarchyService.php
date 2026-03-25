@@ -79,8 +79,10 @@ class HierarchyService {
 
 		$parents = [];
 		$currentAlias = $roleAlias;
+		$visited = [];
 
-		while (isset($this->roleParents[$currentAlias])) {
+		while (isset($this->roleParents[$currentAlias]) && !isset($visited[$currentAlias])) {
+			$visited[$currentAlias] = true;
 			$parentAlias = $this->roleParents[$currentAlias];
 			$parents[] = $parentAlias;
 			$currentAlias = $parentAlias;
@@ -106,15 +108,19 @@ class HierarchyService {
 
 			foreach ($controllerAcl['allow'] as $action => $roles) {
 				foreach ($roles as $roleAlias => $roleId) {
-					// Get all child roles that should inherit this permission
-					$childRoles = $this->getChildRoles($roleAlias, $availableRoles);
-					foreach ($childRoles as $childAlias => $childId) {
+					// Higher roles inherit lower-role permissions.
+					$parentRoles = $this->getParentRoles($roleAlias);
+					foreach ($parentRoles as $parentAlias) {
+						$parentId = $availableRoles[$parentAlias] ?? null;
+						if ($parentId === null) {
+							continue;
+						}
 						// Don't override explicit deny
-						if (isset($acl[$key]['deny'][$action][$childAlias])) {
+						if (isset($acl[$key]['deny'][$action][$parentAlias])) {
 							continue;
 						}
 						// Add inherited permission
-						$acl[$key]['allow'][$action][$childAlias] = $childId;
+						$acl[$key]['allow'][$action][$parentAlias] = $parentId;
 					}
 				}
 			}
@@ -148,15 +154,43 @@ class HierarchyService {
 	}
 
 	/**
+	 * Get descendant role aliases ordered from nearest child to deepest descendant.
+	 *
+	 * @param string $parentAlias The parent role alias.
+	 * @return array<string>
+	 */
+	public function getDescendantRoleAliases(string $parentAlias): array {
+		$this->ensureHierarchyLoaded();
+
+		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
+		/** @var \TinyAuthBackend\Model\Entity\Role|null $parent */
+		$parent = $rolesTable->find()->where(['alias' => $parentAlias])->first();
+		if (!$parent) {
+			return [];
+		}
+
+		$aliases = [];
+		$this->collectDescendantAliases($parent->id, $aliases, $rolesTable);
+
+		return $aliases;
+	}
+
+	/**
 	 * Recursively collect child roles.
 	 *
 	 * @param int $parentId The parent role ID.
 	 * @param array<string, int> $children Reference to children array to populate.
 	 * @param array<string, int> $availableRoles Available roles as alias => id mapping.
 	 * @param \Cake\ORM\Table $rolesTable The roles table instance.
+	 * @param array<int, bool> $visited
 	 * @return void
 	 */
-	protected function collectChildren(int $parentId, array &$children, array $availableRoles, Table $rolesTable): void {
+	protected function collectChildren(int $parentId, array &$children, array $availableRoles, Table $rolesTable, array &$visited = []): void {
+		if (isset($visited[$parentId])) {
+			return;
+		}
+		$visited[$parentId] = true;
+
 		$childRoles = $rolesTable->find()->where(['parent_id' => $parentId])->all();
 
 		/** @var \TinyAuthBackend\Model\Entity\Role $child */
@@ -164,7 +198,34 @@ class HierarchyService {
 			if (isset($availableRoles[$child->alias])) {
 				$children[$child->alias] = $availableRoles[$child->alias];
 			}
-			$this->collectChildren($child->id, $children, $availableRoles, $rolesTable);
+			$this->collectChildren($child->id, $children, $availableRoles, $rolesTable, $visited);
+		}
+	}
+
+	/**
+	 * @param int $parentId
+	 * @param array<string> $aliases
+	 * @param \Cake\ORM\Table $rolesTable
+	 * @param array<int, bool> $visited
+	 * @return void
+	 */
+	protected function collectDescendantAliases(int $parentId, array &$aliases, Table $rolesTable, array &$visited = []): void {
+		if (isset($visited[$parentId])) {
+			return;
+		}
+		$visited[$parentId] = true;
+
+		$childRoles = $rolesTable->find()
+			->select(['id', 'alias'])
+			->where(['parent_id' => $parentId])
+			->orderByAsc('sort_order')
+			->orderByAsc('id')
+			->all();
+
+		/** @var \TinyAuthBackend\Model\Entity\Role $child */
+		foreach ($childRoles as $child) {
+			$aliases[] = $child->alias;
+			$this->collectDescendantAliases($child->id, $aliases, $rolesTable, $visited);
 		}
 	}
 

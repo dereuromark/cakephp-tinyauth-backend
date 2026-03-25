@@ -6,8 +6,8 @@ namespace TinyAuthBackend\Policy;
 use Authorization\IdentityInterface;
 use Authorization\Policy\BeforePolicyInterface;
 use BadMethodCallException;
+use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
-use Cake\Utility\Inflector;
 use TinyAuthBackend\Service\TinyAuthService;
 
 /**
@@ -60,8 +60,8 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 		// Get user roles
 		$roles = $this->tinyAuth->getUserRoles($user);
 
-		// Super admin bypass (optional - can be configured)
-		if (in_array('admin', $roles, true) || in_array('superadmin', $roles, true)) {
+		// Super admin bypass
+		if (array_intersect($roles, $this->getSuperAdminRoles())) {
 			return true;
 		}
 
@@ -171,9 +171,28 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	protected function getResourceName(EntityInterface $entity): string {
 		$className = get_class($entity);
 		$parts = explode('\\', $className);
-		$entityName = end($parts);
+		$entityName = end($parts) ?: '';
 
-		return Inflector::pluralize($entityName);
+		return $entityName;
+	}
+
+	/**
+	 * @return array<string>
+	 */
+	protected function getSuperAdminRoles(): array {
+		$superAdminRole = Configure::read('TinyAuthBackend.superAdminRole');
+		if ($superAdminRole === null) {
+			$superAdminRole = Configure::read('TinyAuth.superAdminRole');
+		}
+
+		if (is_string($superAdminRole) && $superAdminRole !== '') {
+			return [$superAdminRole];
+		}
+		if (is_array($superAdminRole)) {
+			return array_values(array_filter($superAdminRole, 'is_string'));
+		}
+
+		return ['admin', 'superadmin'];
 	}
 
 	/**

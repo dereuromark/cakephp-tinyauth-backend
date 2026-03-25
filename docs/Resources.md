@@ -1,182 +1,120 @@
 ## Resource-Based Permissions
 
-Resources enable entity-level permissions (e.g., "user can edit their own posts").
+Resources are the entity-level part of the backend.
 
-### Overview
+They answer questions like:
 
-While ACL manages controller/action permissions, Resources manage entity-level access:
+- "Can this user edit this article?"
+- "Can moderators delete comments?"
+- "Can users edit only their own records?"
 
-- **ACL**: "Can user access the Articles edit action?"
-- **Resources**: "Can user edit THIS specific article?"
+### Data Model
 
-### Concepts
+- **Resource**: entity type, for example `Article`
+- **Ability**: action on that resource, for example `view`, `edit`, `publish`
+- **Scope**: optional field match, for example `article.user_id === user.id`
 
-| Term | Description |
-|------|-------------|
-| Resource | An entity type (e.g., Article, Comment) |
-| Ability | An action on a resource (e.g., view, edit, delete) |
-| Scope | A condition that limits access (e.g., "own" items only) |
+### Syncing Resources
 
-### Setting Up Resources
+The backend can scan your entities and register them as resources:
 
-#### 1. Add a Resource
+```bash
+bin/cake migrations migrate -p TinyAuthBackend
+```
 
-1. Go to `/admin/tinyauth/admin/resources`
-2. Click "Add Resource"
-3. Enter:
-   - **Name**: Display name (e.g., "Article")
-   - **Entity Class**: Full class name (e.g., `App\Model\Entity\Article`)
-   - **Table Name**: Database table (e.g., `articles`)
+Then use the sync UI at:
 
-#### 2. Add Abilities
+```text
+/admin/auth/sync/resources
+```
 
-For each resource, define what users can do:
+Or call `ResourceSyncService` directly.
 
-1. Click "Manage Abilities" on the resource
-2. Add abilities like:
-   - `view` - Read access
-   - `edit` - Modify access
-   - `delete` - Remove access
-   - `publish` - Custom ability
+Synced resource names use the entity class basename, for example:
 
-#### 3. Assign Permissions
+- `App\Model\Entity\Article` -> `Article`
+- `Blog\Model\Entity\Post` -> `Post`
 
-On the Resources page, set permissions per role:
-
-| Role | Ability | Scope |
-|------|---------|-------|
-| user | view | (none) - can view all |
-| user | edit | own - can edit own only |
-| moderator | edit | (none) - can edit all |
-| admin | delete | (none) - can delete all |
-
-### Database Schema
+### Example Schema
 
 ```sql
--- Resources
 CREATE TABLE tinyauth_resources (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     entity_class VARCHAR(200) NOT NULL,
-    table_name VARCHAR(100) NOT NULL,
-    created DATETIME,
-    modified DATETIME
+    table_name VARCHAR(100) NOT NULL
 );
 
--- Abilities per resource
 CREATE TABLE tinyauth_resource_abilities (
     id INT AUTO_INCREMENT PRIMARY KEY,
     resource_id INT NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(200),
-    created DATETIME,
-    modified DATETIME,
-    FOREIGN KEY (resource_id) REFERENCES tinyauth_resources(id)
+    name VARCHAR(50) NOT NULL
 );
 
--- Resource ACL permissions
 CREATE TABLE tinyauth_resource_acl (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    ability_id INT NOT NULL,
+    resource_ability_id INT NOT NULL,
     role_id INT NOT NULL,
-    scope_id INT NULL,
-    type ENUM('allow', 'deny') NOT NULL,
-    created DATETIME,
-    modified DATETIME,
-    FOREIGN KEY (ability_id) REFERENCES tinyauth_resource_abilities(id),
-    FOREIGN KEY (role_id) REFERENCES tinyauth_roles(id),
-    FOREIGN KEY (scope_id) REFERENCES tinyauth_scopes(id)
+    type VARCHAR(10) NOT NULL,
+    scope_id INT NULL
 );
 ```
 
-### Using in Policies
+### Policy Example
 
 ```php
-// src/Policy/ArticlePolicy.php
 namespace App\Policy;
 
 use App\Model\Entity\Article;
-use Authorization\IdentityInterface;
-use TinyAuthBackend\Service\TinyAuthService;
+use Cake\Datasource\EntityInterface;
+use TinyAuthBackend\Policy\TinyAuthPolicy;
 
-class ArticlePolicy
+class ArticlePolicy extends TinyAuthPolicy
 {
-    protected TinyAuthService $tinyAuth;
-
-    public function __construct()
+    public function canPublish(EntityInterface $user, Article $article): bool
     {
-        $this->tinyAuth = new TinyAuthService();
-    }
-
-    public function canView(IdentityInterface $user, Article $article): bool
-    {
-        return $this->tinyAuth->canAccessResource($user, $article, 'view');
-    }
-
-    public function canEdit(IdentityInterface $user, Article $article): bool
-    {
-        return $this->tinyAuth->canAccessResource($user, $article, 'edit');
-    }
-
-    public function canDelete(IdentityInterface $user, Article $article): bool
-    {
-        return $this->tinyAuth->canAccessResource($user, $article, 'delete');
+        return $this->can($user, 'publish', $article);
     }
 }
 ```
 
-### Programmatic API
+Or use `TinyAuthPolicy` as the default ORM policy if your rules are fully backend-driven.
+
+### Direct Service Example
 
 ```php
 use TinyAuthBackend\Service\TinyAuthService;
 
 $service = new TinyAuthService();
 
-// Check resource access
 $canEdit = $service->canAccessResource($user, $article, 'edit');
-
-// Get all abilities user has for a resource
-$abilities = $service->getResourceAbilities($user, $article);
-// Returns: ['view', 'edit']
-
-// Check ability without entity (type-level)
 $canCreate = $service->canPerformAbility($user, 'Article', 'create');
 ```
 
-### Common Patterns
+### Scope Example
 
-#### Owner-Only Access
+If a scope named `own` uses:
 
-```php
-// Scope: own
-// entity_field: user_id
-// user_field: id
+- `entity_field = user_id`
+- `user_field = id`
 
-// This allows users to edit only articles where:
-// $article->user_id === $user->id
-```
+then this backend rule:
 
-#### Team-Based Access
+- role `user`
+- resource `Article`
+- ability `edit`
+- scope `own`
 
-```php
-// Scope: team
-// entity_field: team_id
-// user_field: team_id
-
-// This allows users to edit articles in their team:
-// $article->team_id === $user->team_id
-```
-
-#### Status-Based Access
-
-For more complex conditions, use custom scopes or policy logic:
+means:
 
 ```php
-public function canPublish(IdentityInterface $user, Article $article): bool
-{
-    // Must have ability AND article must be in draft status
-    $hasAbility = $this->tinyAuth->canAccessResource($user, $article, 'publish');
-
-    return $hasAbility && $article->status === 'draft';
-}
+$article->user_id === $user->id
 ```
+
+### Interaction With Role Hierarchy
+
+If role hierarchy is enabled:
+
+- higher roles inherit lower-role resource permissions
+- a direct rule on the current role wins over inherited rules
+- inherited scoped rules also flow into `getScopeCondition()`

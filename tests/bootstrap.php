@@ -15,6 +15,26 @@ use TinyAuthBackend\TinyAuthBackendPlugin;
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
+
+if (!function_exists('findVendorPath')) {
+	/**
+	 * @param string $startDir
+	 * @return string|null
+	 */
+	function findVendorPath(string $startDir): ?string {
+		$dir = $startDir;
+		while ($dir !== dirname($dir)) {
+			$autoload = $dir . DS . 'vendor' . DS . 'autoload.php';
+			if (file_exists($autoload)) {
+				return $dir . DS . 'vendor';
+			}
+			$dir = dirname($dir);
+		}
+
+		return null;
+	}
+}
+
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'src');
 
@@ -33,11 +53,20 @@ define('TESTS', ROOT . DS . 'tests' . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
 
-define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
+$vendorPath = findVendorPath(ROOT);
+if ($vendorPath === null) {
+	throw new RuntimeException('Unable to locate Composer vendor directory for tests.');
+}
+
+define('CAKE_CORE_INCLUDE_PATH', $vendorPath . '/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . APP_DIR . DS);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+/** @var \Composer\Autoload\ClassLoader $autoloader */
+$autoloader = require $vendorPath . '/autoload.php';
+$autoloader->addPsr4('TinyAuthBackend\\Test\\', ROOT . DS . 'tests' . DS);
+$autoloader->addPsr4('TestApp\\', ROOT . DS . 'tests' . DS . 'test_app' . DS . 'src' . DS);
+
 require CORE_PATH . 'config/bootstrap.php';
 require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
 

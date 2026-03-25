@@ -55,6 +55,36 @@ class TinyAuthService {
 	}
 
 	/**
+	 * Convenience wrapper for entity-level authorization checks.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $user The current user entity.
+	 * @param \Cake\Datasource\EntityInterface $entity The resource entity.
+	 * @param string $ability The ability name.
+	 * @return bool Whether access is allowed.
+	 */
+	public function canAccessResource(EntityInterface $user, EntityInterface $entity, string $ability): bool {
+		return $this->canAccess(
+			$this->getUserRoles($user),
+			$this->getResourceName($entity),
+			$ability,
+			$entity,
+			$user,
+		);
+	}
+
+	/**
+	 * Convenience wrapper for type-level checks without an entity instance.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $user The current user entity.
+	 * @param string $resource The resource name.
+	 * @param string $ability The ability name.
+	 * @return bool Whether access is allowed.
+	 */
+	public function canPerformAbility(EntityInterface $user, string $resource, string $ability): bool {
+		return $this->canAccess($this->getUserRoles($user), $resource, $ability, null, $user);
+	}
+
+	/**
 	 * Check access for a single role.
 	 *
 	 * @param string $role The role alias.
@@ -71,25 +101,9 @@ class TinyAuthService {
 		?EntityInterface $entity,
 		?EntityInterface $user,
 	): bool {
-		$rule = $this->getResourcePermission($role, $resource, $ability);
-
+		$rule = $this->getEffectiveResourcePermission($role, $resource, $ability);
 		if (!$rule || $rule->type === 'deny') {
-			// Check parent roles if hierarchy enabled
-			if (Configure::read('TinyAuthBackend.roleHierarchy')) {
-				$parentRoles = $this->hierarchyService->getParentRoles($role);
-				foreach ($parentRoles as $parentRole) {
-					$parentRule = $this->getResourcePermission($parentRole, $resource, $ability);
-					if ($parentRule && $parentRule->type === 'allow') {
-						$rule = $parentRule;
-
-						break;
-					}
-				}
-			}
-
-			if (!$rule || $rule->type === 'deny') {
-				return false;
-			}
+			return false;
 		}
 
 		// No scope = full access
@@ -151,7 +165,7 @@ class TinyAuthService {
 		$hasFullAccess = false;
 
 		foreach ($roles as $role) {
-			$rule = $this->getResourcePermission($role, $resource, $ability);
+			$rule = $this->getEffectiveResourcePermission($role, $resource, $ability);
 
 			if (!$rule || $rule->type === 'deny') {
 				continue;
@@ -183,6 +197,37 @@ class TinyAuthService {
 	}
 
 	/**
+	 * Resolve the effective permission for a role, taking hierarchy into account.
+	 *
+	 * Direct rules win. Only missing rules inherit from descendant roles.
+	 *
+	 * @param string $role The role alias.
+	 * @param string $resource The resource name.
+	 * @param string $ability The ability name.
+	 * @return \TinyAuthBackend\Model\Entity\ResourceAcl|null
+	 */
+	protected function getEffectiveResourcePermission(string $role, string $resource, string $ability): ?ResourceAcl {
+		$rule = $this->getResourcePermission($role, $resource, $ability);
+		if ($rule) {
+			return $rule;
+		}
+
+		if (!Configure::read('TinyAuthBackend.roleHierarchy')) {
+			return null;
+		}
+
+		$descendantRoles = $this->hierarchyService->getDescendantRoleAliases($role);
+		foreach ($descendantRoles as $descendantRole) {
+			$descendantRule = $this->getResourcePermission($descendantRole, $resource, $ability);
+			if ($descendantRule) {
+				return $descendantRule;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Evaluate a scope condition against an entity and user.
 	 *
 	 * @param \TinyAuthBackend\Model\Entity\Scope|null $scope The scope to evaluate.
@@ -199,6 +244,17 @@ class TinyAuthService {
 		$userValue = $user->get($scope->user_field);
 
 		return $entityValue !== null && $entityValue === $userValue;
+	}
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return string
+	 */
+	protected function getResourceName(EntityInterface $entity): string {
+		$className = get_class($entity);
+		$parts = explode('\\', $className);
+
+		return end($parts) ?: '';
 	}
 
 	/**

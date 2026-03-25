@@ -11,6 +11,7 @@ Configure::write('TinyAuthBackend', [
 	'rolesTable' => 'roles', // Multi-role: pivot table
 	'cacheEnabled' => true,
 	'cacheConfig' => 'default',
+	'superAdminRole' => null,
 
 	// Feature toggles (hybrid: auto-detect from DB tables, override here)
 	// null = auto-detect, true = force enable, false = force disable

@@ -21,7 +21,7 @@ class ImportExportService {
 	 * @return array<string, mixed>
 	 */
 	public function exportJson(): array {
-		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
+		$roleSource = new RoleSourceService();
 		$controllersTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.TinyauthControllers');
 		$permissionsTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.AclPermissions');
 		$resourcesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Resources');
@@ -31,7 +31,7 @@ class ImportExportService {
 		return [
 			'version' => '1.0',
 			'exported_at' => date('c'),
-			'roles' => $rolesTable->find()->toArray(),
+			'roles' => $roleSource->getRoleEntities(),
 			'controllers' => $controllersTable->find()->contain(['Actions'])->toArray(),
 			'acl_permissions' => $permissionsTable->find()->contain(['Actions', 'Roles'])->toArray(),
 			'resources' => $resourcesTable->find()->contain(['ResourceAbilities'])->toArray(),
@@ -116,9 +116,7 @@ class ImportExportService {
 	 */
 	public function exportCsv(): string {
 		$controllersTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.TinyauthControllers');
-		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
-
-		$roles = $rolesTable->find()->orderBy(['sort_order' => 'ASC'])->all()->toArray();
+		$roles = (new RoleSourceService())->getRoleEntities();
 		$controllers = $controllersTable->find()
 			->contain(['Actions.AclPermissions'])
 			->all();
@@ -167,14 +165,9 @@ class ImportExportService {
 		$controllersTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.TinyauthControllers');
 		$actionsTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Actions');
 		$permissionsTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.AclPermissions');
-		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
 
 		// Build role lookup
-		$roleLookup = [];
-		/** @var \TinyAuthBackend\Model\Entity\Role $role */
-		foreach ($rolesTable->find()->all() as $role) {
-			$roleLookup[$role->alias] = $role->id;
-		}
+		$roleLookup = (new RoleSourceService())->getRoles();
 
 		$result = ['controllers' => 0, 'actions' => 0, 'permissions' => 0, 'errors' => []];
 

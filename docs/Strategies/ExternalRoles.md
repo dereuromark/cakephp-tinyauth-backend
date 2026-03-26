@@ -31,6 +31,8 @@ Or:
 - `RoleSourceService` reads aliases and IDs from the configured source
 - the roles page becomes read-only
 - external roles are mirrored into `tinyauth_roles` so ACL/resource permission rows can still use foreign keys safely
+- the mirror is authoritative: rows not present in the current external role set are pruned on sync
+- when a pruned role is still referenced by ACL/resource permission rows, those dependent rows are removed by the database foreign-key cascades too
 
 ### Good Fit
 

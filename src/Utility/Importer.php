@@ -70,22 +70,12 @@ class Importer {
 
 		foreach ($aclData as $aclRow) {
 			foreach ($aclRow['allow'] as $action => $roles) {
-				// Remap to * for simplicity
-				if (count($roles) === count($availableRoles)) {
-					$roles = ['*' => '*'];
-				}
-
 				foreach ($roles as $role => $id) {
 					[$controllerId, $actionId] = $this->ensureAction($aclRow, $action);
 					$this->upsertAclPermission($actionId, $role, 'allow');
 				}
 			}
 			foreach ($aclRow['deny'] as $action => $roles) {
-				// Remap to * for simplicity
-				if (count($roles) === count($availableRoles)) {
-					$roles = ['*' => '*'];
-				}
-
 				foreach ($roles as $role => $id) {
 					[$controllerId, $actionId] = $this->ensureAction($aclRow, $action);
 					$this->upsertAclPermission($actionId, $role, 'deny');
@@ -195,7 +185,7 @@ class Importer {
 	 */
 	protected function upsertAclPermission(int $actionId, string $roleAlias, string $type): void {
 		$roleId = (new RoleSourceService())->getRoles()[$roleAlias] ?? null;
-		if ($roleId === null || $roleAlias === '*') {
+		if ($roleId === null) {
 			return;
 		}
 

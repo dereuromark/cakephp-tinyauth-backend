@@ -46,6 +46,7 @@ When an external source is used:
 
 - the roles UI becomes read-only
 - external roles are mirrored into `tinyauth_roles` so ACL/resource assignments can still be stored with foreign keys
+- mirrored rows are kept in sync with the external source, and obsolete rows are pruned
 
 ### Example Config
 

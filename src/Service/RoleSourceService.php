@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Service;
 
 use Cake\Core\Configure;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Exception;
 
@@ -55,8 +56,8 @@ class RoleSourceService {
 			static::$cachedRoles = [];
 		}
 
-		if ($roleSource !== null && static::$cachedRoles) {
-			$this->syncExternalRoles(static::$cachedRoles);
+		if ($roleSource !== null) {
+			$this->syncExternalRoles(static::$cachedRoles ?? []);
 		}
 
 		return static::$cachedRoles ?? [];
@@ -190,6 +191,7 @@ class RoleSourceService {
 					'id' => $id,
 					'alias' => $alias,
 					'name' => $role->name ?: ucfirst($alias),
+					'parent_id' => null,
 					'sort_order' => $role->sort_order ?: $sortOrder,
 				]);
 				$rolesTable->save($role);
@@ -205,6 +207,29 @@ class RoleSourceService {
 				'sort_order' => $sortOrder,
 			], ['accessibleFields' => ['id' => true]]);
 			$rolesTable->save($role);
+		}
+
+		$this->pruneExternalRoles($rolesTable, $roles);
+	}
+
+	/**
+	 * Remove shadow rows for roles that no longer exist in the external source.
+	 *
+	 * @param \TinyAuthBackend\Model\Table\RolesTable $rolesTable
+	 * @param array<string, int> $roles
+	 * @return void
+	 */
+	protected function pruneExternalRoles(Table $rolesTable, array $roles): void {
+		$expectedAliases = array_keys($roles);
+
+		$staleRoles = $rolesTable->find();
+		if ($expectedAliases) {
+			$staleRoles->where(['alias NOT IN' => $expectedAliases]);
+		}
+
+		/** @var \TinyAuthBackend\Model\Entity\Role $staleRole */
+		foreach ($staleRoles->all() as $staleRole) {
+			$rolesTable->delete($staleRole);
 		}
 	}
 

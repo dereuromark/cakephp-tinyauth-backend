@@ -13,7 +13,6 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')) ?>
-    <?= $this->Html->meta('icon', '/img/tinyauth-demo-favicon.svg', ['type' => 'image/svg+xml']) ?>
     <title><?= $this->fetch('title') ?> - TinyAuth</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

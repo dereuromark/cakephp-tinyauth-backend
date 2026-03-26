@@ -3,7 +3,7 @@
  * @var \Cake\View\View $this
  * @var array<\TinyAuthBackend\Model\Entity\Action> $actions
  * @var array<\TinyAuthBackend\Model\Entity\Role> $roles
- * @var array $permissions
+ * @var array<int, array<int, array<string, mixed>>> $permissions
  */
 ?>
 <table class="w-full text-sm">
@@ -25,28 +25,7 @@
 		<tr class="border-b border-gray-100 dark:border-slate-700">
 			<td class="p-2"><?= h($action->name) ?></td>
 			<?php foreach ($roles as $role) { ?>
-				<?php
-				$type = $permissions[$action->id][$role->id] ?? 'none';
-				$symbol = match ($type) {
-					'allow' => '&#9679;',
-					'deny' => '&#10005;',
-					default => '&#9675;',
-				};
-	?>
-				<?php
-				$nextType = match ($type) {
-					'none' => 'allow',
-					'allow' => 'deny',
-					default => 'none',
-				};
-	?>
-			<td id="cell-<?= $action->id ?>-<?= $role->id ?>"
-				class="matrix-cell <?= h($type) ?>"
-				hx-post="<?= $this->Url->build(['action' => 'toggle']) ?>"
-				hx-vals='<?= json_encode(['action_id' => $action->id, 'role_id' => $role->id, 'type' => $nextType]) ?>'
-				hx-swap="outerHTML">
-				<?= $symbol ?>
-			</td>
+				<?= $this->element('TinyAuthBackend.acl_cell', ['cell' => $permissions[$action->id][$role->id]]) ?>
 			<?php } ?>
 		</tr>
 		<?php } ?>

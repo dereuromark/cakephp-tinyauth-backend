@@ -125,6 +125,21 @@ $this->assign('title', 'Roles');
     </div>
 </div>
 
+<?php if (\Cake\Core\Configure::read('TinyAuthBackend.roleHierarchy')) { ?>
+<div class="card mt-6">
+    <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800">
+        <p class="text-sm text-amber-900 dark:text-amber-100">
+            <strong>Hierarchy direction</strong>:
+            Higher roles inherit lower-role permissions.
+            If <code class="text-xs">user</code> is below <code class="text-xs">moderator</code>, and
+            <code class="text-xs">moderator</code> is below <code class="text-xs">admin</code>, then
+            <code class="text-xs">admin</code> inherits permissions from both.
+            Lower roles do not inherit permissions from higher roles.
+        </p>
+    </div>
+</div>
+<?php } ?>
+
 <script>
 function reorderRole(targetId, sourceId) {
     if (targetId === sourceId) return;

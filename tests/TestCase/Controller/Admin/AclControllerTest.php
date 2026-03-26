@@ -34,7 +34,7 @@ class AclControllerTest extends TestCase {
 			'id' => 1,
 			'name' => 'User',
 			'alias' => 'user',
-			'parent_id' => null,
+			'parent_id' => 2,
 			'sort_order' => 1,
 		]);
 		$this->insertRow('tinyauth_roles', [
@@ -68,6 +68,42 @@ class AclControllerTest extends TestCase {
 		$this->assertResponseContains('index');
 	}
 
+	public function testIndexShowsInheritedPermissionState(): void {
+		$this->insertRow('tinyauth_acl_permissions', [
+			'id' => 1,
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('data-state="inherited"');
+		$this->assertResponseContains('title="Inherited permission"');
+	}
+
+	public function testIndexPrefersExplicitDenyOverInheritedPermissionState(): void {
+		$this->insertRow('tinyauth_acl_permissions', [
+			'id' => 1,
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+		$this->insertRow('tinyauth_acl_permissions', [
+			'id' => 2,
+			'action_id' => 1,
+			'role_id' => 2,
+			'type' => 'deny',
+		]);
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('data-state="deny"');
+		$this->assertResponseContains('title="Denied"');
+	}
+
 	public function testToggleCreatesPermission(): void {
 		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
 			'action_id' => 1,
@@ -95,6 +131,32 @@ class AclControllerTest extends TestCase {
 
 		$this->assertResponseCode(200);
 		$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 1, 'type' => 'deny']));
+	}
+
+	public function testToggleRemovingExplicitDenyFallsBackToInheritedState(): void {
+		$this->insertRow('tinyauth_acl_permissions', [
+			'id' => 1,
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+		$this->insertRow('tinyauth_acl_permissions', [
+			'id' => 2,
+			'action_id' => 1,
+			'role_id' => 2,
+			'type' => 'deny',
+		]);
+
+		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+			'action_id' => 1,
+			'role_id' => 2,
+			'type' => 'none',
+		]);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('data-state="inherited"');
+		$this->assertResponseContains('title="Inherited permission"');
+		$this->assertSame(0, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 2]));
 	}
 
 	public function testSearchReturnsMatchingInternalRecords(): void {

@@ -10,7 +10,8 @@
 		"authentication",
 		"authorization",
 		"roles",
-		"admin-panel"
+		"admin-panel",
+		"standalone-ui"
 	],
 	"authors": [
 		{

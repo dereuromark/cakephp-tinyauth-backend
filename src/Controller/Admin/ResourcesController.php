@@ -21,8 +21,8 @@ class ResourcesController extends AppController {
 			->contain(['ResourceAbilities'])
 			->orderBy(['name' => 'ASC', 'entity_class' => 'ASC']);
 
-		// Filter to App namespace by default (configurable)
-		$namespaceFilter = Configure::read('TinyAuthBackend.resourceNamespaceFilter') ?? 'App\\';
+		// Optional namespace filter — default null shows everything.
+		$namespaceFilter = Configure::read('TinyAuthBackend.resourceNamespaceFilter');
 		if ($namespaceFilter) {
 			$query->where(['entity_class LIKE' => $namespaceFilter . '%']);
 		}

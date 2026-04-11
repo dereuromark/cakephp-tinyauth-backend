@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Model\Table;
 
 use ArrayObject;
-use Cake\Cache\Cache;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
  * @method \TinyAuthBackend\Model\Entity\AclPermission get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
@@ -71,6 +71,11 @@ class AclPermissionsTable extends Table {
 			->inList('type', ['allow', 'deny'])
 			->notEmptyString('type');
 
+		$validator
+			->scalar('description')
+			->maxLength('description', 255)
+			->allowEmptyString('description');
+
 		return $validator;
 	}
 
@@ -82,7 +87,7 @@ class AclPermissionsTable extends Table {
 	 * @return void
 	 */
 	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		Cache::delete('TinyAuth.acl');
+		CacheInvalidator::clearAcl();
 	}
 
 	/**
@@ -93,7 +98,7 @@ class AclPermissionsTable extends Table {
 	 * @return void
 	 */
 	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		Cache::delete('TinyAuth.acl');
+		CacheInvalidator::clearAcl();
 	}
 
 }

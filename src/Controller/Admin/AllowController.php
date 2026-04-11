@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Controller\Admin;
 
-use Cake\Cache\Cache;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
+use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
  * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
@@ -64,7 +64,7 @@ class AllowController extends AppController {
 		$action->is_public = $isPublic;
 
 		if ($actionsTable->save($action)) {
-			Cache::delete('TinyAuth.allow');
+			CacheInvalidator::clearAllow();
 		} else {
 			$this->response = $this->response->withStatus(500);
 			$this->set('error', 'Failed to update action');
@@ -97,7 +97,7 @@ class AllowController extends AppController {
 			['controller_id' => $controllerId],
 		);
 
-		Cache::delete('TinyAuth.allow');
+		CacheInvalidator::clearAllow();
 
 		$this->Flash->success(__('Actions updated.'));
 

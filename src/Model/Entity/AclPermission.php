@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
  * @property int $action_id
  * @property int $role_id
  * @property string $type
+ * @property string|null $description
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
  * @property \TinyAuthBackend\Model\Entity\Action|null $action
@@ -34,6 +35,7 @@ class AclPermission extends Entity {
 		'action_id' => true,
 		'role_id' => true,
 		'type' => true,
+		'description' => true,
 		'created' => true,
 		'modified' => true,
 		'action' => true,

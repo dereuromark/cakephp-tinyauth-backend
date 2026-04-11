@@ -3,10 +3,6 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Model\Table;
 
-use ArrayObject;
-use Cake\Cache\Cache;
-use Cake\Datasource\EntityInterface;
-use Cake\Event\EventInterface;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -84,26 +80,8 @@ class ResourceAclTable extends Table {
 		return $validator;
 	}
 
-	/**
-	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
-	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \ArrayObject<string, mixed> $options
-	 *
-	 * @return void
-	 */
-	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		Cache::delete('TinyAuth.resources');
-	}
-
-	/**
-	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
-	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \ArrayObject<string, mixed> $options
-	 *
-	 * @return void
-	 */
-	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		Cache::delete('TinyAuth.resources');
-	}
+	// Resource ACL rules are evaluated at request time by
+	// TinyAuthPolicy and not cached by the TinyAuth runtime, so
+	// there is nothing to invalidate on save/delete.
 
 }

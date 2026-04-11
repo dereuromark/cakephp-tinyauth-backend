@@ -49,6 +49,8 @@ class AclController extends AppController {
 		$actionId = (int)$this->request->getData('action_id');
 		$roleId = (int)$this->request->getData('role_id');
 		$type = $this->request->getData('type');
+		$description = $this->request->getData('description');
+		$description = is_string($description) && $description !== '' ? $description : null;
 
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
 			throw new BadRequestException('Invalid permission type');
@@ -74,6 +76,7 @@ class AclController extends AppController {
 			/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
 			if ($existing) {
 				$existing->type = $type;
+				$existing->description = $description;
 				if (!$permissionsTable->save($existing)) {
 					$this->response = $this->response->withStatus(500);
 					$this->set('error', 'Failed to update permission');
@@ -83,6 +86,7 @@ class AclController extends AppController {
 					'action_id' => $actionId,
 					'role_id' => $roleId,
 					'type' => $type,
+					'description' => $description,
 				]);
 				if (!$permissionsTable->save($permission)) {
 					$this->response = $this->response->withStatus(500);
@@ -158,9 +162,11 @@ class AclController extends AppController {
 			->all();
 
 		$directPermissions = [];
+		$directDescriptions = [];
 		/** @var \TinyAuthBackend\Model\Entity\AclPermission $perm */
 		foreach ($perms as $perm) {
 			$directPermissions[$perm->action_id][$perm->role_id] = $perm->type;
+			$directDescriptions[$perm->action_id][$perm->role_id] = $perm->description;
 		}
 
 		$inheritedPermissions = $this->buildInheritedPermissions($roles, $actionIds, $directPermissions);
@@ -173,8 +179,9 @@ class AclController extends AppController {
 				}
 
 				$directType = $directPermissions[$actionId][$roleId] ?? null;
+				$directDescription = $directDescriptions[$actionId][$roleId] ?? null;
 				$isInherited = $inheritedPermissions[$actionId][$roleId] ?? false;
-				$states[$actionId][$roleId] = $this->buildCellState($actionId, $roleId, $directType, $isInherited);
+				$states[$actionId][$roleId] = $this->buildCellState($actionId, $roleId, $directType, $isInherited, $directDescription);
 			}
 		}
 
@@ -239,9 +246,11 @@ class AclController extends AppController {
 	 * @param int $roleId
 	 * @param string|null $directType
 	 * @param bool $isInherited
+	 * @param string|null $description Optional rule description for tooltip.
 	 * @return array<string, mixed>
 	 */
-	protected function buildCellState(int $actionId, int $roleId, ?string $directType, bool $isInherited): array {
+	protected function buildCellState(int $actionId, int $roleId, ?string $directType, bool $isInherited, ?string $description = null): array {
+		$suffix = $description !== null && $description !== '' ? ' — ' . $description : '';
 		if ($directType === 'deny') {
 			return [
 				'action_id' => $actionId,
@@ -250,7 +259,8 @@ class AclController extends AppController {
 				'symbol' => '&#10005;',
 				'next_type' => 'none',
 				'state' => 'deny',
-				'title' => 'Denied',
+				'title' => 'Denied' . $suffix,
+				'description' => $description,
 			];
 		}
 		if ($directType === 'allow') {
@@ -261,7 +271,8 @@ class AclController extends AppController {
 				'symbol' => '&#9679;',
 				'next_type' => 'deny',
 				'state' => 'allow',
-				'title' => 'Allowed',
+				'title' => 'Allowed' . $suffix,
+				'description' => $description,
 			];
 		}
 		if ($isInherited) {
@@ -273,6 +284,7 @@ class AclController extends AppController {
 				'next_type' => 'deny',
 				'state' => 'inherited',
 				'title' => 'Inherited permission',
+				'description' => null,
 			];
 		}
 
@@ -284,6 +296,7 @@ class AclController extends AppController {
 			'next_type' => 'allow',
 			'state' => 'none',
 			'title' => 'No permission',
+			'description' => null,
 		];
 	}
 

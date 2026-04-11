@@ -32,10 +32,13 @@ Configure::write('TinyAuthBackend', [
 	// Example callable: fn() => TableRegistry::get('Roles')->find('list')->toArray()
 	'roleSource' => null,
 
-	// Resource namespace filter for the admin panel
-	// Only show resources matching this namespace prefix (e.g., 'App\\' to exclude plugin entities)
-	// Set to null or empty string to show all resources
-	'resourceNamespaceFilter' => 'App\\',
+	// Resource namespace filter for the admin panel.
+	// Only show resources whose entity_class starts with this prefix.
+	// Null/empty = show all (default). Set to 'App\\' to restrict to
+	// main-app entities, or to a plugin namespace (e.g. 'MyPlugin\\')
+	// to isolate plugin-owned resources. Note: the previous default
+	// of 'App\\' silently excluded plugin entities.
+	'resourceNamespaceFilter' => null,
 
 	// Plugins to exclude from ACL controller tree in admin panel
 	// These plugins won't appear in the permission management UI

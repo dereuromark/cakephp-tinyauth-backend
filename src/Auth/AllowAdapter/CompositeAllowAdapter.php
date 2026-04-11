@@ -50,7 +50,7 @@ class CompositeAllowAdapter implements AllowAdapterInterface {
 	 *
 	 * @var array<class-string<\TinyAuth\Auth\AllowAdapter\AllowAdapterInterface>>
 	 */
-	protected const array DEFAULT_ADAPTERS = [
+	protected const DEFAULT_ADAPTERS = [
 		IniAllowAdapter::class,
 		DbAllowAdapter::class,
 	];

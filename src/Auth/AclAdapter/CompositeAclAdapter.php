@@ -38,7 +38,7 @@ class CompositeAclAdapter implements AclAdapterInterface {
 	/**
 	 * @var array<class-string<\TinyAuth\Auth\AclAdapter\AclAdapterInterface>>
 	 */
-	protected const array DEFAULT_ADAPTERS = [
+	protected const DEFAULT_ADAPTERS = [
 		IniAclAdapter::class,
 		DbAclAdapter::class,
 	];

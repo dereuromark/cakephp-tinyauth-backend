@@ -51,7 +51,10 @@ class AclController extends AppController {
 		$roleId = (int)$this->request->getData('role_id');
 		$type = $this->request->getData('type');
 		$description = $this->request->getData('description');
-		$description = is_string($description) && $description !== '' ? $description : null;
+		$description = is_string($description) ? trim($description) : null;
+		if ($description === '') {
+			$description = null;
+		}
 
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
 			throw new BadRequestException('Invalid permission type');

@@ -7,6 +7,8 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
+use Cake\Log\Log;
+use Throwable;
 
 /**
  * Base controller for TinyAuthBackend Admin controllers.
@@ -62,7 +64,26 @@ class AppController extends Controller {
 		}
 
 		$identity = $this->request->getAttribute('identity');
-		if ($check($identity, $this->request) !== true) {
+		try {
+			$allowed = $check($identity, $this->request) === true;
+		} catch (ForbiddenException $e) {
+			// Caller explicitly chose the 403 path — respect it.
+			throw $e;
+		} catch (Throwable $e) {
+			// Convert any other failure (broken callable, transient DB
+			// error in a role lookup, etc.) to a generic 403. Logging
+			// the concrete exception class + message lets operators
+			// diagnose it without leaking a stack trace to the client.
+			Log::warning(sprintf(
+				'TinyAuthBackend editorCheck threw %s: %s',
+				$e::class,
+				$e->getMessage(),
+			));
+
+			throw new ForbiddenException('Not authorized to manage TinyAuth rules');
+		}
+
+		if (!$allowed) {
 			throw new ForbiddenException('Not authorized to manage TinyAuth rules');
 		}
 	}

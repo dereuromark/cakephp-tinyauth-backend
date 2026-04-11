@@ -25,23 +25,41 @@ and consume that data from your own CakePHP Authorization policies/services.
 
 ### Recommended Usage
 
-Use the backend's resource tables and `TinyAuthService` inside your policies:
+The simplest path is to let `TinyAuthPolicy` handle every entity you want the backend to govern, via the plugin-provided `TinyAuthResolver`:
 
 ```php
-use App\Model\Entity\Article;
+// Application::getAuthorizationService()
+use Authorization\AuthorizationService;
+use TinyAuthBackend\Policy\TinyAuthResolver;
+
+$resolver = new TinyAuthResolver([
+    \App\Model\Entity\Article::class,
+    \App\Model\Entity\Project::class,
+]);
+
+return new AuthorizationService($resolver);
+```
+
+See [Authorization Integration](../Authorization.md) for the full wiring guide.
+
+If you need custom logic on top of the base policy, extend `TinyAuthPolicy` and override the specific hook — the parent signature matches CakePHP Authorization's calling convention:
+
+```php
+use Authorization\IdentityInterface;
 use Cake\Datasource\EntityInterface;
 use TinyAuthBackend\Policy\TinyAuthPolicy;
 
 class ArticlePolicy extends TinyAuthPolicy
 {
-    public function canEdit(EntityInterface $user, Article $article): bool
+    public function canEdit(?IdentityInterface $identity, EntityInterface $entity): bool
     {
-        return $this->can($user, 'edit', $article);
+        // Custom gate goes here; fall through to the TinyAuth rules.
+        return parent::canEdit($identity, $entity);
     }
 }
 ```
 
-Or call the service directly:
+Or call the service directly from your own policy:
 
 ```php
 use TinyAuthBackend\Service\TinyAuthService;

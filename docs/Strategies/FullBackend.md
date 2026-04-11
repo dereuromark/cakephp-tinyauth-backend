@@ -32,9 +32,26 @@ Use this mode if you want the backend to be the main source of truth for:
 
 1. Migrate the plugin tables.
 2. Configure TinyAuth DB adapters.
-3. Sync controllers and resources.
-4. Set up `TinyAuthPolicy` or custom policies for your entities.
+3. Sync controllers and resources (`bin/cake tiny_auth_backend sync`).
+4. Wire `cakephp/authorization` with the plugin's `TinyAuthResolver` — see [Authorization Integration](../Authorization.md) for the full wiring guide.
 5. Manage request and resource permissions from the same backend.
+
+### Minimal Authorization Wiring
+
+```php
+// Application::getAuthorizationService()
+use Authorization\AuthorizationService;
+use TinyAuthBackend\Policy\TinyAuthResolver;
+
+$resolver = new TinyAuthResolver([
+    \App\Model\Entity\Article::class,
+    \App\Model\Entity\Project::class,
+]);
+
+return new AuthorizationService($resolver);
+```
+
+`TinyAuthResolver` transparently unwraps `SelectQuery` resources to their repository, so the same resolver works for both `$this->Authorization->authorize($entity, 'edit')` and `$this->Authorization->applyScope($query)`.
 
 ### Good Fit
 

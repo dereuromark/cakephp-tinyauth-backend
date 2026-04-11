@@ -34,6 +34,21 @@ Or:
 - the mirror is authoritative: rows not present in the current external role set are pruned on sync
 - when a pruned role is still referenced by ACL/resource permission rows, those dependent rows are removed by the database foreign-key cascades too
 
+### Identity Without `cakephp/authentication`
+
+External role sources often come with custom identity resolution too — a JWT claim, an SSO gateway, a session payload written by middleware the app already owns. If you don't want to pull in `cakephp/authentication` just to satisfy the Authorization plugin's `IdentityInterface` contract, the plugin ships `TinyAuthBackend\Identity\EntityIdentity`: a minimal wrapper around any Cake entity that implements `IdentityInterface` directly.
+
+```php
+use TinyAuthBackend\Identity\EntityIdentity;
+
+$user = $this->Users->get($userIdFromSession);
+$identity = new EntityIdentity($user, $authorizationService); // service is optional
+
+$request = $request->withAttribute('identity', $identity);
+```
+
+See [Authorization Integration](../Authorization.md#identity-without-cakephpauthentication) for the full usage notes.
+
 ### Good Fit
 
 Choose this mode if:

@@ -28,6 +28,32 @@ Common sections:
 | `/admin/auth/sync/controllers` | Scan controllers/actions into DB |
 | `/admin/auth/sync/resources` | Scan entities/resources into DB |
 
+### Admin Access
+
+The plugin expects the host app to decide who may manage `/admin/auth`.
+
+Default behavior:
+
+- in `debug = true`, the admin UI is accessible by default for local development
+- in `debug = false`, the default `TinyAuthBackend.editorCheck` denies access until you replace it with your own callable
+
+Example:
+
+```php
+use Cake\Core\Configure;
+use Psr\Http\Message\ServerRequestInterface;
+
+Configure::write(
+    'TinyAuthBackend.editorCheck',
+    function (mixed $identity, ServerRequestInterface $request): bool {
+        return $identity !== null
+            && (int)($identity->get('role_id') ?? 0) === 3;
+    },
+);
+```
+
+Do not rely on the debug-mode default in production.
+
 ### Which Guide Should I Read?
 
 - [Strategies Overview](Strategies/README.md)

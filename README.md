@@ -24,5 +24,36 @@ composer require dereuromark/cakephp-tinyauth-backend
 
 It will auto-require `dereuromark/cakephp-tinyauth` dependency.
 
+### Admin Access Requirement
+
+The plugin mounts its admin UI under `/admin/auth`.
+
+As of the current `master`, admin access is **fail-closed outside debug mode**:
+
+- `debug = true`: the admin UI is accessible by default for local setup and demos
+- `debug = false`: the admin UI returns `403` unless your app explicitly configures `TinyAuthBackend.editorCheck`
+
+Production apps should always set `TinyAuthBackend.editorCheck` to a callable that decides who may edit TinyAuth rules:
+
+```php
+use Cake\Core\Configure;
+use Psr\Http\Message\ServerRequestInterface;
+
+Configure::write(
+    'TinyAuthBackend.editorCheck',
+    function (mixed $identity, ServerRequestInterface $request): bool {
+        if ($identity === null) {
+            return false;
+        }
+
+        $roleId = is_object($identity) && method_exists($identity, 'get')
+            ? $identity->get('role_id')
+            : ($identity['role_id'] ?? null);
+
+        return (int)$roleId === 3;
+    },
+);
+```
+
 ## Usage
 See [Docs](/docs/README.md).

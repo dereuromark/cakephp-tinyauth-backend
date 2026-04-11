@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Command;
 
+use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Command\Command;
 use Cake\Routing\Router;
 use TinyAuth\Utility\TinyAuth;
 use TinyAuthBackend\Utility\Importer;

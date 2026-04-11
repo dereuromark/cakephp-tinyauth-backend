@@ -28,6 +28,7 @@ class AclControllerTest extends TestCase {
 		$this->loadPlugins(['TinyAuthBackend']);
 		Configure::write('TinyAuth.aclAdapter', DbAclAdapter::class);
 		Configure::write('TinyAuthBackend.roleSource', null);
+		Configure::delete('TinyAuthBackend.editorCheck');
 		(new RoleSourceService())->clearCache();
 
 		$this->insertRow('tinyauth_roles', [
@@ -164,6 +165,60 @@ class AclControllerTest extends TestCase {
 
 		$this->assertResponseCode(200);
 		$this->assertResponseContains('index');
+	}
+
+	public function testSearchTreatsUnderscoreAsLiteralNotWildcard(): void {
+		// Sibling controller with a name that SQL LIKE's `_` wildcard
+		// would match if the query were passed through unescaped.
+		$this->insertRow('tinyauth_controllers', [
+			'id' => 2,
+			'plugin' => null,
+			'prefix' => 'Admin',
+			'name' => 'AXBooks',
+		]);
+		$this->insertRow('tinyauth_controllers', [
+			'id' => 3,
+			'plugin' => null,
+			'prefix' => 'Admin',
+			'name' => 'A_Books',
+		]);
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'search', '?' => ['q' => 'A_B']]);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('A_Books');
+		$this->assertResponseNotContains('AXBooks');
+	}
+
+	public function testEditorCheckUnsetAllowsRequest(): void {
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
+
+		$this->assertResponseCode(200);
+	}
+
+	public function testEditorCheckRejectsUnprivilegedCaller(): void {
+		$this->disableErrorHandlerMiddleware();
+		Configure::write('TinyAuthBackend.editorCheck', fn ($identity, $request) => false);
+
+		$this->expectException(\Cake\Http\Exception\ForbiddenException::class);
+		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+	}
+
+	public function testEditorCheckAllowsPrivilegedCaller(): void {
+		Configure::write('TinyAuthBackend.editorCheck', fn ($identity, $request) => true);
+
+		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+
+		$this->assertResponseCode(200);
+		$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 1, 'type' => 'allow']));
 	}
 
 }

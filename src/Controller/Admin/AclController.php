@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Controller\Admin;
 
 use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use TinyAuthBackend\Service\HierarchyService;
@@ -120,18 +121,32 @@ class AclController extends AppController {
 			$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
 			$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
 
-			$results['controllers'] = $controllersTable->find()
-				->where(['name LIKE' => "%{$q}%"])
-				->limit(5)
-				->all()
-				->toArray();
+			// Filter in PHP instead of via SQL LIKE so that user-supplied
+			// `_` / `%` match literally and not as LIKE wildcards. The
+			// admin matrix tables are bounded (one row per controller /
+			// action of the host app) so a full scan is cheap and avoids
+			// per-database ESCAPE clause quirks.
+			$needle = mb_strtolower($q);
+			$match = function (EntityInterface|array $row) use ($needle): bool {
+				$name = $row instanceof EntityInterface ? $row->get('name') : ($row['name'] ?? '');
 
-			$results['actions'] = $actionsTable->find()
-				->contain(['TinyauthControllers'])
-				->where(['Actions.name LIKE' => "%{$q}%"])
-				->limit(5)
-				->all()
-				->toArray();
+				return str_contains(mb_strtolower((string)$name), $needle);
+			};
+
+			$results['controllers'] = array_slice(
+				array_values(array_filter($controllersTable->find()->all()->toArray(), $match)),
+				0,
+				5,
+			);
+
+			$results['actions'] = array_slice(
+				array_values(array_filter(
+					$actionsTable->find()->contain(['TinyauthControllers'])->all()->toArray(),
+					$match,
+				)),
+				0,
+				5,
+			);
 
 			$roles = (new RoleSourceService())->getRoleEntities();
 			$results['roles'] = array_slice(array_values(array_filter($roles, function (object $role) use ($q): bool {

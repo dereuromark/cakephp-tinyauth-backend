@@ -109,7 +109,11 @@ return [
 		'resourceNamespaceFilter' => null,
 
 		/*
-		 * Plugins hidden from the ACL controller tree in the admin UI.
+		 * Plugins hidden from sync/admin surfaces.
+		 *
+		 * These plugins are excluded from:
+		 * - the ACL controller tree in the admin UI
+		 * - resource/entity discovery during sync
 		 */
 		'excludedPlugins' => ['DebugKit', 'TinyAuthBackend'],
 	],

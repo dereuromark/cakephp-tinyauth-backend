@@ -30,6 +30,10 @@ Then use the sync UI at:
 
 Or call `ResourceSyncService` directly.
 
+Resource discovery respects `TinyAuthBackend.excludedPlugins`, so entities
+from plugins like `DebugKit` can be kept out of both sync results and the
+Resources admin section.
+
 Synced resource names use the entity class basename, for example:
 
 - `App\Model\Entity\Article` -> `Article`

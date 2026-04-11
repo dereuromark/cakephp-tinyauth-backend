@@ -108,6 +108,8 @@ $result = $service->sync();
 $resources = $service->scan();
 ```
 
+`scan()` / `sync()` skip plugins listed in `TinyAuthBackend.excludedPlugins`.
+
 By default, synced resources get these abilities:
 
 ```php

@@ -30,6 +30,11 @@ class ResourceSyncService {
 	public function scan(): array {
 		$found = [];
 		$appNamespace = (string)(Configure::read('App.namespace') ?: 'App');
+		/** @var array<string> $excludedPlugins */
+		$excludedPlugins = array_values(array_filter(
+			(array)Configure::read('TinyAuthBackend.excludedPlugins'),
+			'is_string',
+		));
 
 		// Scan app entities
 		$found = array_merge($found, $this->scanPath(APP . 'Model' . DS . 'Entity' . DS, $appNamespace));
@@ -37,6 +42,10 @@ class ResourceSyncService {
 		// Scan plugin entities
 		$plugins = Plugin::loaded();
 		foreach ($plugins as $plugin) {
+			if (in_array($plugin, $excludedPlugins, true)) {
+				continue;
+			}
+
 			$path = Plugin::path($plugin) . 'src' . DS . 'Model' . DS . 'Entity' . DS;
 			if (is_dir($path)) {
 				$found = array_merge($found, $this->scanPath($path, $plugin));

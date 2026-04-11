@@ -51,8 +51,9 @@ $defaults = [
 	// of 'App\\' silently excluded plugin entities.
 	'resourceNamespaceFilter' => null,
 
-	// Plugins to exclude from ACL controller tree in admin panel
-	// These plugins won't appear in the permission management UI
+	// Plugins to exclude from sync/admin surfaces.
+	// These plugins won't appear in the ACL controller tree and their
+	// entities won't be imported into the Resources section.
 	'excludedPlugins' => ['DebugKit', 'TinyAuthBackend'],
 ];
 

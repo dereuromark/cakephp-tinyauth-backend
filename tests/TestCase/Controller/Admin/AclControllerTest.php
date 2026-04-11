@@ -28,6 +28,7 @@ class AclControllerTest extends TestCase {
 		parent::setUp();
 
 		$this->loadPlugins(['TinyAuthBackend']);
+		Configure::write('debug', true);
 		Configure::write('TinyAuth.aclAdapter', DbAclAdapter::class);
 		Configure::write('TinyAuthBackend.roleSource', null);
 		Configure::delete('TinyAuthBackend.editorCheck');
@@ -192,10 +193,20 @@ class AclControllerTest extends TestCase {
 		$this->assertResponseNotContains('AXBooks');
 	}
 
-	public function testEditorCheckUnsetAllowsRequest(): void {
+	public function testEditorCheckUnsetAllowsRequestInDebugMode(): void {
 		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
 
 		$this->assertResponseCode(200);
+	}
+
+	public function testEditorCheckUnsetRejectsRequestOutsideDebugMode(): void {
+		$this->disableErrorHandlerMiddleware();
+		Configure::write('debug', false);
+		Configure::delete('TinyAuthBackend.editorCheck');
+		require dirname(__DIR__, 4) . '/config/bootstrap.php';
+
+		$this->expectException(ForbiddenException::class);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
 	}
 
 	public function testEditorCheckRejectsUnprivilegedCaller(): void {

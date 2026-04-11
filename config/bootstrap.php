@@ -16,6 +16,14 @@ $defaults = [
 	'cacheConfig' => 'default',
 	'superAdminRole' => null,
 
+	// Admin UI editor gate. Fail closed by default outside debug mode.
+	// In debug=true environments the admin UI stays accessible out of the
+	// box for demos / local setup. In debug=false the default denies all
+	// access until the host app provides an explicit callable.
+	'editorCheck' => static function (mixed $identity, mixed $request): bool {
+		return Configure::read('debug') === true;
+	},
+
 	// Feature toggles (hybrid: auto-detect from DB tables, override here)
 	// null = auto-detect, true = force enable, false = force disable
 	'features' => [

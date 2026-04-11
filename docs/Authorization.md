@@ -29,27 +29,37 @@ Load the plugin and middleware in your app as usual.
 
 ### Mapping `TinyAuthPolicy`
 
-Map it as the default policy for entities you want to control from the backend:
+The plugin ships a dedicated `TinyAuthResolver` that maps any known entity, table, or `SelectQuery` to `TinyAuthPolicy` — without you having to write a thin `App\Policy\FooPolicy` wrapper per resource:
 
 ```php
 use Authorization\AuthorizationService;
 use Authorization\AuthorizationServiceInterface;
 use Authorization\AuthorizationServiceProviderInterface;
-use Authorization\Policy\OrmResolver;
 use Psr\Http\Message\ServerRequestInterface;
-use TinyAuthBackend\Policy\TinyAuthPolicy;
+use TinyAuthBackend\Policy\TinyAuthResolver;
 
 class Application extends BaseApplication implements AuthorizationServiceProviderInterface
 {
     public function getAuthorizationService(
         ServerRequestInterface $request
     ): AuthorizationServiceInterface {
-        $resolver = new OrmResolver(TinyAuthPolicy::class);
+        $resolver = new TinyAuthResolver([
+            \App\Model\Entity\Article::class,
+            \App\Model\Entity\Project::class,
+        ]);
 
         return new AuthorizationService($resolver);
     }
 }
 ```
+
+The constructor takes an allowlist of entity/table classes. Leave it empty to put every resource under TinyAuth control (match-all mode):
+
+```php
+$resolver = new TinyAuthResolver(); // governs all resources
+```
+
+`TinyAuthResolver` transparently unwraps `SelectQuery` instances to their repository, so the same resolver works for both `$this->Authorization->authorize($article, 'edit')` and `$this->Authorization->applyScope($query)`. Cake's built-in `MapResolver` only handles the former, and `OrmResolver` requires convention-based `App\Policy\*` classes — `TinyAuthResolver` avoids both pitfalls.
 
 ### In Controllers
 
@@ -82,6 +92,21 @@ If no config is set, the built-in fallback aliases are:
 
 - `admin`
 - `superadmin`
+
+### Identity Without `cakephp/authentication`
+
+Most apps load `cakephp/authentication`, which hangs an `IdentityInterface` on the request automatically. If your app resolves users another way — a session payload, a JWT claim, an upstream SSO gateway — the plugin ships `EntityIdentity`, a small wrapper that turns any Cake entity into a valid `Authorization\IdentityInterface` without pulling in the authentication plugin:
+
+```php
+use TinyAuthBackend\Identity\EntityIdentity;
+
+$user = $this->Users->get($userId);
+$identity = new EntityIdentity($user, $authorizationService); // service is optional
+
+$request = $request->withAttribute('identity', $identity);
+```
+
+`EntityIdentity` forwards array access and magic property reads to the underlying entity, so policies and templates can treat it interchangeably with the wrapped user entity. When constructed without an authorization service, `can()` returns `false` and `applyScope()` returns the resource unchanged — the right behavior for strategies that gate by role only and never call into the Authorization service (see the AdapterOnly usage pattern).
 
 ### Using `TinyAuthService` Directly
 

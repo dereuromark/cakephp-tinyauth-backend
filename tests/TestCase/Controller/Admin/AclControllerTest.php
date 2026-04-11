@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Test\TestCase\Controller\Admin;
 
 use Cake\Core\Configure;
+use Cake\Http\Exception\ForbiddenException;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Auth\AclAdapter\DbAclAdapter;
@@ -200,7 +201,7 @@ class AclControllerTest extends TestCase {
 		$this->disableErrorHandlerMiddleware();
 		Configure::write('TinyAuthBackend.editorCheck', fn ($identity, $request) => false);
 
-		$this->expectException(\Cake\Http\Exception\ForbiddenException::class);
+		$this->expectException(ForbiddenException::class);
 		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
 			'action_id' => 1,
 			'role_id' => 1,

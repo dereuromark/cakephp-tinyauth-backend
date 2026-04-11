@@ -9,12 +9,12 @@ class CreateTinyAuthTables extends BaseMigration {
 	 * @return void
 	 */
 	public function change(): void {
-		// Drop legacy tables from previous versions
-		if ($this->hasTable('acl_rules')) {
-			$this->table('acl_rules')->drop()->save();
+		// Drop legacy 2.x tables from previous versions
+		if ($this->hasTable('tiny_auth_acl_rules')) {
+			$this->table('tiny_auth_acl_rules')->drop()->save();
 		}
-		if ($this->hasTable('allow_rules')) {
-			$this->table('allow_rules')->drop()->save();
+		if ($this->hasTable('tiny_auth_allow_rules')) {
+			$this->table('tiny_auth_allow_rules')->drop()->save();
 		}
 
 		// Roles table

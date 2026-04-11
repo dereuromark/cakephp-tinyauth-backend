@@ -22,9 +22,16 @@ class ResourcesController extends AppController {
 			->orderBy(['name' => 'ASC', 'entity_class' => 'ASC']);
 
 		// Optional namespace filter — default null shows everything.
+		// Entity class names contain backslashes (`App\Model\Entity\…`),
+		// and MySQL's LIKE treats backslash as its escape character by
+		// default: a naive `LIKE 'App\%'` reads as "literal `App%`",
+		// so the filter matches nothing. Escape each backslash in the
+		// pattern so MySQL's regex layer sees a literal backslash.
+		// (Other drivers pass it through unchanged.)
 		$namespaceFilter = Configure::read('TinyAuthBackend.resourceNamespaceFilter');
 		if ($namespaceFilter) {
-			$query->where(['entity_class LIKE' => $namespaceFilter . '%']);
+			$pattern = str_replace('\\', '\\\\', $namespaceFilter) . '%';
+			$query->where(['entity_class LIKE' => $pattern]);
 		}
 
 		$resources = $query->all()->toArray();

@@ -6,8 +6,8 @@ namespace TinyAuthBackend\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Command\Command;
 use Cake\Core\Configure;
-use Shim\Command\Command;
 use TinyAuthBackend\Utility\AdapterConfig;
 use TinyAuthBackend\Utility\Importer;
 

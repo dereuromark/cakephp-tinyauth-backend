@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Model\Table;
 
+use ArrayObject;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
  * @method \TinyAuthBackend\Model\Entity\Role get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
@@ -57,6 +61,32 @@ class RolesTable extends Table {
 			'className' => 'TinyAuthBackend.ResourceAcl',
 			'foreignKey' => 'role_id',
 		]);
+	}
+
+	/**
+	 * Role hierarchy changes (parent_id, new/removed roles) alter
+	 * the inheritance expansion applied by DbAclAdapter — invalidate
+	 * the acl cache on any write.
+	 *
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject<string, mixed> $options
+	 *
+	 * @return void
+	 */
+	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		CacheInvalidator::clearAcl();
+	}
+
+	/**
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject<string, mixed> $options
+	 *
+	 * @return void
+	 */
+	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		CacheInvalidator::clearAcl();
 	}
 
 	/**

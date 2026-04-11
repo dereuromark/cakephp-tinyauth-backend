@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Model\Table;
 
+use ArrayObject;
 use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
  * @method \TinyAuthBackend\Model\Entity\TinyauthController get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
@@ -41,6 +45,31 @@ class TinyauthControllersTable extends Table {
 			'foreignKey' => 'controller_id',
 			'dependent' => true,
 		]);
+	}
+
+	/**
+	 * Adding or removing a controller changes the set of keys in the
+	 * allow/acl matrices, so both caches must be invalidated.
+	 *
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject<string, mixed> $options
+	 *
+	 * @return void
+	 */
+	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		CacheInvalidator::clearAll();
+	}
+
+	/**
+	 * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject<string, mixed> $options
+	 *
+	 * @return void
+	 */
+	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		CacheInvalidator::clearAll();
 	}
 
 	/**

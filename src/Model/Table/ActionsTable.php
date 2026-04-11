@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Model\Table;
 
 use ArrayObject;
-use Cake\Cache\Cache;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
  * @method \TinyAuthBackend\Model\Entity\Action get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
@@ -83,7 +83,7 @@ class ActionsTable extends Table {
 	 */
 	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if ($entity->isDirty('is_public')) {
-			Cache::delete('TinyAuth.allow');
+			CacheInvalidator::clearAllow();
 		}
 	}
 
@@ -95,7 +95,7 @@ class ActionsTable extends Table {
 	 * @return void
 	 */
 	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		Cache::delete('TinyAuth.allow');
+		CacheInvalidator::clearAll();
 	}
 
 }

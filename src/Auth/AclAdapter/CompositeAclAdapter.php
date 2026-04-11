@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Auth\AclAdapter;
 
 use Cake\Core\Configure;
+use Cake\Log\Log;
 use Throwable;
 use TinyAuth\Auth\AclAdapter\AclAdapterInterface;
 use TinyAuth\Auth\AclAdapter\IniAclAdapter;
@@ -49,7 +50,8 @@ class CompositeAclAdapter implements AclAdapterInterface {
 	 * @return array<string, array<string, mixed>>
 	 */
 	public function getAcl(array $availableRoles, array $config): array {
-		$adapters = (array)Configure::read('TinyAuth.aclAdapters') ?: static::DEFAULT_ADAPTERS;
+		$configured = Configure::read('TinyAuth.aclAdapters');
+		$adapters = $configured === null ? static::DEFAULT_ADAPTERS : (array)$configured;
 
 		$result = [];
 		foreach ($adapters as $adapterClass) {
@@ -62,6 +64,12 @@ class CompositeAclAdapter implements AclAdapterInterface {
 				$adapter = new $adapterClass();
 				$contribution = $adapter->getAcl($availableRoles, $config);
 			} catch (Throwable $e) {
+				Log::warning(sprintf(
+					'CompositeAclAdapter skipped delegated adapter "%s" after exception: %s',
+					$adapterClass,
+					$e->getMessage(),
+				));
+
 				continue;
 			}
 

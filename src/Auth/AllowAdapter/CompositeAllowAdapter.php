@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Auth\AllowAdapter;
 
 use Cake\Core\Configure;
+use Cake\Log\Log;
 use Throwable;
 use TinyAuth\Auth\AllowAdapter\AllowAdapterInterface;
 use TinyAuth\Auth\AllowAdapter\IniAllowAdapter;
@@ -60,7 +61,8 @@ class CompositeAllowAdapter implements AllowAdapterInterface {
 	 * @return array<string, array<string, mixed>>
 	 */
 	public function getAllow(array $config): array {
-		$adapters = (array)Configure::read('TinyAuth.allowAdapters') ?: static::DEFAULT_ADAPTERS;
+		$configured = Configure::read('TinyAuth.allowAdapters');
+		$adapters = $configured === null ? static::DEFAULT_ADAPTERS : (array)$configured;
 
 		$result = [];
 		foreach ($adapters as $adapterClass) {
@@ -73,6 +75,12 @@ class CompositeAllowAdapter implements AllowAdapterInterface {
 				$adapter = new $adapterClass();
 				$contribution = $adapter->getAllow($config);
 			} catch (Throwable $e) {
+				Log::warning(sprintf(
+					'CompositeAllowAdapter skipped delegated adapter "%s" after exception: %s',
+					$adapterClass,
+					$e->getMessage(),
+				));
+
 				continue;
 			}
 

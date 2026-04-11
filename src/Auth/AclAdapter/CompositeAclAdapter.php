@@ -64,10 +64,11 @@ class CompositeAclAdapter implements AclAdapterInterface {
 				$adapter = new $adapterClass();
 				$contribution = $adapter->getAcl($availableRoles, $config);
 			} catch (Throwable $e) {
+				$shortName = strrchr($adapterClass, '\\');
 				Log::warning(sprintf(
-					'CompositeAclAdapter skipped delegated adapter "%s" after exception: %s',
-					$adapterClass,
-					$e->getMessage(),
+					'CompositeAclAdapter skipped delegated adapter "%s" after %s',
+					$shortName !== false ? substr($shortName, 1) : $adapterClass,
+					$e::class,
 				));
 
 				continue;

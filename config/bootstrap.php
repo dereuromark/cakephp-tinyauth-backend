@@ -2,9 +2,12 @@
 declare(strict_types=1);
 
 use Cake\Core\Configure;
+use Cake\Utility\Hash;
 
-// Default configuration
-Configure::write('TinyAuthBackend', [
+// Default configuration. Merged with any TinyAuthBackend.* values the
+// host app already set so callers can pre-seed keys (e.g. editorCheck)
+// before the plugin bootstraps without having them wiped.
+$defaults = [
 	'roleHierarchy' => true,
 	'multiRole' => false, // Set true for users with multiple roles
 	'roleColumn' => 'role_id', // Single role: column name
@@ -43,4 +46,9 @@ Configure::write('TinyAuthBackend', [
 	// Plugins to exclude from ACL controller tree in admin panel
 	// These plugins won't appear in the permission management UI
 	'excludedPlugins' => ['DebugKit', 'TinyAuthBackend'],
-]);
+];
+
+Configure::write(
+	'TinyAuthBackend',
+	Hash::merge($defaults, (array)Configure::read('TinyAuthBackend')),
+);

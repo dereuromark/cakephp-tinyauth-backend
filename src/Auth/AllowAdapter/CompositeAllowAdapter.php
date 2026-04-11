@@ -75,10 +75,11 @@ class CompositeAllowAdapter implements AllowAdapterInterface {
 				$adapter = new $adapterClass();
 				$contribution = $adapter->getAllow($config);
 			} catch (Throwable $e) {
+				$shortName = strrchr($adapterClass, '\\');
 				Log::warning(sprintf(
-					'CompositeAllowAdapter skipped delegated adapter "%s" after exception: %s',
-					$adapterClass,
-					$e->getMessage(),
+					'CompositeAllowAdapter skipped delegated adapter "%s" after %s',
+					$shortName !== false ? substr($shortName, 1) : $adapterClass,
+					$e::class,
 				));
 
 				continue;

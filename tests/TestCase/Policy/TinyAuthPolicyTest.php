@@ -66,12 +66,98 @@ class TinyAuthPolicyTest extends TestCase {
 
 	public function testCanEditUsesSyncedResourceName(): void {
 		$policy = new TinyAuthPolicy();
-		$user = new Entity(['id' => 99, 'role_id' => 1]);
+		$identity = new TestIdentity(new Entity(['id' => 99, 'role_id' => 1]));
 		$article = new Article(['id' => 5, 'user_id' => 99]);
 
-		$result = $policy->canEdit($user, $article);
+		$result = $policy->canEdit($identity, $article);
 
 		$this->assertTrue($result);
+	}
+
+	/**
+	 * Null identity must deny every check — guards against a silent
+	 * passthrough from missing authentication.
+	 *
+	 * @return void
+	 */
+	public function testCanEditDeniesNullIdentity(): void {
+		$policy = new TinyAuthPolicy();
+
+		$this->assertFalse($policy->canEdit(null, new Article(['id' => 5, 'user_id' => 99])));
+		$this->assertFalse($policy->canView(null, new Article(['id' => 5, 'user_id' => 99])));
+		$this->assertFalse($policy->canDelete(null, new Article(['id' => 5, 'user_id' => 99])));
+	}
+
+	/**
+	 * Custom abilities via __call must also accept an identity and
+	 * pass the unwrapped user to TinyAuthService.
+	 *
+	 * @return void
+	 */
+	/**
+	 * Null identity forces the query to `1 = 0` — no rows leak to
+	 * anonymous visitors even on list endpoints.
+	 *
+	 * @return void
+	 */
+	public function testScopeIndexDeniesNullIdentity(): void {
+		$this->insertRow('tinyauth_roles', [
+			'id' => 99,
+			'name' => 'Dummy',
+			'alias' => 'dummy',
+			'parent_id' => null,
+			'sort_order' => 9999,
+		]);
+		// A freshly-created table with a known schema avoids schema
+		// introspection errors on test_app Tables we don't ship a
+		// fixture for.
+		$table = $this->fetchTable('TinyAuthBackend.Roles');
+		$query = $table->find();
+
+		$policy = new TinyAuthPolicy();
+		$result = $policy->scopeIndex(null, $query);
+
+		$this->assertStringContainsString('1 = 0', $result->sql());
+	}
+
+	/**
+	 * Super-admin identity returns the query unchanged — no WHERE
+	 * narrowing, full access.
+	 *
+	 * @return void
+	 */
+	public function testScopeIndexSuperAdminBypass(): void {
+		Configure::write('TinyAuth.superAdminRole', 'admin');
+
+		$policy = new TinyAuthPolicy();
+		$identity = new TestIdentity(new Entity(['id' => 1, 'role_id' => 1]));
+		$query = $this->fetchTable('TinyAuthBackend.Roles')->find();
+
+		$result = $policy->scopeIndex($identity, $query);
+
+		$this->assertSame($query, $result);
+	}
+
+	public function testCustomAbilityViaCallAcceptsIdentity(): void {
+		$this->insertRow('tinyauth_resource_abilities', [
+			'id' => 2,
+			'resource_id' => 1,
+			'name' => 'publish',
+			'description' => null,
+		]);
+		$this->insertRow('tinyauth_resource_acl', [
+			'id' => 2,
+			'resource_ability_id' => 2,
+			'role_id' => 1,
+			'type' => 'allow',
+			'scope_id' => null,
+		]);
+
+		$policy = new TinyAuthPolicy();
+		$identity = new TestIdentity(new Entity(['id' => 99, 'role_id' => 1]));
+		$article = new Article(['id' => 5, 'user_id' => 99]);
+
+		$this->assertTrue($policy->canPublish($identity, $article));
 	}
 
 	public function testBeforeUsesConfiguredSuperAdminRole(): void {

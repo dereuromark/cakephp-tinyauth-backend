@@ -51,19 +51,11 @@ class SyncControllerTest extends TestCase {
 		$this->assertResponseContains('Sync');
 	}
 
-	public function testResourcesIndexMatchesExistingRowsByEntityClass(): void {
-		$this->insertRow('tinyauth_resources', [
-			'id' => 1,
-			'name' => 'Role',
-			'entity_class' => 'Other\\Plugin\\Model\\Entity\\Role',
-			'table_name' => 'other_roles',
-		]);
-
+	public function testResourcesIndexHidesExcludedPluginEntitiesByDefault(): void {
 		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Sync', 'action' => 'resources']);
 
 		$this->assertResponseCode(200);
-		$this->assertResponseContains('TinyAuthBackend\\Model\\Entity\\Role');
-		$this->assertResponseContains('+ NEW');
+		$this->assertResponseNotContains('TinyAuthBackend\\Model\\Entity\\Role');
 	}
 
 	public function testResourcesSync(): void {
@@ -73,8 +65,8 @@ class SyncControllerTest extends TestCase {
 		]);
 
 		$this->assertResponseCode(302);
-		$this->assertGreaterThan(0, TableRegistry::getTableLocator()->get('tinyauth_resources')->find()->count());
-		$this->assertGreaterThan(0, TableRegistry::getTableLocator()->get('tinyauth_resource_abilities')->find()->count());
+		$this->assertSame(0, TableRegistry::getTableLocator()->get('tinyauth_resources')->find()->count());
+		$this->assertSame(0, TableRegistry::getTableLocator()->get('tinyauth_resource_abilities')->find()->count());
 	}
 
 }

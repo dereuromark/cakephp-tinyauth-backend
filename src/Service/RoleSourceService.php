@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Service;
 
 use Cake\Core\Configure;
+use Cake\Log\Log;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Exception;
@@ -144,20 +145,45 @@ class RoleSourceService {
 	}
 
 	/**
+	 * Normalize an `alias => id` role map into the plugin's internal
+	 * shape (`array<string, int>`).
+	 *
+	 * This plugin keys permission rows by integer role id. If a host
+	 * hands over non-integer ids (UUIDs, GUIDs, string slugs, ...)
+	 * there is no safe coercion, so the entry is dropped — but we
+	 * log a warning so the operator knows *why* their matrix is empty
+	 * instead of staring at silent zeros. See `docs/Roles.md` for the
+	 * supported shape and the "existing UUID roles" workaround.
+	 *
 	 * @param array<mixed, mixed> $roles
 	 * @return array<string, int>
 	 */
 	protected function normalizeRoles(array $roles): array {
 		$result = [];
+		$dropped = [];
 		foreach ($roles as $alias => $id) {
 			if (!is_string($alias) || $alias === '') {
+				$dropped[] = sprintf('(alias=%s)', var_export($alias, true));
+
 				continue;
 			}
 			if (!is_numeric($id)) {
+				$dropped[] = sprintf('%s=%s', $alias, var_export($id, true));
+
 				continue;
 			}
 
 			$result[$alias] = (int)$id;
+		}
+
+		if ($dropped) {
+			Log::warning(sprintf(
+				'TinyAuthBackend.roleSource dropped %d role(s) with non-numeric ids: %s. '
+				. 'Role ids must be integer or numeric-string; map UUID/opaque ids to stable ints yourself. '
+				. 'See docs/Roles.md.',
+				count($dropped),
+				implode(', ', $dropped),
+			));
 		}
 
 		return $result;

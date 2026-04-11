@@ -7,6 +7,7 @@ use Cake\Core\Configure;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TinyAuthBackend\Auth\AclAdapter\DbAclAdapter;
 use TinyAuthBackend\Service\RoleSourceService;
 use TinyAuthBackend\Test\TestSuite\DatabaseTestTrait;
@@ -220,6 +221,36 @@ class AclControllerTest extends TestCase {
 
 		$this->assertResponseCode(200);
 		$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 1, 'type' => 'allow']));
+	}
+
+	public function testEditorCheckThrowingIsConvertedToForbidden(): void {
+		$this->disableErrorHandlerMiddleware();
+		Configure::write('TinyAuthBackend.editorCheck', function (): bool {
+			throw new RuntimeException('upstream auth service failed');
+		});
+
+		// Must NOT leak the RuntimeException / stack trace to the client.
+		$this->expectException(ForbiddenException::class);
+		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
+	}
+
+	public function testEditorCheckExplicitForbiddenIsRespected(): void {
+		$this->disableErrorHandlerMiddleware();
+		Configure::write('TinyAuthBackend.editorCheck', function (): bool {
+			throw new ForbiddenException('custom denial reason');
+		});
+
+		$this->expectException(ForbiddenException::class);
+		$this->expectExceptionMessage('custom denial reason');
+		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+			'action_id' => 1,
+			'role_id' => 1,
+			'type' => 'allow',
+		]);
 	}
 
 }

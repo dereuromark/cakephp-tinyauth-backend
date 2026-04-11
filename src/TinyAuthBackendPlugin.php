@@ -9,6 +9,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Routing\RouteBuilder;
 use TinyAuthBackend\Command\ImportCommand;
 use TinyAuthBackend\Command\InitCommand;
+use TinyAuthBackend\Command\SyncCommand;
 
 /**
  * Plugin for TinyAuthBackend
@@ -69,6 +70,7 @@ class TinyAuthBackendPlugin extends BasePlugin {
 	public function console(CommandCollection $commands): CommandCollection {
 		$commands->add('tiny_auth_backend init', InitCommand::class);
 		$commands->add('tiny_auth_backend import', ImportCommand::class);
+		$commands->add('tiny_auth_backend sync', SyncCommand::class);
 
 		return $commands;
 	}

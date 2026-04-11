@@ -11,12 +11,7 @@ use Shim\Command\Command;
 use TinyAuth\Utility\TinyAuth;
 use TinyAuthBackend\Utility\Importer;
 
-/**
- * @property \TinyAuthBackend\Model\Table\AllowRulesTable $AllowRules
- */
 class InitCommand extends Command {
-
-	protected ?string $defaultTable = 'TinyAuthBackend.AllowRules';
 
 	/**
 	 * @inheritDoc

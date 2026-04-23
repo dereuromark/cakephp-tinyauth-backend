@@ -6,6 +6,7 @@
  * @var array $roles
  */
 $this->assign('title', 'Roles');
+$cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
 ?>
 
 <?php if (!$isManaged) { ?>
@@ -74,10 +75,12 @@ $this->assign('title', 'Roles');
                     <span class="opacity-0 group-hover:opacity-100 flex gap-1">
                         <a href="<?= $this->Url->build(['action' => 'edit', $role->id]) ?>"
                            class="text-blue-600 text-sm">Edit</a>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $role->id], [
-                            'confirm' => __('Delete this role?'),
-                            'class' => 'text-red-600 text-sm',
-                            'block' => true,
+                        <?= $this->Form->postButton(__('Delete'), ['action' => 'delete', $role->id], [
+                            'class' => 'text-red-600 text-sm bg-transparent border-0 p-0',
+                            'form' => [
+                                'class' => 'inline',
+                                'data-confirm-message' => __('Delete this role?'),
+                            ],
                         ]) ?>
                     </span>
                 </div>
@@ -140,7 +143,7 @@ $this->assign('title', 'Roles');
 </div>
 <?php } ?>
 
-<script>
+<script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
 function reorderRole(targetId, sourceId) {
     if (targetId === sourceId) return;
 

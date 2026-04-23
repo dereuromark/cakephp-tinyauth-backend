@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @var \Cake\View\View $this
  */
 $this->loadHelper('TinyAuthBackend.TinyAuth');
+$cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
 ?>
 <!DOCTYPE html>
 <html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
@@ -17,7 +18,7 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script>
+    <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
         // Configure HTMX to include CSRF token in all requests
         document.addEventListener('htmx:configRequest', function(event) {
             var csrfToken = document.querySelector('meta[name="csrfToken"]');
@@ -25,8 +26,19 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
                 event.detail.headers['X-CSRF-Token'] = csrfToken.content;
             }
         });
+
+        // Confirmation dialogs for postButton forms (CSP-safe replacement for postLink + confirm)
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('form[data-confirm-message]').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm(form.dataset.confirmMessage)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
     </script>
-    <script>
+    <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -38,7 +50,7 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
             }
         }
     </script>
-    <script>
+    <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
         window.TinyAuth = {
             urls: {
                 aclToggle: <?= json_encode($this->Url->build(['plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle', 'prefix' => 'Admin'])) ?>,

@@ -85,6 +85,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 })();
 
+// Role hierarchy: apply indentation from data-role-level (replaces inline style="margin-left:...rem")
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-role-level]').forEach(function(el) {
+        var level = parseInt(el.dataset.roleLevel, 10) || 0;
+        el.style.marginLeft = (level * 1.5) + 'rem';
+    });
+});
+
 // Role hierarchy drag-and-drop reorder (replaces Alpine @dragstart/@dragend/@drop bindings)
 (function() {
     var draggingId = null;

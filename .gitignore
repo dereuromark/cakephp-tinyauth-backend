@@ -8,3 +8,4 @@
 .idea/
 /config/Migrations/schema-dump-default.lock
 .phpcs.cache
+/node_modules/

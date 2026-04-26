@@ -54,6 +54,7 @@
 		}
 	},
 	"scripts": {
+		"assets": "npx --yes tailwindcss@^3 -i webroot/css/tailwind.input.css -o webroot/css/tailwind.css --minify",
 		"cs-check": "phpcs --colors --parallel=16",
 		"cs-fix": "phpcbf --colors --parallel=16",
 		"lowest": "validate-prefer-lowest",

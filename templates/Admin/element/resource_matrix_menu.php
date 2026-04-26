@@ -11,8 +11,7 @@
  */
 ?>
 <div data-menu
-	 class="menu-popover absolute z-10 mt-1 bg-white dark:bg-slate-800 border rounded-md shadow-lg p-2 text-left min-w-[150px]"
-	 style="left: 50%; transform: translateX(-50%);">
+	 class="menu-popover menu-popover-centered absolute z-10 mt-1 bg-white dark:bg-slate-800 border rounded-md shadow-lg p-2 text-left min-w-[150px]">
 	<div class="text-xs font-medium text-gray-500 mb-1"><?= __('Permission') ?></div>
 	<button type="button"
 			class="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm"

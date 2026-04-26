@@ -9,15 +9,21 @@ $this->loadHelper('TinyAuthBackend.TinyAuth');
 $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
 ?>
 <!DOCTYPE html>
-<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')) ?>
     <title><?= $this->fetch('title') ?> - TinyAuth</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
+        // FOUC-safe dark-mode bootstrap (runs before paint)
+        (function () {
+            var dark = localStorage.getItem('darkMode') === 'true';
+            document.documentElement.classList.toggle('dark', dark);
+        })();
+    </script>
     <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
         // Configure HTMX to include CSRF token in all requests
         document.addEventListener('htmx:configRequest', function(event) {
@@ -101,12 +107,12 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
                     <?php } ?>
 
                     <!-- Theme toggle -->
-                    <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)"
+                    <button data-action="toggle-dark-mode"
                             class="ml-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700"
-                            :aria-label="darkMode ? '<?= __('Switch to light mode') ?>' : '<?= __('Switch to dark mode') ?>'"
+                            aria-label="<?= __('Toggle dark mode') ?>"
                             type="button">
-                        <span x-show="!darkMode">🌙</span>
-                        <span x-show="darkMode">☀️</span>
+                        <span data-dark-mode-icon="light">🌙</span>
+                        <span data-dark-mode-icon="dark" hidden>☀️</span>
                     </button>
                 </nav>
             </div>

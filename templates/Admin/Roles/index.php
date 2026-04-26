@@ -6,7 +6,6 @@
  * @var array $roles
  */
 $this->assign('title', 'Roles');
-$cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
 ?>
 
 <?php if (!$isManaged) { ?>
@@ -55,17 +54,16 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
             <a href="<?= $this->Url->build(['action' => 'add']) ?>" class="btn btn-primary">+ Add Role</a>
         </div>
 
-        <div class="p-4" x-data="{ dragging: null }">
+        <div class="p-4" data-role-tree
+             data-reorder-url="<?= $this->Url->build(['action' => 'reorder']) ?>"
+             data-csrf-token="<?= h($this->request->getAttribute('csrfToken')) ?>">
             <?php
             $renderTree = function ($roles, $level = 0) use (&$renderTree) {
                 foreach ($roles as $role) {
             ?>
             <div class="role-item mb-1" style="margin-left: <?= $level * 1.5 ?>rem;"
                  draggable="true"
-                 @dragstart="dragging = <?= $role->id ?>"
-                 @dragend="dragging = null"
-                 @dragover.prevent
-                 @drop="reorderRole(<?= $role->id ?>, dragging)">
+                 data-role-id="<?= $role->id ?>">
                 <div class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 group">
                     <span class="cursor-move text-gray-400">&#8942;&#8942;</span>
                     <span class="flex-1">
@@ -143,22 +141,4 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
 </div>
 <?php } ?>
 
-<script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
-function reorderRole(targetId, sourceId) {
-    if (targetId === sourceId) return;
-
-    fetch('<?= $this->Url->build(['action' => 'reorder']) ?>', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRF-Token': '<?= $this->request->getAttribute('csrfToken') ?>'
-        },
-        body: new URLSearchParams({
-            role_id: sourceId,
-            parent_id: targetId,
-            sort_order: 0
-        })
-    }).then(() => location.reload());
-}
-</script>
 <?php } ?>

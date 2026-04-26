@@ -160,6 +160,19 @@
     transform: translateX(-50%);
 }
 
+/* HTMX request indicators — bundled here instead of injected by HTMX, since
+   `htmx-config` disables `includeIndicatorStyles` so the layout can run under
+   strict CSP without the inline-style hash HTMX would otherwise need. */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
 /* Tree: hide native disclosure marker, show our own caret */
 .tree details > summary {
     list-style: none;

@@ -14,9 +14,10 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')) ?>
+    <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
     <title><?= $this->fetch('title') ?> - TinyAuth</title>
     <?= $this->Html->css('TinyAuthBackend.tailwind') ?>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <?= $this->Html->script('TinyAuthBackend.htmx.min') ?>
     <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
         // FOUC-safe dark-mode bootstrap (runs before paint)
         (function () {

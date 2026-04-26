@@ -114,3 +114,26 @@ jobs:
 
       - name: Run phpcs
         run: composer cs-check
+
+  assets:
+    name: Tailwind asset build is up to date
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regenerate webroot/css/tailwind.css
+        run: composer assets
+
+      - name: Fail if generated CSS is stale
+        run: |
+          if ! git diff --quiet -- webroot/css/tailwind.css; then
+            echo "::error::webroot/css/tailwind.css is out of date. Run 'composer assets' locally and commit the regenerated file. See docs/Assets.md."
+            git diff -- webroot/css/tailwind.css | head -40
+            exit 1
+          fi

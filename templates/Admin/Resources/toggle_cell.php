@@ -5,6 +5,7 @@
  * @var int $roleId
  * @var string $type
  * @var \TinyAuthBackend\Model\Entity\Scope|null $scope
+ * @var array<\TinyAuthBackend\Model\Entity\Scope> $scopes
  * @var string|null $error
  */
 if (isset($error)) { ?>
@@ -26,8 +27,19 @@ if (isset($error)) { ?>
 	?>
 <td id="rcell-<?= $abilityId ?>-<?= $roleId ?>"
 	class="matrix-cell <?= h($class) ?>"
-	x-data="{ showMenu: false }"
-	@click="showMenu = !showMenu">
-	<span><?= h($display) ?></span>
+	data-menu-scope>
+	<div class="relative">
+		<button type="button"
+				class="block w-full text-center"
+				data-menu-toggle
+				aria-haspopup="true">
+			<span><?= h($display) ?></span>
+		</button>
+		<?= $this->element('TinyAuthBackend.resource_matrix_menu', [
+			'abilityId' => $abilityId,
+			'roleId' => $roleId,
+			'scopes' => $scopes,
+		]) ?>
+	</div>
 </td>
 <?php }

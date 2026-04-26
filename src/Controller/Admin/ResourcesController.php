@@ -137,12 +137,13 @@ class ResourcesController extends AppController {
 			}
 		}
 
-		// Return updated cell
+		// Return updated cell — include all scopes so the menu can be re-rendered
 		$scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');
 		$scope = $scopeId ? $scopesTable->find()->where(['id' => $scopeId])->first() : null;
+		$scopes = $scopesTable->find()->orderBy(['name' => 'ASC'])->toArray();
 
 		$this->viewBuilder()->disableAutoLayout();
-		$this->set(compact('abilityId', 'roleId', 'type', 'scope'));
+		$this->set(compact('abilityId', 'roleId', 'type', 'scope', 'scopes'));
 
 		return $this->render('toggle_cell');
 	}

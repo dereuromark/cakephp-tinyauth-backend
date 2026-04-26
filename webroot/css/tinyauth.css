@@ -144,3 +144,31 @@
     color: rgb(156 163 175);
     background-color: rgb(30 41 59);
 }
+
+/* Dropdown menu: hidden by default, visible when toggled open */
+[data-menu] {
+    display: none;
+}
+
+[data-menu].is-open {
+    display: block;
+}
+
+/* Tree: hide native disclosure marker, show our own caret */
+.tree details > summary {
+    list-style: none;
+}
+
+.tree details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.tree details > summary .tree-marker::before {
+    content: "\25B6"; /* ▶ */
+    display: inline-block;
+    transition: transform 0.1s ease;
+}
+
+.tree details[open] > summary .tree-marker::before {
+    transform: rotate(90deg);
+}

@@ -9,7 +9,10 @@
 module.exports = {
     content: [
         './templates/**/*.php',
-        './webroot/js/**/*.js',
+        // Plugin-owned JS only — excludes vendored libraries like
+        // `htmx.min.js` whose minified strings would otherwise leak into
+        // the utility-class scan (e.g. picking up `transition` from htmx).
+        './webroot/js/tinyauth.js',
     ],
     darkMode: 'class',
     theme: {

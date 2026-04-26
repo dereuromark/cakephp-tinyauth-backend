@@ -61,9 +61,10 @@ $this->assign('title', 'Roles');
             $renderTree = function ($roles, $level = 0) use (&$renderTree) {
                 foreach ($roles as $role) {
             ?>
-            <div class="role-item mb-1" style="margin-left: <?= $level * 1.5 ?>rem;"
+            <div class="role-item mb-1"
                  draggable="true"
-                 data-role-id="<?= $role->id ?>">
+                 data-role-id="<?= $role->id ?>"
+                 data-role-level="<?= (int)$level ?>">
                 <div class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 group">
                     <span class="cursor-move text-gray-400">&#8942;&#8942;</span>
                     <span class="flex-1">

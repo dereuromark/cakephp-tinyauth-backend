@@ -15,7 +15,7 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')) ?>
     <title><?= $this->fetch('title') ?> - TinyAuth</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <?= $this->Html->css('TinyAuthBackend.tailwind') ?>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
         // FOUC-safe dark-mode bootstrap (runs before paint)
@@ -43,18 +43,6 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
                 });
             });
         });
-    </script>
-    <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                    }
-                }
-            }
-        }
     </script>
     <script<?= $cspNonce !== '' ? ' nonce="' . h($cspNonce) . '"' : '' ?>>
         window.TinyAuth = {

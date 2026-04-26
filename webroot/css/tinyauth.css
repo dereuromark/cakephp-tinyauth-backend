@@ -154,6 +154,12 @@
     display: block;
 }
 
+/* Centered popover (replaces inline style="left:50%; transform:translateX(-50%)") */
+.menu-popover-centered {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 /* Tree: hide native disclosure marker, show our own caret */
 .tree details > summary {
     list-style: none;

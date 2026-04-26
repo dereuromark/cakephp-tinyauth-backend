@@ -67,6 +67,7 @@ Do not rely on the debug-mode default in production.
 - [Roles and Hierarchy](Roles.md)
 - [Scopes](Scopes.md)
 - [Services API](Services.md)
+- [Frontend Assets (for contributors)](Assets.md)
 
 ### Feature Flags
 

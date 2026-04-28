@@ -6,7 +6,7 @@
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/license.svg)](LICENSE)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-tinyauth-backend)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/d/total)](https://packagist.org/packages/dereuromark/cakephp-tinyauth-backend)
-[![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
+[![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-purple.svg?style=flat-square)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
 A database driven backend for CakePHP [TinyAuth plugin](https://github.com/dereuromark/cakephp-tinyauth).
 This replaces the native INI file approach.

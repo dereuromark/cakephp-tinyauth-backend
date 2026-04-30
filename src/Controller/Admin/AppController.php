@@ -8,10 +8,35 @@ use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Log\Log;
+use Closure;
 use Throwable;
 
 /**
  * Base controller for TinyAuthBackend Admin controllers.
+ *
+ * The admin UI manages authorization rules — accidental exposure is
+ * RCE-equivalent (an attacker can grant themselves access to anything),
+ * so the default policy is **deny**. The host application MUST set
+ * `TinyAuthBackend.adminAccess` to a `Closure` that receives the current
+ * request and returns literal `true` to grant access; anything else
+ * (unset, non-Closure, returns false, returns a truthy non-bool, or
+ * throws) yields a 403.
+ *
+ * ```php
+ * Configure::write('TinyAuthBackend.adminAccess', function (\Cake\Http\ServerRequest $request): bool {
+ *     $identity = $request->getAttribute('identity');
+ *     return $identity !== null && in_array('admin', (array)$identity->roles, true);
+ * });
+ * ```
+ *
+ * The legacy `TinyAuthBackend.editorCheck` callable (signature
+ * `function ($identity, $request): bool`) is still honored for
+ * backward compatibility but is **deprecated** and emits a
+ * deprecation warning when used. Migrate to `adminAccess`.
+ *
+ * Precedence: `adminAccess` is checked first; if unset the legacy
+ * `editorCheck` is consulted; if neither is set the request is
+ * denied.
  */
 class AppController extends Controller {
 
@@ -25,47 +50,65 @@ class AppController extends Controller {
 	}
 
 	/**
-	 * Defense-in-depth authorization hook.
+	 * Default-deny access gate.
 	 *
-	 * The plugin delegates authentication to the host app — the
-	 * `/admin/auth` prefix is expected to be gated at the middleware or
-	 * routing layer. This hook adds an optional *authorization* gate so
-	 * the plugin can reject authenticated-but-not-privileged users (e.g.
-	 * a helpdesk identity that can see the admin area but must not be
-	 * able to edit ACL rules).
-	 *
-	 * Configure a callable under `TinyAuthBackend.editorCheck` that
-	 * receives the current identity (may be `null`) and the request, and
-	 * returns `true` if the caller is permitted to manage TinyAuth rules.
-	 * Returning `false` — or any non-true value — raises a 403.
-	 *
-	 * ```php
-	 * Configure::write('TinyAuthBackend.editorCheck', function ($identity, $request) {
-	 *     return $identity !== null && in_array('admin', (array)$identity->roles, true);
-	 * });
-	 * ```
-	 *
-	 * When the key is unset the hook is a no-op — existing installs keep
-	 * working and continue to rely on the host app's gating.
-	 *
-     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event
-     * @throws \Cake\Http\Exception\ForbiddenException When the configured check rejects the caller.
-     * @return void
+	 * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event
+	 * @throws \Cake\Http\Exception\ForbiddenException When access is denied or unconfigured.
+	 * @return void
 	 */
 	public function beforeFilter(EventInterface $event): void {
 		parent::beforeFilter($event);
 
-		$check = Configure::read('TinyAuthBackend.editorCheck');
-		if ($check === null) {
-			return;
-		}
-		if (!is_callable($check)) {
-			throw new ForbiddenException('TinyAuthBackend.editorCheck must be callable');
+		// Coexist with cakephp/authorization: this gate IS the authorization
+		// decision for the TinyAuthBackend admin, so silence the policy check.
+		if ($this->components()->has('Authorization') && method_exists($this->components()->get('Authorization'), 'skipAuthorization')) {
+			$this->components()->get('Authorization')->skipAuthorization();
 		}
 
-		$identity = $this->request->getAttribute('identity');
+		$adminAccess = Configure::read('TinyAuthBackend.adminAccess');
+		if ($adminAccess instanceof Closure) {
+			$request = $this->request;
+			$this->runGate(static fn () => $adminAccess($request));
+
+			return;
+		}
+		if ($adminAccess !== null) {
+			throw new ForbiddenException('TinyAuthBackend.adminAccess must be a Closure');
+		}
+
+		$editorCheck = Configure::read('TinyAuthBackend.editorCheck');
+		if ($editorCheck !== null) {
+			if (!is_callable($editorCheck)) {
+				throw new ForbiddenException('TinyAuthBackend.editorCheck must be callable');
+			}
+			deprecationWarning(
+				'3.2.0',
+				'TinyAuthBackend.editorCheck is deprecated, use TinyAuthBackend.adminAccess (Closure receiving only the request) instead.',
+			);
+			$identity = $this->request->getAttribute('identity');
+			$request = $this->request;
+			$this->runGate(static fn () => $editorCheck($identity, $request));
+
+			return;
+		}
+
+		throw new ForbiddenException(__d(
+			'tinyauth_backend',
+			'TinyAuthBackend admin backend is not configured. Set TinyAuthBackend.adminAccess to a Closure that returns true for permitted callers.',
+		));
+	}
+
+	/**
+	 * Run the gate Closure, normalising every non-true outcome to a 403 and
+	 * logging unexpected exceptions instead of leaking them to the client.
+	 *
+	 * @param \Closure $gate
+	 * @throws \Cake\Http\Exception\ForbiddenException
+	 * @return void
+	 */
+	private function runGate(Closure $gate): void {
 		try {
-			$allowed = $check($identity, $this->request) === true;
+			$allowed = $gate() === true;
 		} catch (ForbiddenException $e) {
 			// Caller explicitly chose the 403 path — respect it.
 			throw $e;
@@ -75,7 +118,7 @@ class AppController extends Controller {
 			// the concrete exception class + message lets operators
 			// diagnose it without leaking a stack trace to the client.
 			Log::warning(sprintf(
-				'TinyAuthBackend editorCheck threw %s: %s',
+				'TinyAuthBackend admin gate threw %s: %s',
 				$e::class,
 				$e->getMessage(),
 			));

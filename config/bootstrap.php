@@ -16,13 +16,10 @@ $defaults = [
 	'cacheConfig' => 'default',
 	'superAdminRole' => null,
 
-	// Admin UI editor gate. Fail closed by default outside debug mode.
-	// In debug=true environments the admin UI stays accessible out of the
-	// box for demos / local setup. In debug=false the default denies all
-	// access until the host app provides an explicit callable.
-	'editorCheck' => static function (mixed $identity, mixed $request): bool {
-		return Configure::read('debug') === true;
-	},
+	// Admin UI gate is intentionally NOT defaulted here. The plugin's
+	// AppController fails closed when neither TinyAuthBackend.adminAccess
+	// (preferred Closure) nor the deprecated TinyAuthBackend.editorCheck
+	// (legacy callable) is configured. Hosts must opt in explicitly.
 
 	// Feature toggles (hybrid: auto-detect from DB tables, override here)
 	// null = auto-detect, true = force enable, false = force disable

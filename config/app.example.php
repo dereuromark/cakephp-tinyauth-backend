@@ -54,13 +54,18 @@ return [
 		'superAdminRole' => null,
 
 		/*
-		 * Admin UI editor gate.
+		 * Admin access gate. REQUIRED — the plugin fails closed by default,
+		 * regardless of debug mode. Set to a Closure that receives the current
+		 * request and returns literal `true` to grant access; anything else
+		 * (unset, non-Closure, returns false, returns a truthy non-bool, or
+		 * throws) yields a 403.
 		 *
-		 * In debug=true the plugin defaults to allowing access for local setup.
-		 * In debug=false the plugin defaults to denying access unless you
-		 * provide your own callable here.
+		 * The admin UI manages authorization rules — accidental exposure is
+		 * RCE-equivalent (an attacker can grant themselves access to anything),
+		 * so the default policy is deny.
 		 */
-		'editorCheck' => static function (mixed $identity, ServerRequestInterface $request): bool {
+		'adminAccess' => static function (ServerRequestInterface $request): bool {
+			$identity = $request->getAttribute('identity');
 			if ($identity === null) {
 				return false;
 			}
@@ -71,6 +76,23 @@ return [
 
 			return (int)$roleId === 3;
 		},
+
+		/*
+		 * Legacy editorCheck callable (DEPRECATED).
+		 *
+		 * Still honored when `adminAccess` is unset, but emits a deprecation
+		 * warning. Migrate by:
+		 *   1. Renaming the key from `editorCheck` to `adminAccess`.
+		 *   2. Dropping the `$identity` parameter — fetch it via
+		 *      $request->getAttribute('identity') instead.
+		 *
+		 * If both keys are configured, `adminAccess` wins; `editorCheck` is
+		 * ignored. Keeping a `editorCheck` example here only as a migration
+		 * aid — new installs should configure `adminAccess` above instead.
+		 */
+		// 'editorCheck' => static function (mixed $identity, ServerRequestInterface $request): bool {
+		//     return $identity !== null && (int)($identity->get('role_id') ?? 0) === 3;
+		// },
 
 		/*
 		 * Feature toggles.

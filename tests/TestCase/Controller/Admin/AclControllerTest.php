@@ -193,36 +193,25 @@ class AclControllerTest extends TestCase {
 		$this->assertResponseNotContains('AXBooks');
 	}
 
-	public function testEditorCheckUnsetAllowsRequestInDebugMode(): void {
-		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
-
-		$this->assertResponseCode(200);
-	}
-
-	public function testEditorCheckUnsetRejectsRequestOutsideDebugMode(): void {
+	public function testAdminAccessUnsetAndEditorCheckUnsetRejects(): void {
 		$this->disableErrorHandlerMiddleware();
-		Configure::write('debug', false);
+		Configure::delete('TinyAuthBackend.adminAccess');
 		Configure::delete('TinyAuthBackend.editorCheck');
-		require dirname(__DIR__, 4) . '/config/bootstrap.php';
 
 		$this->expectException(ForbiddenException::class);
 		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
 	}
 
-	public function testEditorCheckRejectsUnprivilegedCaller(): void {
+	public function testAdminAccessClosureFalseRejects(): void {
 		$this->disableErrorHandlerMiddleware();
-		Configure::write('TinyAuthBackend.editorCheck', fn ($identity, $request) => false);
+		Configure::write('TinyAuthBackend.adminAccess', fn () => false);
 
 		$this->expectException(ForbiddenException::class);
-		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
-			'action_id' => 1,
-			'role_id' => 1,
-			'type' => 'allow',
-		]);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
 	}
 
-	public function testEditorCheckAllowsPrivilegedCaller(): void {
-		Configure::write('TinyAuthBackend.editorCheck', fn ($identity, $request) => true);
+	public function testAdminAccessClosureTrueAllows(): void {
+		Configure::write('TinyAuthBackend.adminAccess', fn () => true);
 
 		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
 			'action_id' => 1,
@@ -234,34 +223,119 @@ class AclControllerTest extends TestCase {
 		$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 1, 'type' => 'allow']));
 	}
 
+	public function testAdminAccessNonClosureRejects(): void {
+		$this->disableErrorHandlerMiddleware();
+		Configure::write('TinyAuthBackend.adminAccess', 'not a closure');
+
+		$this->expectException(ForbiddenException::class);
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
+	}
+
+	public function testAdminAccessTakesPrecedenceOverEditorCheck(): void {
+		// adminAccess permits, editorCheck would reject — adminAccess wins.
+		Configure::write('TinyAuthBackend.adminAccess', fn () => true);
+		Configure::write('TinyAuthBackend.editorCheck', fn () => false);
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
+
+		$this->assertResponseCode(200);
+	}
+
+	/**
+	 * The deprecated TinyAuthBackend.editorCheck is still honored when
+	 * adminAccess is unset — back-compat for installs that have not yet
+	 * migrated. A deprecation warning is emitted; tests suppress it.
+	 *
+	 * @return void
+	 */
+	public function testEditorCheckRejectsUnprivilegedCaller(): void {
+		$this->disableErrorHandlerMiddleware();
+		Configure::delete('TinyAuthBackend.adminAccess');
+		Configure::write('TinyAuthBackend.editorCheck', fn ($identity, $request) => false);
+
+		$this->expectException(ForbiddenException::class);
+		$this->withErrorReporting(E_ALL & ~E_USER_DEPRECATED, function (): void {
+			$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+				'action_id' => 1,
+				'role_id' => 1,
+				'type' => 'allow',
+			]);
+		});
+	}
+
+	public function testEditorCheckAllowsPrivilegedCaller(): void {
+		Configure::delete('TinyAuthBackend.adminAccess');
+		Configure::write('TinyAuthBackend.editorCheck', fn ($identity, $request) => true);
+
+		$this->withErrorReporting(E_ALL & ~E_USER_DEPRECATED, function (): void {
+			$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+				'action_id' => 1,
+				'role_id' => 1,
+				'type' => 'allow',
+			]);
+		});
+
+		$this->assertResponseCode(200);
+		$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['action_id' => 1, 'role_id' => 1, 'type' => 'allow']));
+	}
+
 	public function testEditorCheckThrowingIsConvertedToForbidden(): void {
 		$this->disableErrorHandlerMiddleware();
+		Configure::delete('TinyAuthBackend.adminAccess');
 		Configure::write('TinyAuthBackend.editorCheck', function (): bool {
 			throw new RuntimeException('upstream auth service failed');
 		});
 
 		// Must NOT leak the RuntimeException / stack trace to the client.
 		$this->expectException(ForbiddenException::class);
-		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
-			'action_id' => 1,
-			'role_id' => 1,
-			'type' => 'allow',
-		]);
+		$this->withErrorReporting(E_ALL & ~E_USER_DEPRECATED, function (): void {
+			$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+				'action_id' => 1,
+				'role_id' => 1,
+				'type' => 'allow',
+			]);
+		});
 	}
 
 	public function testEditorCheckExplicitForbiddenIsRespected(): void {
 		$this->disableErrorHandlerMiddleware();
+		Configure::delete('TinyAuthBackend.adminAccess');
 		Configure::write('TinyAuthBackend.editorCheck', function (): bool {
 			throw new ForbiddenException('custom denial reason');
 		});
 
 		$this->expectException(ForbiddenException::class);
 		$this->expectExceptionMessage('custom denial reason');
-		$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
-			'action_id' => 1,
-			'role_id' => 1,
-			'type' => 'allow',
-		]);
+		$this->withErrorReporting(E_ALL & ~E_USER_DEPRECATED, function (): void {
+			$this->post(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'toggle'], [
+				'action_id' => 1,
+				'role_id' => 1,
+				'type' => 'allow',
+			]);
+		});
+	}
+
+	public function testEditorCheckEmitsDeprecationWarning(): void {
+		Configure::delete('TinyAuthBackend.adminAccess');
+		Configure::write('TinyAuthBackend.editorCheck', fn () => true);
+
+		$captured = null;
+		set_error_handler(static function (int $errno, string $msg) use (&$captured): bool {
+			if ($errno === E_USER_DEPRECATED) {
+				$captured = $msg;
+			}
+
+			return true;
+		});
+
+		try {
+			$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', '?' => ['controller_id' => 1]]);
+		} finally {
+			restore_error_handler();
+		}
+
+		$this->assertNotNull($captured);
+		$this->assertStringContainsString('editorCheck is deprecated', (string)$captured);
 	}
 
 }

@@ -31,29 +31,31 @@ Common sections:
 
 ### Admin Access
 
-The plugin expects the host app to decide who may manage `/admin/auth`.
-
-Default behavior:
-
-- in `debug = true`, the admin UI is accessible by default for local development
-- in `debug = false`, the default `TinyAuthBackend.editorCheck` denies access until you replace it with your own callable
-
-Example:
+The plugin expects the host app to decide who may manage `/admin/auth`. It
+**fails closed by default**: regardless of `debug` mode, every admin
+request is rejected with `403` until you configure a gate. Set
+`TinyAuthBackend.adminAccess` to a `Closure` that returns literal `true`
+for permitted callers:
 
 ```php
 use Cake\Core\Configure;
-use Psr\Http\Message\ServerRequestInterface;
+use Cake\Http\ServerRequest;
 
 Configure::write(
-    'TinyAuthBackend.editorCheck',
-    function (mixed $identity, ServerRequestInterface $request): bool {
+    'TinyAuthBackend.adminAccess',
+    function (ServerRequest $request): bool {
+        $identity = $request->getAttribute('identity');
+
         return $identity !== null
             && (int)($identity->get('role_id') ?? 0) === 3;
     },
 );
 ```
 
-Do not rely on the debug-mode default in production.
+The legacy `TinyAuthBackend.editorCheck` callable is still honored when
+`adminAccess` is unset (with a deprecation warning) — see
+[Authentication.md](Authentication.md#deprecated-tinyauthbackendeditorcheck)
+for the migration steps.
 
 ### Which Guide Should I Read?
 

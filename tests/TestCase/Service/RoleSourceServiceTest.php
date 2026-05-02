@@ -115,7 +115,11 @@ class RoleSourceServiceTest extends TestCase {
 		}
 	}
 
-	public function testExternalRoleSourcePrunesAllShadowRowsWhenSourceIsEmpty(): void {
+	public function testEmptyExternalRoleSourceDoesNotPruneShadowRows(): void {
+		// Regression: a misconfigured / transiently-empty external source must
+		// not wipe `tinyauth_roles` on every GET. Empty set means "skip prune",
+		// not "prune all" — otherwise every permission row that FKs a role is
+		// cascade-destroyed.
 		$this->insertRow('tinyauth_roles', [
 			'id' => 10,
 			'name' => 'Editor',
@@ -123,13 +127,21 @@ class RoleSourceServiceTest extends TestCase {
 			'parent_id' => null,
 			'sort_order' => 1,
 		]);
+		$this->insertRow('tinyauth_roles', [
+			'id' => 20,
+			'name' => 'Manager',
+			'alias' => 'manager',
+			'parent_id' => null,
+			'sort_order' => 2,
+		]);
 		Configure::write('TinyAuthBackend.roleSource', []);
 		(new RoleSourceService())->clearCache();
 
 		$roles = (new RoleSourceService())->getRoles();
 
 		$this->assertSame([], $roles);
-		$this->assertSame(0, $this->countRows('tinyauth_roles', ['id' => 10]));
+		$this->assertSame(1, $this->countRows('tinyauth_roles', ['id' => 10]));
+		$this->assertSame(1, $this->countRows('tinyauth_roles', ['id' => 20]));
 	}
 
 }

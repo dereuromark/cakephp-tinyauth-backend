@@ -241,17 +241,26 @@ class RoleSourceService {
 	/**
 	 * Remove shadow rows for roles that no longer exist in the external source.
 	 *
+	 * An empty external set is treated as "skip prune this request" rather than
+	 * "prune everything": a misconfigured/transiently-failing source (callable
+	 * that throws and is swallowed upstream, Configure path that doesn't resolve
+	 * yet during bootstrap, ...) would otherwise wipe the entire `tinyauth_roles`
+	 * table on every GET, cascade-destroying every permission row that references
+	 * a role. Operators that genuinely want to clear all shadow rows can do so
+	 * via the table directly; we refuse to do it implicitly from a read path.
+	 *
 	 * @param \TinyAuthBackend\Model\Table\RolesTable $rolesTable
 	 * @param array<string, int> $roles
 	 * @return void
 	 */
 	protected function pruneExternalRoles(Table $rolesTable, array $roles): void {
 		$expectedAliases = array_keys($roles);
-
-		$staleRoles = $rolesTable->find();
-		if ($expectedAliases) {
-			$staleRoles->where(['alias NOT IN' => $expectedAliases]);
+		if (!$expectedAliases) {
+			return;
 		}
+
+		$staleRoles = $rolesTable->find()
+			->where(['alias NOT IN' => $expectedAliases]);
 
 		/** @var \TinyAuthBackend\Model\Entity\Role $staleRole */
 		foreach ($staleRoles->all() as $staleRole) {

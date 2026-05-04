@@ -29,14 +29,14 @@ $this->assign('title', 'Public Actions');
             <div class="flex items-center justify-between mb-3">
                 <h3 class="font-medium"><?= h($controller->full_path) ?></h3>
                 <div class="flex gap-2">
-                    <?= $this->Form->postButton(__('Make All Public'), ['action' => 'bulkToggle'], [
+                    <?= $this->Form->postButton(__d('tinyauth_backend', 'Make All Public'), ['action' => 'bulkToggle'], [
 						'data' => ['controller_id' => $controller->id, 'is_public' => true],
 						'class' => 'text-xs text-blue-600 hover:underline bg-transparent border-0 p-0',
 						'form' => [
 							'class' => 'inline',
 						],
 					]) ?>
-                    <?= $this->Form->postButton(__('Make All Protected'), ['action' => 'bulkToggle'], [
+                    <?= $this->Form->postButton(__d('tinyauth_backend', 'Make All Protected'), ['action' => 'bulkToggle'], [
 						'data' => ['controller_id' => $controller->id, 'is_public' => false],
 						'class' => 'text-xs text-blue-600 hover:underline bg-transparent border-0 p-0',
 						'form' => [

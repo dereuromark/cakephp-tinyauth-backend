@@ -21,7 +21,8 @@ class SyncController extends AppController {
 				'addActions' => (bool)$this->request->getData('add_actions', true),
 			]);
 
-			$this->Flash->success(__(
+			$this->Flash->success(__d(
+				'tinyauth_backend',
 				'Sync complete: {0} controllers added, {1} actions added.',
 				$result['added'],
 				$result['actions_added'],
@@ -70,7 +71,8 @@ class SyncController extends AppController {
 				'addDefaultAbilities' => (bool)$this->request->getData('add_abilities', true),
 			]);
 
-			$this->Flash->success(__(
+			$this->Flash->success(__d(
+				'tinyauth_backend',
 				'Sync complete: {0} resources added, {1} abilities added.',
 				$result['added'],
 				$result['abilities_added'],

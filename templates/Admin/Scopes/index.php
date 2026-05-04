@@ -48,11 +48,11 @@ $this->assign('title', 'Scopes');
                         <div class="flex gap-2">
                             <a href="<?= $this->Url->build(['action' => 'edit', $scope->id]) ?>"
                                class="text-blue-600 text-sm">Edit</a>
-                            <?= $this->Form->postButton(__('Delete'), ['action' => 'delete', $scope->id], [
+                            <?= $this->Form->postButton(__d('tinyauth_backend', 'Delete'), ['action' => 'delete', $scope->id], [
                                 'class' => 'text-red-600 text-sm bg-transparent border-0 p-0',
                                 'form' => [
                                     'class' => 'inline',
-                                    'data-confirm-message' => __('Delete this scope? Permissions using it will be updated.'),
+                                    'data-confirm-message' => __d('tinyauth_backend', 'Delete this scope? Permissions using it will be updated.'),
                                 ],
                             ]) ?>
                         </div>

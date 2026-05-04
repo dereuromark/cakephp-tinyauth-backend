@@ -86,7 +86,7 @@ class AllowController extends AppController {
 		$isPublic = filter_var($this->request->getData('is_public'), FILTER_VALIDATE_BOOLEAN);
 
 		if (!$controllerId) {
-			$this->Flash->error(__('Invalid controller.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Invalid controller.'));
 
 			return $this->redirect(['action' => 'index']);
 		}
@@ -99,7 +99,7 @@ class AllowController extends AppController {
 
 		CacheInvalidator::clearAllow();
 
-		$this->Flash->success(__('Actions updated.'));
+		$this->Flash->success(__d('tinyauth_backend', 'Actions updated.'));
 
 		return $this->redirect(['action' => 'index']);
 	}

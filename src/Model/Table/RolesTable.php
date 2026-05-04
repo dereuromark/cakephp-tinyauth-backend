@@ -109,7 +109,7 @@ class RolesTable extends Table {
 			->add('alias', 'unique', [
 				'rule' => 'validateUnique',
 				'provider' => 'table',
-				'message' => __('This alias is already in use.'),
+				'message' => __d('tinyauth_backend', 'This alias is already in use.'),
 			]);
 
 		$validator
@@ -127,7 +127,7 @@ class RolesTable extends Table {
 
 					return true;
 				},
-				'message' => __('A role cannot be its own parent.'),
+				'message' => __d('tinyauth_backend', 'A role cannot be its own parent.'),
 			])
 			->add('parent_id', 'exists', [
 				'rule' => function ($value, $context) {
@@ -137,7 +137,7 @@ class RolesTable extends Table {
 
 					return $this->exists(['id' => $value]);
 				},
-				'message' => __('Parent role does not exist.'),
+				'message' => __d('tinyauth_backend', 'Parent role does not exist.'),
 			])
 			->add('parent_id', 'noCircular', [
 				'rule' => function ($value, $context) {
@@ -162,7 +162,7 @@ class RolesTable extends Table {
 
 					return true;
 				},
-				'message' => __('Circular parent reference detected.'),
+				'message' => __d('tinyauth_backend', 'Circular parent reference detected.'),
 			]);
 
 		$validator

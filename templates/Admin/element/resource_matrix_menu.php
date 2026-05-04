@@ -12,14 +12,14 @@
 ?>
 <div data-menu
 	 class="menu-popover menu-popover-centered absolute z-10 mt-1 bg-white dark:bg-slate-800 border rounded-md shadow-lg p-2 text-left min-w-[150px]">
-	<div class="text-xs font-medium text-gray-500 mb-1"><?= __('Permission') ?></div>
+	<div class="text-xs font-medium text-gray-500 mb-1"><?= __d('tinyauth_backend', 'Permission') ?></div>
 	<button type="button"
 			class="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm"
 			hx-post="<?= $this->Url->build(['action' => 'toggle']) ?>"
 			hx-vals='<?= json_encode(['ability_id' => $abilityId, 'role_id' => $roleId, 'type' => 'allow', 'scope_id' => '']) ?>'
 			hx-target="#rcell-<?= $abilityId ?>-<?= $roleId ?>"
 			hx-swap="outerHTML">
-		<span class="text-green-500">●</span> <?= __('Full access') ?>
+		<span class="text-green-500">●</span> <?= __d('tinyauth_backend', 'Full access') ?>
 	</button>
 	<?php foreach ($scopes as $scope) { ?>
 	<button type="button"
@@ -37,7 +37,7 @@
 			hx-vals='<?= json_encode(['ability_id' => $abilityId, 'role_id' => $roleId, 'type' => 'deny', 'scope_id' => '']) ?>'
 			hx-target="#rcell-<?= $abilityId ?>-<?= $roleId ?>"
 			hx-swap="outerHTML">
-		<span class="text-red-500">✕</span> <?= __('Deny') ?>
+		<span class="text-red-500">✕</span> <?= __d('tinyauth_backend', 'Deny') ?>
 	</button>
 	<button type="button"
 			class="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-sm"
@@ -45,6 +45,6 @@
 			hx-vals='<?= json_encode(['ability_id' => $abilityId, 'role_id' => $roleId, 'type' => 'none', 'scope_id' => '']) ?>'
 			hx-target="#rcell-<?= $abilityId ?>-<?= $roleId ?>"
 			hx-swap="outerHTML">
-		<span class="text-gray-400">○</span> <?= __('Remove') ?>
+		<span class="text-gray-400">○</span> <?= __d('tinyauth_backend', 'Remove') ?>
 	</button>
 </div>

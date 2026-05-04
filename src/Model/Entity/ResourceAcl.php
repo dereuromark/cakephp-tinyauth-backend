@@ -49,8 +49,8 @@ class ResourceAcl extends Entity {
 	 */
 	public static function types(): array {
 		return [
-			static::TYPE_ALLOW => __('Allow'),
-			static::TYPE_DENY => __('Deny'),
+			static::TYPE_ALLOW => __d('tinyauth_backend', 'Allow'),
+			static::TYPE_DENY => __d('tinyauth_backend', 'Deny'),
 		];
 	}
 

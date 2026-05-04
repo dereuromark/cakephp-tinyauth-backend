@@ -98,7 +98,7 @@ $cspNonce = (string)$this->getRequest()->getAttribute('cspNonce', '');
                     <!-- Theme toggle -->
                     <button data-action="toggle-dark-mode"
                             class="ml-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700"
-                            aria-label="<?= __('Toggle dark mode') ?>"
+                            aria-label="<?= __d('tinyauth_backend', 'Toggle dark mode') ?>"
                             type="button">
                         <span data-dark-mode-icon="light">🌙</span>
                         <span data-dark-mode-icon="dark" hidden>☀️</span>

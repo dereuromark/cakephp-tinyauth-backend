@@ -52,7 +52,7 @@ $this->assign('title', $isEdit ? 'Edit Role' : 'Add Role');
             </div>
 
             <div class="flex gap-3 pt-4">
-                <?= $this->Form->button(__('Save'), ['class' => 'btn btn-primary']) ?>
+                <?= $this->Form->button(__d('tinyauth_backend', 'Save'), ['class' => 'btn btn-primary']) ?>
                 <a href="<?= $this->Url->build(['action' => 'index']) ?>" class="btn btn-secondary">Cancel</a>
             </div>
 

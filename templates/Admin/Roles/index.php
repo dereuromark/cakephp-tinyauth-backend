@@ -74,11 +74,11 @@ $this->assign('title', 'Roles');
                     <span class="opacity-0 group-hover:opacity-100 flex gap-1">
                         <a href="<?= $this->Url->build(['action' => 'edit', $role->id]) ?>"
                            class="text-blue-600 text-sm">Edit</a>
-                        <?= $this->Form->postButton(__('Delete'), ['action' => 'delete', $role->id], [
+                        <?= $this->Form->postButton(__d('tinyauth_backend', 'Delete'), ['action' => 'delete', $role->id], [
                             'class' => 'text-red-600 text-sm bg-transparent border-0 p-0',
                             'form' => [
                                 'class' => 'inline',
-                                'data-confirm-message' => __('Delete this role?'),
+                                'data-confirm-message' => __d('tinyauth_backend', 'Delete this role?'),
                             ],
                         ]) ?>
                     </span>

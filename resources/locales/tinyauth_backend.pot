@@ -1,0 +1,169 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2026-05-04 02:29+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Invalid controller."
+msgstr ""
+
+msgid "Actions updated."
+msgstr ""
+
+msgid "TinyAuthBackend admin backend is not configured. Set TinyAuthBackend.adminAccess to a Closure that returns true for permitted callers."
+msgstr ""
+
+msgid "Ability name is required."
+msgstr ""
+
+msgid "Ability \"{0}\" already exists for this resource."
+msgstr ""
+
+msgid "Ability added."
+msgstr ""
+
+msgid "Could not add ability."
+msgstr ""
+
+msgid "Cannot delete ability. It has {0} permission(s) assigned."
+msgstr ""
+
+msgid "Ability deleted."
+msgstr ""
+
+msgid "Could not delete ability."
+msgstr ""
+
+msgid "Roles are managed externally and cannot be created here."
+msgstr ""
+
+msgid "Role saved."
+msgstr ""
+
+msgid "Could not save role."
+msgstr ""
+
+msgid "Roles are managed externally and cannot be edited here."
+msgstr ""
+
+msgid "Role updated."
+msgstr ""
+
+msgid "Could not update role."
+msgstr ""
+
+msgid "Roles are managed externally and cannot be deleted here."
+msgstr ""
+
+msgid "Cannot delete role. It has {0} child role(s)."
+msgstr ""
+
+msgid "Cannot delete role. It has {0} ACL permission(s)."
+msgstr ""
+
+msgid "Cannot delete role. It has {0} resource permission(s)."
+msgstr ""
+
+msgid "Role deleted."
+msgstr ""
+
+msgid "Could not delete role."
+msgstr ""
+
+msgid "Scope saved."
+msgstr ""
+
+msgid "Could not save scope."
+msgstr ""
+
+msgid "Scope updated."
+msgstr ""
+
+msgid "Could not update scope."
+msgstr ""
+
+msgid "Cannot delete scope. It is used by {0} resource permission(s)."
+msgstr ""
+
+msgid "Scope deleted."
+msgstr ""
+
+msgid "Could not delete scope."
+msgstr ""
+
+msgid "Sync complete: {0} controllers added, {1} actions added."
+msgstr ""
+
+msgid "Sync complete: {0} resources added, {1} abilities added."
+msgstr ""
+
+msgid "Allow"
+msgstr ""
+
+msgid "Deny"
+msgstr ""
+
+msgid "This ability name already exists for this resource."
+msgstr ""
+
+msgid "This alias is already in use."
+msgstr ""
+
+msgid "A role cannot be its own parent."
+msgstr ""
+
+msgid "Parent role does not exist."
+msgstr ""
+
+msgid "Circular parent reference detected."
+msgstr ""
+
+msgid "Invalid field name. Use only letters, numbers, and underscores."
+msgstr ""
+
+msgid "Make All Public"
+msgstr ""
+
+msgid "Make All Protected"
+msgstr ""
+
+msgid "+ Add Ability"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete this role?"
+msgstr ""
+
+msgid "Delete this scope? Permissions using it will be updated."
+msgstr ""
+
+msgid "Sync Now"
+msgstr ""
+
+msgid "Permission"
+msgstr ""
+
+msgid "Full access"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "Toggle dark mode"
+msgstr ""
+

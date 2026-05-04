@@ -41,7 +41,7 @@ class RolesController extends AppController {
 	 */
 	public function add(): ?Response {
 		if (!$this->roleSource->isManaged()) {
-			$this->Flash->error(__('Roles are managed externally and cannot be created here.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Roles are managed externally and cannot be created here.'));
 
 			return $this->redirect(['action' => 'index']);
 		}
@@ -53,11 +53,11 @@ class RolesController extends AppController {
 			$role = $rolesTable->patchEntity($role, $this->request->getData());
 			if ($rolesTable->save($role)) {
 				$this->roleSource->clearCache();
-				$this->Flash->success(__('Role saved.'));
+				$this->Flash->success(__d('tinyauth_backend', 'Role saved.'));
 
 				return $this->redirect(['action' => 'index']);
 			}
-			$this->Flash->error(__('Could not save role.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not save role.'));
 		}
 
 		$parents = $rolesTable->find('list', keyField: 'id', valueField: 'name')
@@ -75,7 +75,7 @@ class RolesController extends AppController {
 	 */
 	public function edit(int $id): ?Response {
 		if (!$this->roleSource->isManaged()) {
-			$this->Flash->error(__('Roles are managed externally and cannot be edited here.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Roles are managed externally and cannot be edited here.'));
 
 			return $this->redirect(['action' => 'index']);
 		}
@@ -88,11 +88,11 @@ class RolesController extends AppController {
 			$role = $rolesTable->patchEntity($role, $data);
 			if ($rolesTable->save($role)) {
 				$this->roleSource->clearCache();
-				$this->Flash->success(__('Role updated.'));
+				$this->Flash->success(__d('tinyauth_backend', 'Role updated.'));
 
 				return $this->redirect(['action' => 'index']);
 			}
-			$this->Flash->error(__('Could not update role.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not update role.'));
 		}
 
 		// Exclude self from parent options to prevent self-reference
@@ -114,7 +114,7 @@ class RolesController extends AppController {
 		$this->request->allowMethod(['post', 'delete']);
 
 		if (!$this->roleSource->isManaged()) {
-			$this->Flash->error(__('Roles are managed externally and cannot be deleted here.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Roles are managed externally and cannot be deleted here.'));
 
 			return $this->redirect(['action' => 'index']);
 		}
@@ -125,7 +125,7 @@ class RolesController extends AppController {
 		// Check for child roles
 		$childCount = $rolesTable->find()->where(['parent_id' => $id])->count();
 		if ($childCount > 0) {
-			$this->Flash->error(__('Cannot delete role. It has {0} child role(s).', $childCount));
+			$this->Flash->error(__d('tinyauth_backend', 'Cannot delete role. It has {0} child role(s).', $childCount));
 
 			return $this->redirect(['action' => 'index']);
 		}
@@ -134,7 +134,7 @@ class RolesController extends AppController {
 		$aclTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
 		$aclCount = $aclTable->find()->where(['role_id' => $id])->count();
 		if ($aclCount > 0) {
-			$this->Flash->error(__('Cannot delete role. It has {0} ACL permission(s).', $aclCount));
+			$this->Flash->error(__d('tinyauth_backend', 'Cannot delete role. It has {0} ACL permission(s).', $aclCount));
 
 			return $this->redirect(['action' => 'index']);
 		}
@@ -143,16 +143,16 @@ class RolesController extends AppController {
 		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 		$resourceCount = $resourceAclTable->find()->where(['role_id' => $id])->count();
 		if ($resourceCount > 0) {
-			$this->Flash->error(__('Cannot delete role. It has {0} resource permission(s).', $resourceCount));
+			$this->Flash->error(__d('tinyauth_backend', 'Cannot delete role. It has {0} resource permission(s).', $resourceCount));
 
 			return $this->redirect(['action' => 'index']);
 		}
 
 		if ($rolesTable->delete($role)) {
 			$this->roleSource->clearCache();
-			$this->Flash->success(__('Role deleted.'));
+			$this->Flash->success(__d('tinyauth_backend', 'Role deleted.'));
 		} else {
-			$this->Flash->error(__('Could not delete role.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not delete role.'));
 		}
 
 		return $this->redirect(['action' => 'index']);

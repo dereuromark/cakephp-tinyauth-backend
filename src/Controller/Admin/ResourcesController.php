@@ -158,7 +158,7 @@ class ResourcesController extends AppController {
 		$name = trim((string)$this->request->getData('name'));
 
 		if ($name === '') {
-			$this->Flash->error(__('Ability name is required.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Ability name is required.'));
 
 			return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
 		}
@@ -168,7 +168,7 @@ class ResourcesController extends AppController {
 		// Check for duplicate
 		$exists = $abilitiesTable->exists(['resource_id' => $resourceId, 'name' => $name]);
 		if ($exists) {
-			$this->Flash->error(__('Ability "{0}" already exists for this resource.', $name));
+			$this->Flash->error(__d('tinyauth_backend', 'Ability "{0}" already exists for this resource.', $name));
 
 			return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
 		}
@@ -179,9 +179,9 @@ class ResourcesController extends AppController {
 		]);
 
 		if ($abilitiesTable->save($ability)) {
-			$this->Flash->success(__('Ability added.'));
+			$this->Flash->success(__d('tinyauth_backend', 'Ability added.'));
 		} else {
-			$this->Flash->error(__('Could not add ability.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not add ability.'));
 		}
 
 		return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
@@ -203,15 +203,15 @@ class ResourcesController extends AppController {
 		$aclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 		$usageCount = $aclTable->find()->where(['resource_ability_id' => $id])->count();
 		if ($usageCount > 0) {
-			$this->Flash->error(__('Cannot delete ability. It has {0} permission(s) assigned.', $usageCount));
+			$this->Flash->error(__d('tinyauth_backend', 'Cannot delete ability. It has {0} permission(s) assigned.', $usageCount));
 
 			return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);
 		}
 
 		if ($abilitiesTable->delete($ability)) {
-			$this->Flash->success(__('Ability deleted.'));
+			$this->Flash->success(__d('tinyauth_backend', 'Ability deleted.'));
 		} else {
-			$this->Flash->error(__('Could not delete ability.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not delete ability.'));
 		}
 
 		return $this->redirect(['action' => 'index', '?' => ['resource_id' => $resourceId]]);

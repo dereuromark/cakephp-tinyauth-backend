@@ -63,7 +63,7 @@ $this->assign('title', 'Resource Permissions');
 						'class' => 'form-input flex-1',
 						'placeholder' => 'New ability name (e.g., publish, archive)',
 					]) ?>
-					<?= $this->Form->button(__('+ Add Ability'), ['class' => 'btn btn-secondary']) ?>
+					<?= $this->Form->button(__d('tinyauth_backend', '+ Add Ability'), ['class' => 'btn btn-secondary']) ?>
 				</div>
 				<?= $this->Form->end() ?>
 			</div>

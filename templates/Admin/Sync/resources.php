@@ -56,7 +56,7 @@ $newCount = count(array_filter($diff, fn ($d) => $d['status'] === 'new'));
                 </label>
             </div>
             <div class="flex gap-2">
-                <?= $this->Form->button(__('Sync Now'), ['class' => 'btn btn-primary']) ?>
+                <?= $this->Form->button(__d('tinyauth_backend', 'Sync Now'), ['class' => 'btn btn-primary']) ?>
                 <a href="<?= $this->Url->build(['controller' => 'Resources', 'action' => 'index']) ?>"
                    class="btn btn-secondary">Cancel</a>
             </div>

@@ -30,11 +30,11 @@ class ScopesController extends AppController {
 		if ($this->request->is('post')) {
 			$scope = $scopesTable->patchEntity($scope, $this->request->getData());
 			if ($scopesTable->save($scope)) {
-				$this->Flash->success(__('Scope saved.'));
+				$this->Flash->success(__d('tinyauth_backend', 'Scope saved.'));
 
 				return $this->redirect(['action' => 'index']);
 			}
-			$this->Flash->error(__('Could not save scope.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not save scope.'));
 		}
 
 		$this->set(compact('scope'));
@@ -53,11 +53,11 @@ class ScopesController extends AppController {
 		if ($this->request->is(['post', 'put', 'patch'])) {
 			$scope = $scopesTable->patchEntity($scope, $this->request->getData());
 			if ($scopesTable->save($scope)) {
-				$this->Flash->success(__('Scope updated.'));
+				$this->Flash->success(__d('tinyauth_backend', 'Scope updated.'));
 
 				return $this->redirect(['action' => 'index']);
 			}
-			$this->Flash->error(__('Could not update scope.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not update scope.'));
 		}
 
 		$this->set(compact('scope'));
@@ -79,15 +79,15 @@ class ScopesController extends AppController {
 		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 		$usageCount = $resourceAclTable->find()->where(['scope_id' => $id])->count();
 		if ($usageCount > 0) {
-			$this->Flash->error(__('Cannot delete scope. It is used by {0} resource permission(s).', $usageCount));
+			$this->Flash->error(__d('tinyauth_backend', 'Cannot delete scope. It is used by {0} resource permission(s).', $usageCount));
 
 			return $this->redirect(['action' => 'index']);
 		}
 
 		if ($scopesTable->delete($scope)) {
-			$this->Flash->success(__('Scope deleted.'));
+			$this->Flash->success(__d('tinyauth_backend', 'Scope deleted.'));
 		} else {
-			$this->Flash->error(__('Could not delete scope.'));
+			$this->Flash->error(__d('tinyauth_backend', 'Could not delete scope.'));
 		}
 
 		return $this->redirect(['action' => 'index']);

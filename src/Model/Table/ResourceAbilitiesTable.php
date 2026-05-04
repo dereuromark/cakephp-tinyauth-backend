@@ -79,7 +79,7 @@ class ResourceAbilitiesTable extends Table {
 
 					return !$this->exists($conditions);
 				},
-				'message' => __('This ability name already exists for this resource.'),
+				'message' => __d('tinyauth_backend', 'This ability name already exists for this resource.'),
 			]);
 
 		$validator

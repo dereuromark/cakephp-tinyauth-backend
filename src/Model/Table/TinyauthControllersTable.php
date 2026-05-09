@@ -12,6 +12,7 @@ use Cake\Validation\Validator;
 use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
+ * @property \TinyAuthBackend\Model\Table\ActionsTable $Actions
  * @method \TinyAuthBackend\Model\Entity\TinyauthController get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
  * @method \TinyAuthBackend\Model\Entity\TinyauthController newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
  * @method array<\TinyAuthBackend\Model\Entity\TinyauthController> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
@@ -21,7 +22,6 @@ use TinyAuthBackend\Utility\CacheInvalidator;
  * @method \TinyAuthBackend\Model\Entity\TinyauthController findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
  * @method \TinyAuthBackend\Model\Entity\TinyauthController saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
  * @method array<string, array<string, mixed>> findTree()
- * @property \TinyAuthBackend\Model\Table\ActionsTable $Actions
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class TinyauthControllersTable extends Table {

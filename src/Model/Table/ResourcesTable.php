@@ -7,6 +7,7 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
+ * @property \TinyAuthBackend\Model\Table\ResourceAbilitiesTable $ResourceAbilities
  * @method \TinyAuthBackend\Model\Entity\Resource get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
  * @method \TinyAuthBackend\Model\Entity\Resource newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
  * @method array<\TinyAuthBackend\Model\Entity\Resource> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
@@ -15,7 +16,6 @@ use Cake\Validation\Validator;
  * @method array<\TinyAuthBackend\Model\Entity\Resource> patchEntities(iterable<\TinyAuthBackend\Model\Entity\Resource> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
  * @method \TinyAuthBackend\Model\Entity\Resource findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
  * @method \TinyAuthBackend\Model\Entity\Resource saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
- * @property \TinyAuthBackend\Model\Table\ResourceAbilitiesTable $ResourceAbilities
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ResourcesTable extends Table {

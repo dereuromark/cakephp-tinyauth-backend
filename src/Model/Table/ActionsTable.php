@@ -11,6 +11,8 @@ use Cake\Validation\Validator;
 use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
+ * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
+ * @property \TinyAuthBackend\Model\Table\AclPermissionsTable $AclPermissions
  * @method \TinyAuthBackend\Model\Entity\Action get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
  * @method \TinyAuthBackend\Model\Entity\Action newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
  * @method array<\TinyAuthBackend\Model\Entity\Action> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
@@ -19,8 +21,6 @@ use TinyAuthBackend\Utility\CacheInvalidator;
  * @method array<\TinyAuthBackend\Model\Entity\Action> patchEntities(iterable<\TinyAuthBackend\Model\Entity\Action> $entities, array<string, mixed> $data, array<string, mixed> $options = [])
  * @method \TinyAuthBackend\Model\Entity\Action findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
  * @method \TinyAuthBackend\Model\Entity\Action saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
- * @property \TinyAuthBackend\Model\Table\TinyauthControllersTable $TinyauthControllers
- * @property \TinyAuthBackend\Model\Table\AclPermissionsTable $AclPermissions
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ActionsTable extends Table {

@@ -11,6 +11,10 @@ use Cake\Validation\Validator;
 use TinyAuthBackend\Utility\CacheInvalidator;
 
 /**
+ * @property \TinyAuthBackend\Model\Table\RolesTable $ParentRoles
+ * @property \TinyAuthBackend\Model\Table\RolesTable $ChildRoles
+ * @property \TinyAuthBackend\Model\Table\AclPermissionsTable $AclPermissions
+ * @property \TinyAuthBackend\Model\Table\ResourceAclTable $ResourceAcl
  * @method \TinyAuthBackend\Model\Entity\Role get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
  * @method \TinyAuthBackend\Model\Entity\Role newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
  * @method array<\TinyAuthBackend\Model\Entity\Role> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
@@ -20,10 +24,6 @@ use TinyAuthBackend\Utility\CacheInvalidator;
  * @method \TinyAuthBackend\Model\Entity\Role findOrCreate($search, ?callable $callback = null, array<string, mixed> $options = [])
  * @method \TinyAuthBackend\Model\Entity\Role saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
  * @method array<\TinyAuthBackend\Model\Entity\Role> findHierarchy()
- * @property \TinyAuthBackend\Model\Table\RolesTable $ParentRoles
- * @property \TinyAuthBackend\Model\Table\RolesTable $ChildRoles
- * @property \TinyAuthBackend\Model\Table\AclPermissionsTable $AclPermissions
- * @property \TinyAuthBackend\Model\Table\ResourceAclTable $ResourceAcl
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class RolesTable extends Table {

@@ -124,13 +124,20 @@ class AclController extends AppController {
 			$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
 
 			// Server-side case-insensitive LIKE with explicit ESCAPE so user-supplied
-			// `_` / `%` / backslash are matched literally, not as wildcards. The previous
+			// `_` / `%` are matched literally, not as wildcards. The previous
 			// implementation pulled the full controllers + actions tables into PHP per
 			// keystroke, which is an OOM hazard once the host app has many controllers.
+			//
+			// `!` is used as the escape character (not `\\`) because the backslash is
+			// driver-dependent inside SQL string literals: MySQL treats `'\\'` as a
+			// 2-char escape sequence, while SQLite and Postgres (with the default
+			// standard_conforming_strings = on) treat it as a literal two-character
+			// string. Picking a printable ASCII char that is never an escape lets the
+			// same SQL travel cleanly across MySQL, Postgres, and SQLite.
 			$pattern = '%' . $this->escapeLikeNeedle(mb_strtolower($q)) . '%';
 
 			$results['controllers'] = $controllersTable->find()
-				->where("LOWER(TinyauthControllers.name) LIKE :pattern ESCAPE '\\'")
+				->where("LOWER(TinyauthControllers.name) LIKE :pattern ESCAPE '!'")
 				->bind(':pattern', $pattern, 'string')
 				->limit(5)
 				->all()
@@ -138,7 +145,7 @@ class AclController extends AppController {
 
 			$results['actions'] = $actionsTable->find()
 				->contain(['TinyauthControllers'])
-				->where("LOWER(Actions.name) LIKE :pattern ESCAPE '\\'")
+				->where("LOWER(Actions.name) LIKE :pattern ESCAPE '!'")
 				->bind(':pattern', $pattern, 'string')
 				->limit(5)
 				->all()
@@ -157,17 +164,17 @@ class AclController extends AppController {
 	}
 
 	/**
-	 * Backslash-escape `\`, `%`, `_` in a search needle so it can be safely interpolated
-	 * between `%…%` wildcards in a SQL LIKE clause that uses `ESCAPE '\\'`.
+	 * Prefix-escape `!`, `%`, `_` in a search needle so it can be safely interpolated
+	 * between `%…%` wildcards in a SQL LIKE clause that uses `ESCAPE '!'`.
 	 *
-	 * Order matters: the backslash itself must be escaped first, otherwise the next
-	 * passes would double-escape any backslashes they introduce.
+	 * Order matters: the escape character itself must be escaped first, otherwise the
+	 * later passes would double-escape any `!` they introduce.
 	 *
 	 * @param string $needle
 	 * @return string
 	 */
 	protected function escapeLikeNeedle(string $needle): string {
-		return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $needle);
+		return str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $needle);
 	}
 
 	/**

@@ -115,6 +115,53 @@ class RoleSourceServiceTest extends TestCase {
 		}
 	}
 
+	public function testSyncExternalRolesRunsOnlyOncePerProcess(): void {
+		// First call resolves the source and writes the shadow row.
+		Configure::write('TinyAuthBackend.roleSource', ['editor' => 10]);
+		$service = new RoleSourceService();
+		$service->clearCache();
+		$service->getRoles();
+
+		$this->assertSame(1, $this->countRows('tinyauth_roles', ['id' => 10, 'alias' => 'editor']));
+
+		// Mutate the shadow row directly (e.g. an admin renamed the role).
+		// A subsequent getRoles() call within the same process must NOT
+		// re-run the sync and clobber that mutation — that's the whole point
+		// of the per-process gate.
+		$rolesTable = TableRegistry::getTableLocator()->get('tinyauth_roles');
+		$role = $rolesTable->get(10);
+		$role->name = 'Renamed Editor';
+		$rolesTable->saveOrFail($role);
+
+		$service->getRoles();
+
+		$reloaded = $rolesTable->get(10);
+		$this->assertSame('Renamed Editor', $reloaded->name);
+	}
+
+	public function testClearCacheResetsSyncGate(): void {
+		// After an explicit cache clear (e.g. CLI sync command, test boundary)
+		// the next getRoles() call MUST re-run the sync — otherwise the gate
+		// turns into a permanent block and there's no way to refresh.
+		Configure::write('TinyAuthBackend.roleSource', ['editor' => 10]);
+		$service = new RoleSourceService();
+		$service->clearCache();
+		$service->getRoles();
+
+		// syncExternalRoles forces parent_id to null on each run. Manually setting
+		// it gives us a state that only an actual sync re-run can flip back.
+		$rolesTable = TableRegistry::getTableLocator()->get('tinyauth_roles');
+		$rolesTable->updateAll(['parent_id' => 99], ['id' => 10]);
+		$this->assertSame(99, $rolesTable->get(10)->parent_id);
+
+		$service->clearCache();
+		Configure::write('TinyAuthBackend.roleSource', ['editor' => 10]);
+		$service->getRoles();
+
+		// Sync re-ran and reset parent_id to null per the sync semantics.
+		$this->assertNull($rolesTable->get(10)->parent_id);
+	}
+
 	public function testEmptyExternalRoleSourceDoesNotPruneShadowRows(): void {
 		// Regression: a misconfigured / transiently-empty external source must
 		// not wipe `tinyauth_roles` on every GET. Empty set means "skip prune",

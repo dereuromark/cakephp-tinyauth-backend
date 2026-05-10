@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Service;
 
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
 /**
@@ -20,6 +19,22 @@ class HierarchyService {
 	 * @var array<int, string> id => alias
 	 */
 	protected array $roleAliasById = [];
+
+	/**
+	 * @var array<string, int> alias => id
+	 */
+	protected array $roleIdByAlias = [];
+
+	/**
+	 * Children rows grouped by parent_id, ordered by (sort_order, id).
+	 *
+	 * Pre-built once during {@see loadRoleHierarchy()} so that the recursive child/
+	 * descendant traversals are pure PHP-side hashmap walks instead of one SELECT
+	 * per parent. The previous implementation issued ~N queries for an N-deep tree.
+	 *
+	 * @var array<int, list<array{id: int, alias: string, sort_order: int|null}>>
+	 */
+	protected array $childrenByParent = [];
 
 	/**
 	 * @var bool Whether the hierarchy has been loaded.
@@ -52,18 +67,26 @@ class HierarchyService {
 	 */
 	protected function loadRoleHierarchy(): void {
 		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
-		$roles = $rolesTable->find()->all();
+		$roles = $rolesTable->find()
+			->orderByAsc('sort_order')
+			->orderByAsc('id')
+			->all();
 
 		/** @var \TinyAuthBackend\Model\Entity\Role $role */
 		foreach ($roles as $role) {
 			$this->roleAliasById[$role->id] = $role->alias;
+			$this->roleIdByAlias[$role->alias] = $role->id;
 		}
 
-		// Build parent map using aliases
 		/** @var \TinyAuthBackend\Model\Entity\Role $role */
 		foreach ($roles as $role) {
 			if ($role->parent_id !== null && isset($this->roleAliasById[$role->parent_id])) {
 				$this->roleParents[$role->alias] = $this->roleAliasById[$role->parent_id];
+				$this->childrenByParent[$role->parent_id][] = [
+					'id' => $role->id,
+					'alias' => $role->alias,
+					'sort_order' => $role->sort_order,
+				];
 			}
 		}
 	}
@@ -139,16 +162,12 @@ class HierarchyService {
 	public function getChildRoles(string $parentAlias, array $availableRoles): array {
 		$this->ensureHierarchyLoaded();
 
-		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
-		/** @var \TinyAuthBackend\Model\Entity\Role|null $parent */
-		$parent = $rolesTable->find()->where(['alias' => $parentAlias])->first();
-
-		if (!$parent) {
+		if (!isset($this->roleIdByAlias[$parentAlias])) {
 			return [];
 		}
 
 		$children = [];
-		$this->collectChildren($parent->id, $children, $availableRoles, $rolesTable);
+		$this->collectChildren($this->roleIdByAlias[$parentAlias], $children, $availableRoles);
 
 		return $children;
 	}
@@ -162,70 +181,54 @@ class HierarchyService {
 	public function getDescendantRoleAliases(string $parentAlias): array {
 		$this->ensureHierarchyLoaded();
 
-		$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
-		/** @var \TinyAuthBackend\Model\Entity\Role|null $parent */
-		$parent = $rolesTable->find()->where(['alias' => $parentAlias])->first();
-		if (!$parent) {
+		if (!isset($this->roleIdByAlias[$parentAlias])) {
 			return [];
 		}
 
 		$aliases = [];
-		$this->collectDescendantAliases($parent->id, $aliases, $rolesTable);
+		$this->collectDescendantAliases($this->roleIdByAlias[$parentAlias], $aliases);
 
 		return $aliases;
 	}
 
 	/**
-	 * Recursively collect child roles.
+	 * Recursively collect child roles by walking the in-memory hierarchy.
 	 *
 	 * @param int $parentId The parent role ID.
 	 * @param array<string, int> $children Reference to children array to populate.
 	 * @param array<string, int> $availableRoles Available roles as alias => id mapping.
-	 * @param \Cake\ORM\Table $rolesTable The roles table instance.
 	 * @param array<int, bool> $visited
 	 * @return void
 	 */
-	protected function collectChildren(int $parentId, array &$children, array $availableRoles, Table $rolesTable, array &$visited = []): void {
+	protected function collectChildren(int $parentId, array &$children, array $availableRoles, array &$visited = []): void {
 		if (isset($visited[$parentId])) {
 			return;
 		}
 		$visited[$parentId] = true;
 
-		$childRoles = $rolesTable->find()->where(['parent_id' => $parentId])->all();
-
-		/** @var \TinyAuthBackend\Model\Entity\Role $child */
-		foreach ($childRoles as $child) {
-			if (isset($availableRoles[$child->alias])) {
-				$children[$child->alias] = $availableRoles[$child->alias];
+		foreach ($this->childrenByParent[$parentId] ?? [] as $child) {
+			if (isset($availableRoles[$child['alias']])) {
+				$children[$child['alias']] = $availableRoles[$child['alias']];
 			}
-			$this->collectChildren($child->id, $children, $availableRoles, $rolesTable, $visited);
+			$this->collectChildren($child['id'], $children, $availableRoles, $visited);
 		}
 	}
 
 	/**
 	 * @param int $parentId
 	 * @param array<string> $aliases
-	 * @param \Cake\ORM\Table $rolesTable
 	 * @param array<int, bool> $visited
 	 * @return void
 	 */
-	protected function collectDescendantAliases(int $parentId, array &$aliases, Table $rolesTable, array &$visited = []): void {
+	protected function collectDescendantAliases(int $parentId, array &$aliases, array &$visited = []): void {
 		if (isset($visited[$parentId])) {
 			return;
 		}
 		$visited[$parentId] = true;
 
-		$childRoles = $rolesTable->find()
-			->select(['id', 'alias'])
-			->where(['parent_id' => $parentId])
-			->orderByAsc('sort_order')
-			->orderByAsc('id')
-			->all();
-
-		/** @var \TinyAuthBackend\Model\Entity\Role $child */
-		foreach ($childRoles as $child) {
-			$aliases[] = $child->alias;
-			$this->collectDescendantAliases($child->id, $aliases, $rolesTable, $visited);
+		foreach ($this->childrenByParent[$parentId] ?? [] as $child) {
+			$aliases[] = $child['alias'];
+			$this->collectDescendantAliases($child['id'], $aliases, $visited);
 		}
 	}
 

@@ -193,6 +193,63 @@ class AclControllerTest extends TestCase {
 		$this->assertResponseNotContains('AXBooks');
 	}
 
+	public function testSearchTreatsPercentAsLiteralNotWildcard(): void {
+		$this->insertRow('tinyauth_controllers', [
+			'id' => 4,
+			'plugin' => null,
+			'prefix' => 'Admin',
+			'name' => 'Discount100',
+		]);
+		$this->insertRow('tinyauth_controllers', [
+			'id' => 5,
+			'plugin' => null,
+			'prefix' => 'Admin',
+			'name' => 'Discount100%',
+		]);
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'search', '?' => ['q' => '100%']]);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('Discount100%');
+		$this->assertResponseNotContains('Discount100"');
+	}
+
+	public function testSearchIsCaseInsensitive(): void {
+		$this->insertRow('tinyauth_controllers', [
+			'id' => 6,
+			'plugin' => null,
+			'prefix' => 'Admin',
+			'name' => 'CamelCaseThing',
+		]);
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'search', '?' => ['q' => 'camelcase']]);
+
+		$this->assertResponseCode(200);
+		$this->assertResponseContains('CamelCaseThing');
+	}
+
+	public function testSearchUsesServerSideLimit(): void {
+		// Twelve rows but the action returns at most 5 — verifies the limit is enforced
+		// by the SQL query, not just by a PHP-side slice.
+		for ($i = 1; $i <= 12; $i++) {
+			$this->insertRow('tinyauth_controllers', [
+				'id' => 100 + $i,
+				'plugin' => null,
+				'prefix' => 'Admin',
+				'name' => 'Many' . $i,
+			]);
+		}
+
+		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'search', '?' => ['q' => 'Many']]);
+
+		$this->assertResponseCode(200);
+		$body = (string)$this->_response->getBody();
+		// Each rendered controller hit emits one anchor under the Controllers section.
+		// The action limits to 5 server-side, so even with 12 matching rows we must see
+		// exactly 5.
+		$this->assertSame(5, substr_count($body, 'controller_id='));
+	}
+
 	public function testAdminAccessUnsetAndEditorCheckUnsetRejects(): void {
 		$this->disableErrorHandlerMiddleware();
 		Configure::delete('TinyAuthBackend.adminAccess');

@@ -208,14 +208,27 @@ class ControllerSyncService {
 		$scanned = $this->scan();
 		$result = ['added' => 0, 'updated' => 0, 'actions_added' => 0];
 
+		// Pre-load all existing controllers and actions into hashmaps so the per-row
+		// loop below is constant-time on lookup. The previous implementation issued
+		// one SELECT per scanned controller and one per action, producing ~600
+		// round-trips for a 100-controller / 5-action-each app.
+		/** @var array<string, \TinyAuthBackend\Model\Entity\TinyauthController> $existingByKey */
+		$existingByKey = [];
+		foreach ($controllersTable->find()->all() as $row) {
+			/** @var \TinyAuthBackend\Model\Entity\TinyauthController $row */
+			$existingByKey[$this->controllerKey($row->plugin, $row->prefix, $row->name)] = $row;
+		}
+
+		/** @var array<int, array<string, true>> $actionsByControllerId */
+		$actionsByControllerId = [];
+		foreach ($actionsTable->find()->select(['controller_id', 'name'])->all() as $action) {
+			/** @var \TinyAuthBackend\Model\Entity\Action $action */
+			$actionsByControllerId[$action->controller_id][$action->name] = true;
+		}
+
 		foreach ($scanned as $item) {
-			$existing = $controllersTable->find()
-				->where([
-					'plugin IS' => $item['plugin'],
-					'prefix IS' => $item['prefix'],
-					'name' => $item['name'],
-				])
-				->first();
+			$key = $this->controllerKey($item['plugin'], $item['prefix'], $item['name']);
+			$existing = $existingByKey[$key] ?? null;
 
 			if (!$existing && $addNew) {
 				$controller = $controllersTable->newEntity([
@@ -225,34 +238,49 @@ class ControllerSyncService {
 				]);
 				if ($controllersTable->save($controller)) {
 					$existing = $controller;
+					$existingByKey[$key] = $controller;
 					$result['added']++;
 				}
 			}
 
-			if ($existing && $existing->id && $addActions) {
-				foreach ($item['actions'] as $actionName) {
-					$existingAction = $actionsTable->find()
-						->where([
-							'controller_id' => $existing->id,
-							'name' => $actionName,
-						])
-						->first();
+			if ($existing && $existing->get('id') && $addActions) {
+				$existingId = (int)$existing->get('id');
+				$existingActionNames = $actionsByControllerId[$existingId] ?? [];
 
-					if (!$existingAction) {
-						$action = $actionsTable->newEntity([
-							'controller_id' => $existing->id,
-							'name' => $actionName,
-							'is_public' => false,
-						]);
-						if ($actionsTable->save($action)) {
-							$result['actions_added']++;
-						}
+				foreach ($item['actions'] as $actionName) {
+					if (isset($existingActionNames[$actionName])) {
+						continue;
+					}
+
+					$action = $actionsTable->newEntity([
+						'controller_id' => $existingId,
+						'name' => $actionName,
+						'is_public' => false,
+					]);
+					if ($actionsTable->save($action)) {
+						$result['actions_added']++;
+						$actionsByControllerId[$existingId][$actionName] = true;
 					}
 				}
 			}
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Build a stable lookup key for a controller across plugin/prefix/name.
+	 *
+	 * Null-safe: uses an empty string for missing components to keep the key
+	 * deterministic across PHP versions.
+	 *
+	 * @param string|null $plugin
+	 * @param string|null $prefix
+	 * @param string $name
+	 * @return string
+	 */
+	protected function controllerKey(?string $plugin, ?string $prefix, string $name): string {
+		return ($plugin ?? '') . "\x00" . ($prefix ?? '') . "\x00" . $name;
 	}
 
 }

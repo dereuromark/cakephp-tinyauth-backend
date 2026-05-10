@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Controller\Admin;
 
 use Cake\Core\Configure;
-use Cake\Datasource\EntityInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use TinyAuthBackend\Service\HierarchyService;
@@ -124,32 +123,26 @@ class AclController extends AppController {
 			$controllersTable = $this->fetchTable('TinyAuthBackend.TinyauthControllers');
 			$actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
 
-			// Filter in PHP instead of via SQL LIKE so that user-supplied
-			// `_` / `%` match literally and not as LIKE wildcards. The
-			// admin matrix tables are bounded (one row per controller /
-			// action of the host app) so a full scan is cheap and avoids
-			// per-database ESCAPE clause quirks.
-			$needle = mb_strtolower($q);
-			$match = function (EntityInterface|array $row) use ($needle): bool {
-				$name = $row instanceof EntityInterface ? $row->get('name') : ($row['name'] ?? '');
+			// Server-side case-insensitive LIKE with explicit ESCAPE so user-supplied
+			// `_` / `%` / backslash are matched literally, not as wildcards. The previous
+			// implementation pulled the full controllers + actions tables into PHP per
+			// keystroke, which is an OOM hazard once the host app has many controllers.
+			$pattern = '%' . $this->escapeLikeNeedle(mb_strtolower($q)) . '%';
 
-				return str_contains(mb_strtolower((string)$name), $needle);
-			};
+			$results['controllers'] = $controllersTable->find()
+				->where("LOWER(TinyauthControllers.name) LIKE :pattern ESCAPE '\\'")
+				->bind(':pattern', $pattern, 'string')
+				->limit(5)
+				->all()
+				->toArray();
 
-			$results['controllers'] = array_slice(
-				array_values(array_filter($controllersTable->find()->all()->toArray(), $match)),
-				0,
-				5,
-			);
-
-			$results['actions'] = array_slice(
-				array_values(array_filter(
-					$actionsTable->find()->contain(['TinyauthControllers'])->all()->toArray(),
-					$match,
-				)),
-				0,
-				5,
-			);
+			$results['actions'] = $actionsTable->find()
+				->contain(['TinyauthControllers'])
+				->where("LOWER(Actions.name) LIKE :pattern ESCAPE '\\'")
+				->bind(':pattern', $pattern, 'string')
+				->limit(5)
+				->all()
+				->toArray();
 
 			$roles = (new RoleSourceService())->getRoleEntities();
 			$results['roles'] = array_slice(array_values(array_filter($roles, function (object $role) use ($q): bool {
@@ -161,6 +154,20 @@ class AclController extends AppController {
 		}
 
 		$this->set('results', $results);
+	}
+
+	/**
+	 * Backslash-escape `\`, `%`, `_` in a search needle so it can be safely interpolated
+	 * between `%…%` wildcards in a SQL LIKE clause that uses `ESCAPE '\\'`.
+	 *
+	 * Order matters: the backslash itself must be escaped first, otherwise the next
+	 * passes would double-escape any backslashes they introduce.
+	 *
+	 * @param string $needle
+	 * @return string
+	 */
+	protected function escapeLikeNeedle(string $needle): string {
+		return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $needle);
 	}
 
 	/**

@@ -28,6 +28,18 @@ class RoleSourceService {
 	protected static ?array $cachedRoles = null;
 
 	/**
+	 * Whether the external-source sync has already run in this process.
+	 *
+	 * Without this guard, every fresh PHP process (CLI invocation, test boot, fresh
+	 * FPM worker) repeats the full patch+save+prune loop on the first `getRoles()`
+	 * call, producing N writes against `tinyauth_roles` even when the source data
+	 * is unchanged. The static gate keeps the sync to once per process.
+	 *
+	 * @var bool
+	 */
+	protected static bool $synced = false;
+
+	/**
 	 * Get all roles as alias => id mapping.
 	 *
 	 * @return array<string, int> Role alias => id mapping.
@@ -57,8 +69,9 @@ class RoleSourceService {
 			static::$cachedRoles = [];
 		}
 
-		if ($roleSource !== null) {
+		if ($roleSource !== null && !static::$synced) {
 			$this->syncExternalRoles(static::$cachedRoles ?? []);
+			static::$synced = true;
 		}
 
 		return static::$cachedRoles ?? [];
@@ -117,12 +130,17 @@ class RoleSourceService {
 	}
 
 	/**
-	 * Clear cached roles.
+	 * Clear cached roles and the per-process sync flag.
+	 *
+	 * Used by tests, the explicit force-sync command, and any caller that has
+	 * just mutated the external role source and wants the next `getRoles()`
+	 * call to re-read and re-sync.
 	 *
 	 * @return void
 	 */
 	public function clearCache(): void {
 		static::$cachedRoles = null;
+		static::$synced = false;
 	}
 
 	/**

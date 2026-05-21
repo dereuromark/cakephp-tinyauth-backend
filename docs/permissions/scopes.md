@@ -1,29 +1,33 @@
-## Scopes
+# Scopes
 
 Scopes define reusable conditions that limit resource access.
 
-### Overview
+![Scopes management](../screenshots/scopes.png)
 
-A scope compares a field on the entity with a field on the user to determine access.
+## Overview
 
-### Built-in Scope Pattern
+A scope compares a field on the entity with a field on the user to determine
+access.
+
+### Built-in scope pattern
 
 The basic scope pattern:
-```
+
+```text
 entity.{entity_field} === user.{user_field}
 ```
 
-### Creating Scopes
+### Creating scopes
 
-1. Go to `/admin/auth/scopes`
-2. Click "Add Scope"
+1. Go to `/admin/auth/scopes`.
+2. Click **Add Scope**.
 3. Enter:
-   - **Name**: Identifier (e.g., `own`, `team`, `department`)
-   - **Description**: What this scope does
-   - **Entity Field**: Field on the entity to check
-   - **User Field**: Field on the user to compare
+   - **Name** — identifier (e.g. `own`, `team`, `department`)
+   - **Description** — what this scope does
+   - **Entity Field** — field on the entity to check
+   - **User Field** — field on the user to compare
 
-### Common Scopes
+### Common scopes
 
 | Name | Entity Field | User Field | Description |
 |------|-------------|------------|-------------|
@@ -32,7 +36,7 @@ entity.{entity_field} === user.{user_field}
 | `department` | `department_id` | `department_id` | User is in same department |
 | `company` | `company_id` | `company_id` | User is in same company |
 
-### Database Schema
+## Database schema
 
 ```sql
 CREATE TABLE tinyauth_scopes (
@@ -46,7 +50,7 @@ CREATE TABLE tinyauth_scopes (
 );
 ```
 
-### Using Scopes
+## Using scopes
 
 When assigning resource permissions, you can optionally attach a scope:
 
@@ -56,23 +60,23 @@ When assigning resource permissions, you can optionally attach a scope:
 | moderator | edit | (none) | Can edit all articles |
 | user | view | (none) | Can view all articles |
 
-### Scope Evaluation
+### Scope evaluation
 
 ```php
 // Scope: own
 // entity_field: user_id
 // user_field: id
 
-// For Article entity and User identity:
+// For an Article entity and a User identity:
 $canAccess = $article->user_id === $user->id;
 ```
 
-### Advanced: Custom Scope Logic
+## Advanced: custom scope logic
 
-For complex conditions not covered by field comparison, extend the scope evaluation:
+For complex conditions not covered by field comparison, extend the scope
+evaluation in your policy:
 
 ```php
-// In your policy
 public function canEdit(IdentityInterface $user, Article $article): bool
 {
     $service = new TinyAuthService();
@@ -82,7 +86,7 @@ public function canEdit(IdentityInterface $user, Article $article): bool
         return true;
     }
 
-    // Custom logic: Editors can edit unpublished articles
+    // Custom logic: editors can edit unpublished articles
     if ($user->role === 'editor' && !$article->is_published) {
         return true;
     }
@@ -91,7 +95,7 @@ public function canEdit(IdentityInterface $user, Article $article): bool
 }
 ```
 
-### Programmatic Scope Management
+## Programmatic scope management
 
 ```php
 $scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');
@@ -111,7 +115,7 @@ $ownScope = $scopesTable->find()
     ->first();
 ```
 
-### Scope Resolution
+## Scope resolution
 
 When checking permissions with a scope:
 
@@ -121,15 +125,17 @@ use TinyAuthBackend\Service\TinyAuthService;
 $service = new TinyAuthService();
 
 // This checks:
-// 1. Does user's role have 'edit' ability on Article resource?
+// 1. Does the user's role have 'edit' ability on the Article resource?
 // 2. If a scope is attached, does the entity match the scope condition?
 $canEdit = $service->canAccessResource($user, $article, 'edit');
 ```
 
-### Best Practices
+## Best practices
 
-1. **Keep scopes simple**: One condition per scope
-2. **Use descriptive names**: `own`, `team`, not `scope1`
-3. **Document scopes**: Clear descriptions help administrators
-4. **Test scope conditions**: Verify field names are correct
-5. **Handle null fields**: Consider what happens if entity_field is null
+::: tip Keep scopes small
+1. **Keep scopes simple** — one condition per scope.
+2. **Use descriptive names** — `own`, `team`, not `scope1`.
+3. **Document scopes** — clear descriptions help administrators.
+4. **Test scope conditions** — verify field names are correct.
+5. **Handle null fields** — consider what happens if `entity_field` is null.
+:::

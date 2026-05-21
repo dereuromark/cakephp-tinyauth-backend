@@ -1,8 +1,8 @@
-## Services
+# Services API
 
 These services are the stable programmatic surface of the plugin.
 
-### TinyAuthService
+## TinyAuthService
 
 Use `TinyAuthService` for resource-level permission checks.
 
@@ -46,7 +46,7 @@ $roles = $service->getUserRoles($user);
 - `[]` for unrestricted access
 - an array of conditions for scoped access
 
-### HierarchyService
+## HierarchyService
 
 Use `HierarchyService` when you need to inspect or apply role hierarchy.
 
@@ -78,7 +78,7 @@ Hierarchy semantics in this plugin are:
 - higher roles inherit lower-role permissions
 - direct rules on the current role win over inherited rules
 
-### ControllerSyncService
+## ControllerSyncService
 
 Scans controllers/actions and stores them in the backend tables.
 
@@ -96,7 +96,7 @@ $controllers = $service->scan();
 ['added' => 0, 'updated' => 0, 'actions_added' => 0]
 ```
 
-### ResourceSyncService
+## ResourceSyncService
 
 Scans entities and stores them as resources.
 
@@ -122,7 +122,7 @@ You can override them:
 $service->setDefaultAbilities(['view', 'publish']);
 ```
 
-### FeatureService
+## FeatureService
 
 Determines which backend sections are enabled.
 
@@ -142,7 +142,9 @@ Known feature keys:
 - `resources`
 - `scopes`
 
-### RoleSourceService
+See [Feature Flags](/guide/feature-flags) for how these are configured.
+
+## RoleSourceService
 
 Resolves roles from the database or an external config/callback source.
 
@@ -154,3 +156,6 @@ $roles = $service->getRoles();
 $entities = $service->getRoleEntities();
 $managed = $service->isManaged();
 ```
+
+See [Roles](/permissions/roles#external-role-sources) and the
+[External Role Source strategy](/strategies/external-roles) for usage context.

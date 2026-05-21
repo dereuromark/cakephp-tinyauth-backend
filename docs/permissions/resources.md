@@ -1,6 +1,8 @@
-## Resource-Based Permissions
+# Resources
 
 Resources are the entity-level part of the backend.
+
+![Resource permissions](../screenshots/resources.png)
 
 They answer questions like:
 
@@ -8,21 +10,16 @@ They answer questions like:
 - "Can moderators delete comments?"
 - "Can users edit only their own records?"
 
-### Data Model
+## Data model
 
-- **Resource**: entity type, for example `Article`
-- **Ability**: action on that resource, for example `view`, `edit`, `publish`
-- **Scope**: optional field match, for example `article.user_id === user.id`
+- **Resource** — entity type, for example `Article`
+- **Ability** — action on that resource, for example `view`, `edit`, `publish`
+- **Scope** — optional field match, for example `article.user_id === user.id`
 
-### Syncing Resources
+## Syncing resources
 
-The backend can scan your entities and register them as resources:
-
-```bash
-bin/cake migrations migrate -p TinyAuthBackend
-```
-
-Then use the sync UI at:
+The backend can scan your entities and register them as resources. After running
+the [migrations](/guide/installation#run-the-migrations), use the sync UI at:
 
 ```text
 /admin/auth/sync/resources
@@ -30,16 +27,18 @@ Then use the sync UI at:
 
 Or call `ResourceSyncService` directly.
 
-Resource discovery respects `TinyAuthBackend.excludedPlugins`, so entities
-from plugins like `DebugKit` can be kept out of both sync results and the
-Resources admin section.
+::: tip Excluding plugins
+Resource discovery respects `TinyAuthBackend.excludedPlugins`, so entities from
+plugins like `DebugKit` can be kept out of both sync results and the Resources
+admin section.
+:::
 
 Synced resource names use the entity class basename, for example:
 
-- `App\Model\Entity\Article` -> `Article`
-- `Blog\Model\Entity\Post` -> `Post`
+- `App\Model\Entity\Article` → `Article`
+- `Blog\Model\Entity\Post` → `Post`
 
-### Example Schema
+## Example schema
 
 ```sql
 CREATE TABLE tinyauth_resources (
@@ -64,7 +63,7 @@ CREATE TABLE tinyauth_resource_acl (
 );
 ```
 
-### Policy Example
+## Policy example
 
 ```php
 namespace App\Policy;
@@ -82,9 +81,11 @@ class ArticlePolicy extends TinyAuthPolicy
 }
 ```
 
-Or use `TinyAuthPolicy` as the default ORM policy if your rules are fully backend-driven.
+Or use `TinyAuthPolicy` as the default ORM policy if your rules are fully
+backend-driven. See [Authorization Integration](/authorization/) for the
+resolver setup that avoids writing one policy class per resource.
 
-### Direct Service Example
+## Direct service example
 
 ```php
 use TinyAuthBackend\Service\TinyAuthService;
@@ -95,7 +96,7 @@ $canEdit = $service->canAccessResource($user, $article, 'edit');
 $canCreate = $service->canPerformAbility($user, 'Article', 'create');
 ```
 
-### Scope Example
+## Scope example
 
 If a scope named `own` uses:
 
@@ -115,7 +116,9 @@ means:
 $article->user_id === $user->id
 ```
 
-### Interaction With Role Hierarchy
+See [Scopes](/permissions/scopes) for the full scope model.
+
+## Interaction with role hierarchy
 
 If role hierarchy is enabled:
 

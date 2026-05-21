@@ -1,11 +1,12 @@
-## Native CakePHP Auth Strategy
+# Native CakePHP Auth Strategy
 
-Use this mode if you want CakePHP Authentication/Authorization to stay in charge at runtime and you do **not** want TinyAuth to handle request authorization.
+Use this mode if you want CakePHP Authentication / Authorization to stay in
+charge at runtime and you do **not** want TinyAuth to handle request
+authorization.
 
-### Important Constraint
+## Important constraint
 
 This package still depends on `dereuromark/cakephp-tinyauth` at install time.
-
 That does **not** mean you must use TinyAuth as your runtime auth layer.
 
 You can instead use TinyAuthBackend mainly for:
@@ -13,19 +14,20 @@ You can instead use TinyAuthBackend mainly for:
 - role management
 - resource/ability editing
 - scope management
-- permission administration UI
+- a permission administration UI
 
 and consume that data from your own CakePHP Authorization policies/services.
 
-### Practical Split
+## Practical split
 
-- Authentication: `cakephp/authentication`
-- Authorization: `cakephp/authorization`
-- Permission storage/admin UI: `TinyAuthBackend`
+- **Authentication**: `cakephp/authentication`
+- **Authorization**: `cakephp/authorization`
+- **Permission storage / admin UI**: TinyAuthBackend
 
-### Recommended Usage
+## Recommended usage
 
-The simplest path is to let `TinyAuthPolicy` handle every entity you want the backend to govern, via the plugin-provided `TinyAuthResolver`:
+The simplest path is to let `TinyAuthPolicy` handle every entity you want the
+backend to govern, via the plugin-provided `TinyAuthResolver`:
 
 ```php
 // Application::getAuthorizationService()
@@ -40,9 +42,11 @@ $resolver = new TinyAuthResolver([
 return new AuthorizationService($resolver);
 ```
 
-See [Authorization Integration](../Authorization.md) for the full wiring guide.
+See [Authorization Integration](/authorization/) for the full wiring guide.
 
-If you need custom logic on top of the base policy, extend `TinyAuthPolicy` and override the specific hook — the parent signature matches CakePHP Authorization's calling convention:
+If you need custom logic on top of the base policy, extend `TinyAuthPolicy` and
+override the specific hook — the parent signature matches CakePHP Authorization's
+calling convention:
 
 ```php
 use Authorization\IdentityInterface;
@@ -68,7 +72,7 @@ $service = new TinyAuthService();
 $allowed = $service->canAccessResource($user, $article, 'edit');
 ```
 
-### What To Avoid In This Mode
+## What to avoid in this mode
 
 If you are not using TinyAuth at runtime, do not wire up:
 
@@ -77,7 +81,7 @@ If you are not using TinyAuth at runtime, do not wire up:
 
 Those adapters are specifically for TinyAuth's controller/action flow.
 
-### Suggested Feature Set
+## Suggested feature set
 
 ```php
 'TinyAuthBackend' => [

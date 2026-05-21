@@ -80,5 +80,15 @@ Two host-app concerns to be aware of:
 
 The included `tests/TestCase/CspComplianceTest.php` (template-source scan) and `tests/TestCase/Controller/Admin/RenderedCspComplianceTest.php` (rendered-HTML check) guard against regressions.
 
-## Usage
-See [Docs](/docs/README.md).
+## Documentation
+
+Full documentation lives at **[dereuromark.github.io/cakephp-tinyauth-backend](https://dereuromark.github.io/cakephp-tinyauth-backend/)**.
+
+A few good entry points:
+
+* [Getting started](https://dereuromark.github.io/cakephp-tinyauth-backend/guide/)
+* [Usage strategies](https://dereuromark.github.io/cakephp-tinyauth-backend/strategies/)
+* [Authorization integration](https://dereuromark.github.io/cakephp-tinyauth-backend/authorization/)
+* [Services API](https://dereuromark.github.io/cakephp-tinyauth-backend/reference/services)
+
+The Markdown sources live in the [docs](docs/) directory of this repository.

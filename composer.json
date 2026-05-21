@@ -20,9 +20,11 @@
 			"role": "Maintainer"
 		}
 	],
-	"homepage": "https://github.com/dereuromark/cakephp-tinyauth-backend",
+	"homepage": "https://dereuromark.github.io/cakephp-tinyauth-backend/",
 	"support": {
-		"source": "https://github.com/dereuromark/cakephp-tinyauth-backend"
+		"issues": "https://github.com/dereuromark/cakephp-tinyauth-backend/issues",
+		"source": "https://github.com/dereuromark/cakephp-tinyauth-backend",
+		"docs": "https://dereuromark.github.io/cakephp-tinyauth-backend/"
 	},
 	"require": {
 		"php": ">=8.2",

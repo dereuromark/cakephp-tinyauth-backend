@@ -1,35 +1,41 @@
-## Authorization Integration
+# Authorization Integration
 
-Use this mode if you want TinyAuthBackend to drive **entity/resource authorization** with CakePHP's `cakephp/authorization` plugin.
+Use this mode if you want TinyAuthBackend to drive **entity/resource
+authorization** with CakePHP's
+[cakephp/authorization](https://github.com/cakephp/authorization) plugin.
 
-### What This Package Provides
+## What this package provides
 
 - `TinyAuthPolicy` for entity-level checks
 - `TinyAuthService` for direct permission lookups
 - backend UIs for resources, scopes, roles, and rule management
 
-### What It Does Not Provide Automatically
+## What it does not provide automatically
 
 `TinyAuthPolicy` is **not** a request policy for controller/action routing.
 
 Use one of these approaches:
 
-- keep TinyAuth `allow`/`acl` for controller/action access and use Authorization for entities
-- write your own request policy if you want request authorization fully inside CakePHP Authorization
+- keep TinyAuth `allow` / `acl` for controller/action access and use
+  Authorization for entities
+- write your own request policy if you want request authorization fully inside
+  CakePHP Authorization
 
-### Setup
+## Setup
 
 Install Authorization:
 
-```bash
+```sh
 composer require cakephp/authorization
 ```
 
 Load the plugin and middleware in your app as usual.
 
-### Mapping `TinyAuthPolicy`
+## Mapping `TinyAuthPolicy`
 
-The plugin ships a dedicated `TinyAuthResolver` that maps any known entity, table, or `SelectQuery` to `TinyAuthPolicy` — without you having to write a thin `App\Policy\FooPolicy` wrapper per resource:
+The plugin ships a dedicated `TinyAuthResolver` that maps any known entity, table,
+or `SelectQuery` to `TinyAuthPolicy` — without you having to write a thin
+`App\Policy\FooPolicy` wrapper per resource:
 
 ```php
 use Authorization\AuthorizationService;
@@ -53,22 +59,29 @@ class Application extends BaseApplication implements AuthorizationServiceProvide
 }
 ```
 
-The constructor takes an allowlist of entity/table classes. Leave it empty to put every resource under TinyAuth control (match-all mode):
+The constructor takes an allowlist of entity/table classes. Leave it empty to put
+every resource under TinyAuth control (match-all mode):
 
 ```php
 $resolver = new TinyAuthResolver(); // governs all resources
 ```
 
-`TinyAuthResolver` transparently unwraps `SelectQuery` instances to their repository, so the same resolver works for both `$this->Authorization->authorize($article, 'edit')` and `$this->Authorization->applyScope($query)`. Cake's built-in `MapResolver` only handles the former, and `OrmResolver` requires convention-based `App\Policy\*` classes — `TinyAuthResolver` avoids both pitfalls.
+::: tip Why `TinyAuthResolver`?
+It transparently unwraps `SelectQuery` instances to their repository, so the same
+resolver works for both `$this->Authorization->authorize($article, 'edit')` and
+`$this->Authorization->applyScope($query)`. Cake's built-in `MapResolver` only
+handles the former, and `OrmResolver` requires convention-based `App\Policy\*`
+classes — `TinyAuthResolver` avoids both pitfalls.
+:::
 
-### In Controllers
+## In controllers
 
 ```php
 $article = $this->Articles->get($id);
 $this->Authorization->authorize($article, 'edit');
 ```
 
-### In Views
+## In views
 
 ```php
 <?php if ($this->Identity->can('edit', $article)): ?>
@@ -76,7 +89,7 @@ $this->Authorization->authorize($article, 'edit');
 <?php endif; ?>
 ```
 
-### Super Admin Bypass
+## Super admin bypass
 
 `TinyAuthPolicy` supports a configurable bypass role:
 
@@ -93,9 +106,13 @@ If no config is set, the built-in fallback aliases are:
 - `admin`
 - `superadmin`
 
-### Identity Without `cakephp/authentication`
+## Identity without cakephp/authentication
 
-Most apps load `cakephp/authentication`, which hangs an `IdentityInterface` on the request automatically. If your app resolves users another way — a session payload, a JWT claim, an upstream SSO gateway — the plugin ships `EntityIdentity`, a small wrapper that turns any Cake entity into a valid `Authorization\IdentityInterface` without pulling in the authentication plugin:
+Most apps load `cakephp/authentication`, which hangs an `IdentityInterface` on
+the request automatically. If your app resolves users another way — a session
+payload, a JWT claim, an upstream SSO gateway — the plugin ships `EntityIdentity`,
+a small wrapper that turns any Cake entity into a valid
+`Authorization\IdentityInterface` without pulling in the authentication plugin:
 
 ```php
 use TinyAuthBackend\Identity\EntityIdentity;
@@ -106,9 +123,14 @@ $identity = new EntityIdentity($user, $authorizationService); // service is opti
 $request = $request->withAttribute('identity', $identity);
 ```
 
-`EntityIdentity` forwards array access and magic property reads to the underlying entity, so policies and templates can treat it interchangeably with the wrapped user entity. When constructed without an authorization service, `can()` returns `false` and `applyScope()` returns the resource unchanged — the right behavior for strategies that gate by role only and never call into the Authorization service (see the AdapterOnly usage pattern).
+`EntityIdentity` forwards array access and magic property reads to the underlying
+entity, so policies and templates can treat it interchangeably with the wrapped
+user entity. When constructed without an authorization service, `can()` returns
+`false` and `applyScope()` returns the resource unchanged — the right behavior
+for strategies that gate by role only and never call into the Authorization
+service (see the [Adapter-Only strategy](/strategies/adapter-only)).
 
-### Using `TinyAuthService` Directly
+## Using `TinyAuthService` directly
 
 ```php
 use TinyAuthBackend\Service\TinyAuthService;
@@ -120,7 +142,9 @@ $canCreate = $service->canPerformAbility($user, 'Article', 'create');
 $scope = $service->getScopeCondition($service->getUserRoles($user), 'Article', 'view', $user);
 ```
 
-### Recommended Split
+See the [Services API](/reference/services) for the full method list.
+
+## Recommended split
 
 A practical setup is:
 

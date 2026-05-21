@@ -1,43 +1,51 @@
-## Allow Management (Public Actions)
+# Allow (Public Actions)
 
-The Allow page lets you mark actions as publicly accessible (no authentication required).
+The Allow page lets you mark actions as publicly accessible — no authentication
+required.
 
-### Overview
+![Allow / public actions management](../screenshots/allow.png)
 
-Public actions bypass authentication entirely - anyone can access them without logging in.
+## Overview
+
+Public actions bypass authentication entirely: anyone can access them without
+logging in.
 
 Common examples:
-- `Pages::display` - Static pages
-- `Users::login` - Login page
-- `Users::register` - Registration page
+
+- `Pages::display` — static pages
+- `Users::login` — login page
+- `Users::register` — registration page
 - API endpoints that don't require auth
 
-### Interface
+## Interface
 
 The Allow page displays all controllers with their actions:
-- **Toggle Switch**: Enable/disable public access per action
-- **Bulk Actions**: Make all actions in a controller public/protected
 
-### Setting Public Actions
+- **Toggle switch** — enable/disable public access per action
+- **Bulk actions** — make all actions in a controller public/protected
 
-1. Find the controller in the list
-2. Toggle the switch next to the action
-3. Green = Public, Gray = Protected
+### Setting public actions
 
-### Bulk Operations
+1. Find the controller in the list.
+2. Toggle the switch next to the action.
+3. Green = public, gray = protected.
+
+### Bulk operations
 
 For each controller, you can:
-- **Make All Public**: Set all actions to public
-- **Make All Protected**: Remove public access from all actions
 
-### Filter Options
+- **Make all public** — set all actions to public
+- **Make all protected** — remove public access from all actions
+
+### Filter options
 
 Filter the view by:
-- **All**: Show all actions
-- **Public**: Show only public actions
-- **Protected**: Show only protected actions
 
-### Database Schema
+- **All** — show all actions
+- **Public** — show only public actions
+- **Protected** — show only protected actions
+
+## Database schema
 
 Public actions are stored in the `tinyauth_actions` table:
 
@@ -52,7 +60,7 @@ CREATE TABLE tinyauth_actions (
 );
 ```
 
-### Programmatic Access
+## Programmatic access
 
 ```php
 use TinyAuthBackend\Service\TinyAuthService;
@@ -68,7 +76,7 @@ $isPublic = $service->isPublicAction('Articles', 'view', [
 ]);
 ```
 
-### Making Actions Public Programmatically
+### Making actions public programmatically
 
 ```php
 $actionsTable = $this->fetchTable('TinyAuthBackend.Actions');
@@ -93,7 +101,7 @@ $actionsTable->save($action);
 Cache::delete('TinyAuth.allow');
 ```
 
-### Integration with TinyAuth
+## Integration with TinyAuth
 
 The `DbAllowAdapter` reads from the normalized tables:
 
@@ -107,7 +115,7 @@ The `DbAllowAdapter` reads from the normalized tables:
 The adapter returns data in TinyAuth's expected format:
 
 ```php
-// Returns array like:
+// Returns an array like:
 [
     'Pages' => ['display', 'home'],
     'Users' => ['login', 'register'],
@@ -115,9 +123,15 @@ The adapter returns data in TinyAuth's expected format:
 ]
 ```
 
-### Security Considerations
+## Security considerations
 
-- Be cautious when making actions public
-- Review public actions regularly
-- Use the filter to audit which actions are public
-- Consider using role-based access instead of public access when possible
+::: warning Review public actions regularly
+- Be cautious when making actions public.
+- Use the filter to audit which actions are currently public.
+- Consider role-based access instead of public access when possible.
+:::
+
+## See also
+
+- [Public Actions concept](/authorization/authentication) — the runtime view.
+- [ACL Matrix](/permissions/acl) — role-based controller/action permissions.

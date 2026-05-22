@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Cake\Core\Configure;
 use Migrations\BaseMigration;
 
 class CreateTinyAuthTables extends BaseMigration {
@@ -9,6 +10,14 @@ class CreateTinyAuthTables extends BaseMigration {
 	 * @return void
 	 */
 	public function change(): void {
+		// Foreign key columns must match the signedness of the primary keys they
+		// reference. The auto-increment `id` columns follow the
+		// `Migrations.unsigned_primary_keys` flag, so the foreign keys must too;
+		// otherwise addForeignKey() fails on MySQL (errno 150) for unsigned-key apps.
+		// The flag is false (signed) when unset; pass the default explicitly to
+		// make that intent unmistakable. Only MySQL honors signedness.
+		$signed = !(bool)Configure::read('Migrations.unsigned_primary_keys', false);
+
 		// Drop legacy 2.x tables from previous versions
 		if ($this->hasTable('tiny_auth_acl_rules')) {
 			$this->table('tiny_auth_acl_rules')->drop()->save();
@@ -21,7 +30,7 @@ class CreateTinyAuthTables extends BaseMigration {
 		$this->table('tinyauth_roles')
 			->addColumn('name', 'string', ['limit' => 100, 'null' => false])
 			->addColumn('alias', 'string', ['limit' => 50, 'null' => false])
-			->addColumn('parent_id', 'integer', ['null' => true, 'default' => null])
+			->addColumn('parent_id', 'integer', ['null' => true, 'default' => null, 'signed' => $signed])
 			->addColumn('sort_order', 'integer', ['default' => 0])
 			->addColumn('created', 'datetime', ['null' => true])
 			->addColumn('modified', 'datetime', ['null' => true])
@@ -49,7 +58,7 @@ class CreateTinyAuthTables extends BaseMigration {
 
 		// Actions table
 		$this->table('tinyauth_actions')
-			->addColumn('controller_id', 'integer', ['null' => false])
+			->addColumn('controller_id', 'integer', ['null' => false, 'signed' => $signed])
 			->addColumn('name', 'string', ['limit' => 100, 'null' => false])
 			->addColumn('is_public', 'boolean', ['default' => false])
 			->addColumn('created', 'datetime', ['null' => true])
@@ -63,8 +72,8 @@ class CreateTinyAuthTables extends BaseMigration {
 
 		// ACL Permissions table
 		$this->table('tinyauth_acl_permissions')
-			->addColumn('action_id', 'integer', ['null' => false])
-			->addColumn('role_id', 'integer', ['null' => false])
+			->addColumn('action_id', 'integer', ['null' => false, 'signed' => $signed])
+			->addColumn('role_id', 'integer', ['null' => false, 'signed' => $signed])
 			->addColumn('type', 'string', ['limit' => 10, 'default' => 'allow'])
 			->addColumn('created', 'datetime', ['null' => true])
 			->addColumn('modified', 'datetime', ['null' => true])
@@ -91,7 +100,7 @@ class CreateTinyAuthTables extends BaseMigration {
 
 		// Resource Abilities table
 		$this->table('tinyauth_resource_abilities')
-			->addColumn('resource_id', 'integer', ['null' => false])
+			->addColumn('resource_id', 'integer', ['null' => false, 'signed' => $signed])
 			->addColumn('name', 'string', ['limit' => 50, 'null' => false])
 			->addColumn('description', 'string', ['limit' => 200, 'null' => true])
 			->addColumn('created', 'datetime', ['null' => true])
@@ -116,10 +125,10 @@ class CreateTinyAuthTables extends BaseMigration {
 
 		// Resource ACL table
 		$this->table('tinyauth_resource_acl')
-			->addColumn('resource_ability_id', 'integer', ['null' => false])
-			->addColumn('role_id', 'integer', ['null' => false])
+			->addColumn('resource_ability_id', 'integer', ['null' => false, 'signed' => $signed])
+			->addColumn('role_id', 'integer', ['null' => false, 'signed' => $signed])
 			->addColumn('type', 'string', ['limit' => 10, 'default' => 'allow'])
-			->addColumn('scope_id', 'integer', ['null' => true])
+			->addColumn('scope_id', 'integer', ['null' => true, 'signed' => $signed])
 			->addColumn('created', 'datetime', ['null' => true])
 			->addColumn('modified', 'datetime', ['null' => true])
 			->addIndex(['resource_ability_id', 'role_id'], ['unique' => true])

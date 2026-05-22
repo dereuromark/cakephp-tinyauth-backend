@@ -14,8 +14,9 @@ class CreateTinyAuthTables extends BaseMigration {
 		// reference. The auto-increment `id` columns follow the
 		// `Migrations.unsigned_primary_keys` flag, so the foreign keys must too;
 		// otherwise addForeignKey() fails on MySQL (errno 150) for unsigned-key apps.
-		// Defaults to signed; only MySQL honors signedness.
-		$signed = !(bool)Configure::read('Migrations.unsigned_primary_keys');
+		// The flag is false (signed) when unset; pass the default explicitly to
+		// make that intent unmistakable. Only MySQL honors signedness.
+		$signed = !(bool)Configure::read('Migrations.unsigned_primary_keys', false);
 
 		// Drop legacy 2.x tables from previous versions
 		if ($this->hasTable('tiny_auth_acl_rules')) {

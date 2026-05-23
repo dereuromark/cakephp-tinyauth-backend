@@ -1,0 +1,129 @@
+// cakephp-tinyauth-backend — database schema snapshot (DBML)
+//
+// A merged snapshot of all plugin migrations under config/Migrations/.
+// Hand-maintained: update it when you add a migration that changes these tables.
+// Paste into https://dbdiagram.io (or any DBML tool) to view/diagram.
+// DBML reference: https://dbml.dbdiagram.io/docs
+
+Project cakephp_tinyauth_backend {
+  database_type: 'Generic'
+  Note: 'TinyAuth backend plugin tables for DB-driven ACL (roles, controllers, actions, permissions, resources, scopes).'
+}
+
+Table tinyauth_roles {
+  id integer [pk, increment]
+  name varchar(100) [not null]
+  alias varchar(50) [not null]
+  parent_id int [null]
+  sort_order integer [not null, default: 0]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    alias [unique]
+    parent_id
+  }
+}
+
+Table tinyauth_controllers {
+  id integer [pk, increment]
+  plugin varchar(100) [null]
+  prefix varchar(100) [null]
+  name varchar(100) [not null]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    (plugin, prefix, name) [unique]
+  }
+}
+
+Table tinyauth_actions {
+  id integer [pk, increment]
+  controller_id int [not null]
+  name varchar(100) [not null]
+  is_public boolean [not null, default: false]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    (controller_id, name) [unique]
+  }
+}
+
+Table tinyauth_acl_permissions {
+  id integer [pk, increment]
+  action_id int [not null]
+  role_id int [not null]
+  type varchar(10) [not null, default: 'allow']
+  description varchar(255) [null]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    (action_id, role_id) [unique]
+  }
+}
+
+Table tinyauth_resources {
+  id integer [pk, increment]
+  name varchar(100) [not null]
+  entity_class varchar(200) [not null]
+  table_name varchar(100) [not null]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    entity_class [unique]
+  }
+}
+
+Table tinyauth_resource_abilities {
+  id integer [pk, increment]
+  resource_id int [not null]
+  name varchar(50) [not null]
+  description varchar(200) [null]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    (resource_id, name) [unique]
+  }
+}
+
+Table tinyauth_scopes {
+  id integer [pk, increment]
+  name varchar(50) [not null]
+  description varchar(200) [null]
+  entity_field varchar(100) [not null]
+  user_field varchar(100) [not null]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    name [unique]
+  }
+}
+
+Table tinyauth_resource_acl {
+  id integer [pk, increment]
+  resource_ability_id int [not null]
+  role_id int [not null]
+  type varchar(10) [not null, default: 'allow']
+  scope_id int [null]
+  created datetime [null]
+  modified datetime [null]
+
+  indexes {
+    (resource_ability_id, role_id) [unique]
+  }
+}
+
+Ref: tinyauth_roles.parent_id > tinyauth_roles.id
+Ref: tinyauth_actions.controller_id > tinyauth_controllers.id
+Ref: tinyauth_acl_permissions.action_id > tinyauth_actions.id
+Ref: tinyauth_acl_permissions.role_id > tinyauth_roles.id
+Ref: tinyauth_resource_abilities.resource_id > tinyauth_resources.id
+Ref: tinyauth_resource_acl.resource_ability_id > tinyauth_resource_abilities.id
+Ref: tinyauth_resource_acl.role_id > tinyauth_roles.id
+Ref: tinyauth_resource_acl.scope_id > tinyauth_scopes.id

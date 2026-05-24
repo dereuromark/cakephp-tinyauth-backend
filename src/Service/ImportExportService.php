@@ -185,11 +185,11 @@ class ImportExportService {
 			$prefix = null;
 			$name = $controllerPath;
 
-			if (str_contains((string) $name, '.')) {
-				[$plugin, $name] = explode('.', (string) $name, 2);
+			if (str_contains((string)$name, '.')) {
+				[$plugin, $name] = explode('.', (string)$name, 2);
 			}
-			if (str_contains((string) $name, '/')) {
-				$parts = explode('/', (string) $name);
+			if (str_contains((string)$name, '/')) {
+				$parts = explode('/', (string)$name);
 				$name = array_pop($parts);
 				$prefix = implode('/', $parts);
 			}
@@ -240,7 +240,7 @@ class ImportExportService {
 				}
 
 				// Parse roles
-				$roleAliases = array_map('trim', explode(',', (string) $rolesList));
+				$roleAliases = array_map('trim', explode(',', (string)$rolesList));
 				foreach ($roleAliases as $alias) {
 					if (!isset($roleLookup[$alias])) {
 						$result['errors'][] = "Unknown role: {$alias}";

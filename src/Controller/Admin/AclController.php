@@ -70,30 +70,30 @@ class AclController extends AppController {
 			->first();
 
 		if ($type === 'none') {
-            if ($existing && !$permissionsTable->delete($existing)) {
-                $this->response = $this->response->withStatus(500);
-                $this->set('error', 'Failed to delete permission');
-            }
-        } elseif ($existing) {
-            /** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
-            $existing->type = $type;
-            $existing->description = $description;
-            if (!$permissionsTable->save($existing)) {
+			if ($existing && !$permissionsTable->delete($existing)) {
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to delete permission');
+			}
+		} elseif ($existing) {
+			/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
+			$existing->type = $type;
+			$existing->description = $description;
+			if (!$permissionsTable->save($existing)) {
 					$this->response = $this->response->withStatus(500);
 					$this->set('error', 'Failed to update permission');
-				}
-        } else {
+			}
+		} else {
 				$permission = $permissionsTable->newEntity([
 					'action_id' => $actionId,
 					'role_id' => $roleId,
 					'type' => $type,
 					'description' => $description,
 				]);
-				if (!$permissionsTable->save($permission)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to save permission');
-				}
+			if (!$permissionsTable->save($permission)) {
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to save permission');
 			}
+		}
 
 		$roles = (new RoleSourceService())->getRoleEntities();
 		$permissions = $this->buildCellStates($roles, [$actionId]);
@@ -113,7 +113,7 @@ class AclController extends AppController {
 		$this->viewBuilder()->disableAutoLayout();
 
 		$q = $this->request->getQuery('q', '');
-		$q = substr((string) $q, 0, 100); // Limit search query length
+		$q = substr((string)$q, 0, 100); // Limit search query length
 		$results = ['controllers' => [], 'actions' => [], 'roles' => []];
 
 		if (strlen($q) >= 2) {

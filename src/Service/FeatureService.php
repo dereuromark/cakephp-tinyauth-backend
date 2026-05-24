@@ -85,13 +85,13 @@ class FeatureService {
 				// Force disabled
 				$result[$feature] = false;
 			} elseif ($feature === 'roles') {
-                // Auto-detect
-                // Special handling: roles available from external source OR table
-                $hasExternalSource = Configure::read('TinyAuthBackend.roleSource') !== null;
-                $result[$feature] = $hasExternalSource || $this->tableExists($table);
-            } else {
+				// Auto-detect
+				// Special handling: roles available from external source OR table
+				$hasExternalSource = Configure::read('TinyAuthBackend.roleSource') !== null;
+				$result[$feature] = $hasExternalSource || $this->tableExists($table);
+			} else {
 					$result[$feature] = $this->tableExists($table);
-				}
+			}
 		}
 
 		static::$cachedFeatures = $result;

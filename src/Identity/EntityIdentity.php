@@ -79,7 +79,7 @@ class EntityIdentity implements IdentityInterface {
 	 * @inheritDoc
 	 */
 	public function canResult(string $action, mixed $resource): ResultInterface {
-		if (!$this->service instanceof \Authorization\AuthorizationServiceInterface) {
+		if (!$this->service instanceof AuthorizationServiceInterface) {
 			throw new BadMethodCallException(
 				'EntityIdentity::canResult() requires an AuthorizationService. '
 				. 'Construct EntityIdentity with a service, or call can() instead.',
@@ -93,7 +93,7 @@ class EntityIdentity implements IdentityInterface {
 	 * @inheritDoc
 	 */
 	public function applyScope(string $action, mixed $resource, mixed ...$optionalArgs): mixed {
-		if (!$this->service instanceof \Authorization\AuthorizationServiceInterface) {
+		if (!$this->service instanceof AuthorizationServiceInterface) {
 			return $resource;
 		}
 

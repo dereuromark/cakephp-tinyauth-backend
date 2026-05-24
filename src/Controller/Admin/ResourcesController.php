@@ -108,30 +108,30 @@ class ResourcesController extends AppController {
 			->first();
 
 		if ($type === 'none') {
-            if ($existing && !$resourceAclTable->delete($existing)) {
-                $this->response = $this->response->withStatus(500);
-                $this->set('error', 'Failed to remove permission');
-            }
-        } elseif ($existing) {
-            /** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
-            $existing->type = $type;
-            $existing->scope_id = $scopeId;
-            if (!$resourceAclTable->save($existing)) {
+			if ($existing && !$resourceAclTable->delete($existing)) {
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to remove permission');
+			}
+		} elseif ($existing) {
+			/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
+			$existing->type = $type;
+			$existing->scope_id = $scopeId;
+			if (!$resourceAclTable->save($existing)) {
 					$this->response = $this->response->withStatus(500);
 					$this->set('error', 'Failed to update permission');
-				}
-        } else {
+			}
+		} else {
 				$permission = $resourceAclTable->newEntity([
 					'resource_ability_id' => $abilityId,
 					'role_id' => $roleId,
 					'type' => $type,
 					'scope_id' => $scopeId,
 				]);
-				if (!$resourceAclTable->save($permission)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to create permission');
-				}
+			if (!$resourceAclTable->save($permission)) {
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to create permission');
 			}
+		}
 
 		// Return updated cell — include all scopes so the menu can be re-rendered
 		$scopesTable = $this->fetchTable('TinyAuthBackend.Scopes');

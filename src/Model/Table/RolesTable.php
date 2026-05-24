@@ -120,8 +120,9 @@ class RolesTable extends Table {
 					if (!$value) {
 						return true;
 					}
-                    // Can't be your own parent
-                    return !(isset($context['data']['id']) && (int)$value === (int)$context['data']['id']);
+
+					// Can't be your own parent
+					return !(isset($context['data']['id']) && (int)$value === (int)$context['data']['id']);
 				},
 				'message' => __d('tinyauth_backend', 'A role cannot be its own parent.'),
 			])

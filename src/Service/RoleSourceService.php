@@ -157,7 +157,7 @@ class RoleSourceService {
 				->toArray();
 
 			return $roles;
-		} catch (Exception $e) {
+		} catch (Exception) {
 			return [];
 		}
 	}
@@ -217,7 +217,7 @@ class RoleSourceService {
 		try {
 			/** @var \TinyAuthBackend\Model\Table\RolesTable $rolesTable */
 			$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
-		} catch (Exception $e) {
+		} catch (Exception) {
 			return;
 		}
 

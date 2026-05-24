@@ -31,7 +31,7 @@ class CspComplianceTest extends TestCase {
 	 * @return void
 	 */
 	public function testNoAlpineDirectivesInTemplates(): void {
-		$offenders = $this->scanTemplates(static::ALPINE_PATTERN);
+		$offenders = $this->scanTemplates(self::ALPINE_PATTERN);
 		$this->assertSame([], $offenders, "Alpine directives found:\n" . implode("\n", $offenders));
 	}
 
@@ -39,7 +39,7 @@ class CspComplianceTest extends TestCase {
 	 * @return void
 	 */
 	public function testNoInlineEventHandlersInTemplates(): void {
-		$offenders = $this->scanTemplates(static::INLINE_HANDLER_PATTERN);
+		$offenders = $this->scanTemplates(self::INLINE_HANDLER_PATTERN);
 		$this->assertSame([], $offenders, "Inline event handlers found:\n" . implode("\n", $offenders));
 	}
 

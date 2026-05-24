@@ -58,7 +58,7 @@ class ScopesTable extends Table {
 			->requirePresence('entity_field', 'create')
 			->notEmptyString('entity_field')
 			->add('entity_field', 'validFieldName', [
-				'rule' => ['custom', '/^[a-zA-Z_][a-zA-Z0-9_]*$/'],
+				'rule' => ['custom', '/^[a-zA-Z_]\w*$/'],
 				'message' => __d('tinyauth_backend', 'Invalid field name. Use only letters, numbers, and underscores.'),
 			]);
 
@@ -68,7 +68,7 @@ class ScopesTable extends Table {
 			->requirePresence('user_field', 'create')
 			->notEmptyString('user_field')
 			->add('user_field', 'validFieldName', [
-				'rule' => ['custom', '/^[a-zA-Z_][a-zA-Z0-9_]*$/'],
+				'rule' => ['custom', '/^[a-zA-Z_]\w*$/'],
 				'message' => __d('tinyauth_backend', 'Invalid field name. Use only letters, numbers, and underscores.'),
 			]);
 

@@ -37,7 +37,7 @@ class AllowController extends AppController {
 
 		$controllers = $query->all()->toArray();
 
-		$this->set(compact('controllers', 'filter'));
+		$this->set(['controllers' => $controllers, 'filter' => $filter]);
 	}
 
 	/**
@@ -71,7 +71,7 @@ class AllowController extends AppController {
 		}
 
 		$this->viewBuilder()->disableAutoLayout();
-		$this->set(compact('action'));
+		$this->set(['action' => $action]);
 
 		return $this->render('toggle_cell');
 	}

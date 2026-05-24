@@ -38,7 +38,7 @@ class AclController extends AppController {
 			$permissions = $this->buildCellStates($roles, array_map(static fn ($action) => (int)$action->id, $actions));
 		}
 
-		$this->set(compact('tree', 'roles', 'selectedController', 'actions', 'permissions'));
+		$this->set(['tree' => $tree, 'roles' => $roles, 'selectedController' => $selectedController, 'actions' => $actions, 'permissions' => $permissions]);
 	}
 
 	/**
@@ -59,7 +59,7 @@ class AclController extends AppController {
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
 			throw new BadRequestException('Invalid permission type');
 		}
-		if (!in_array($roleId, array_values((new RoleSourceService())->getRoles()), true)) {
+		if (!in_array($roleId, (new RoleSourceService())->getRoles(), true)) {
 			throw new BadRequestException('Invalid role');
 		}
 
@@ -70,22 +70,19 @@ class AclController extends AppController {
 			->first();
 
 		if ($type === 'none') {
-			if ($existing) {
-				if (!$permissionsTable->delete($existing)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to delete permission');
-				}
-			}
-		} else {
-			/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
-			if ($existing) {
-				$existing->type = $type;
-				$existing->description = $description;
-				if (!$permissionsTable->save($existing)) {
+            if ($existing && !$permissionsTable->delete($existing)) {
+                $this->response = $this->response->withStatus(500);
+                $this->set('error', 'Failed to delete permission');
+            }
+        } elseif ($existing) {
+            /** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
+            $existing->type = $type;
+            $existing->description = $description;
+            if (!$permissionsTable->save($existing)) {
 					$this->response = $this->response->withStatus(500);
 					$this->set('error', 'Failed to update permission');
 				}
-			} else {
+        } else {
 				$permission = $permissionsTable->newEntity([
 					'action_id' => $actionId,
 					'role_id' => $roleId,
@@ -97,7 +94,6 @@ class AclController extends AppController {
 					$this->set('error', 'Failed to save permission');
 				}
 			}
-		}
 
 		$roles = (new RoleSourceService())->getRoleEntities();
 		$permissions = $this->buildCellStates($roles, [$actionId]);
@@ -105,7 +101,7 @@ class AclController extends AppController {
 
 		// Return updated cell HTML
 		$this->viewBuilder()->disableAutoLayout();
-		$this->set(compact('cell'));
+		$this->set(['cell' => $cell]);
 
 		return $this->render('toggle_cell');
 	}
@@ -117,7 +113,7 @@ class AclController extends AppController {
 		$this->viewBuilder()->disableAutoLayout();
 
 		$q = $this->request->getQuery('q', '');
-		$q = substr($q, 0, 100); // Limit search query length
+		$q = substr((string) $q, 0, 100); // Limit search query length
 		$results = ['controllers' => [], 'actions' => [], 'roles' => []];
 
 		if (strlen($q) >= 2) {
@@ -244,7 +240,7 @@ class AclController extends AppController {
 		$effectiveAcl = (new HierarchyService())->applyInheritance($acl, $availableRoles);
 		$inheritedPermissions = [];
 		foreach ($actionIds as $actionId) {
-			foreach (($effectiveAcl['selected']['allow'][(string)$actionId] ?? []) as $alias => $roleId) {
+			foreach (($effectiveAcl['selected']['allow'][(string)$actionId] ?? []) as $roleId) {
 				if (($directPermissions[$actionId][$roleId] ?? null) === 'allow') {
 					continue;
 				}

@@ -83,9 +83,8 @@ class DbAclAdapter implements AclAdapterInterface {
 		if ($prefix) {
 			$key .= $prefix . '/';
 		}
-		$key .= $controller;
 
-		return $key;
+		return $key . $controller;
 	}
 
 }

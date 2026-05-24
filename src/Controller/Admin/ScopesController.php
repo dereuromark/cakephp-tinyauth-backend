@@ -17,7 +17,7 @@ class ScopesController extends AppController {
 			->all()
 			->toArray();
 
-		$this->set(compact('scopes'));
+		$this->set(['scopes' => $scopes]);
 	}
 
 	/**
@@ -37,7 +37,7 @@ class ScopesController extends AppController {
 			$this->Flash->error(__d('tinyauth_backend', 'Could not save scope.'));
 		}
 
-		$this->set(compact('scope'));
+		$this->set(['scope' => $scope]);
 
 		return $this->render('form');
 	}
@@ -60,7 +60,7 @@ class ScopesController extends AppController {
 			$this->Flash->error(__d('tinyauth_backend', 'Could not update scope.'));
 		}
 
-		$this->set(compact('scope'));
+		$this->set(['scope' => $scope]);
 
 		return $this->render('form');
 	}

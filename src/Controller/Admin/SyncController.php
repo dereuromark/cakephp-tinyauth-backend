@@ -54,7 +54,7 @@ class SyncController extends AppController {
 			$diff[] = array_merge($item, ['status' => $status]);
 		}
 
-		$this->set(compact('diff'));
+		$this->set(['diff' => $diff]);
 
 		return null;
 	}
@@ -94,7 +94,7 @@ class SyncController extends AppController {
 			$diff[] = array_merge($item, ['status' => $status]);
 		}
 
-		$this->set(compact('diff'));
+		$this->set(['diff' => $diff]);
 
 		return null;
 	}

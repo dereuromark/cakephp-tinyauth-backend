@@ -52,7 +52,7 @@ class DashboardController extends AppController {
 			->all()
 			->toArray();
 
-		$this->set(compact('stats', 'features', 'recentControllers'));
+		$this->set(['stats' => $stats, 'features' => $features, 'recentControllers' => $recentControllers]);
 	}
 
 	/**
@@ -64,7 +64,7 @@ class DashboardController extends AppController {
 		$featureService = new FeatureService();
 		$features = $featureService->getEnabledFeatures();
 
-		$this->set(compact('features'));
+		$this->set(['features' => $features]);
 	}
 
 }

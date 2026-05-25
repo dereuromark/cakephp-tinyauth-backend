@@ -64,7 +64,7 @@ class DashboardController extends AppController {
 		$featureService = new FeatureService();
 		$features = $featureService->getEnabledFeatures();
 
-		$this->set(['features' => $features]);
+		$this->set(compact('features'));
 	}
 
 }

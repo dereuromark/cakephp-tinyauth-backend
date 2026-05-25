@@ -71,7 +71,7 @@ class AllowController extends AppController {
 		}
 
 		$this->viewBuilder()->disableAutoLayout();
-		$this->set(['action' => $action]);
+		$this->set(compact('action'));
 
 		return $this->render('toggle_cell');
 	}

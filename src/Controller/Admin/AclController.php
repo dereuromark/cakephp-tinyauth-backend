@@ -101,7 +101,7 @@ class AclController extends AppController {
 
 		// Return updated cell HTML
 		$this->viewBuilder()->disableAutoLayout();
-		$this->set(['cell' => $cell]);
+		$this->set(compact('cell'));
 
 		return $this->render('toggle_cell');
 	}

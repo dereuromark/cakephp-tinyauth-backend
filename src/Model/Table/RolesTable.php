@@ -120,12 +120,9 @@ class RolesTable extends Table {
 					if (!$value) {
 						return true;
 					}
-					// Can't be your own parent
-					if (isset($context['data']['id']) && (int)$value === (int)$context['data']['id']) {
-						return false;
-					}
 
-					return true;
+					// Can't be your own parent
+					return !(isset($context['data']['id']) && (int)$value === (int)$context['data']['id']);
 				},
 				'message' => __d('tinyauth_backend', 'A role cannot be its own parent.'),
 			])
@@ -155,6 +152,7 @@ class RolesTable extends Table {
 							return false; // Circular reference detected
 						}
 						$visited[] = $parentId;
+						/** @var \TinyAuthBackend\Model\Entity\Role|null $parent */
 						$parent = $this->find()->select(['parent_id'])->where(['id' => $parentId])->first();
 						$parentId = $parent ? (int)$parent->parent_id : null;
 						$maxDepth--;

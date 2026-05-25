@@ -128,6 +128,7 @@ class Importer {
 		/** @var \TinyAuthBackend\Model\Table\ActionsTable $actionsTable */
 		$actionsTable = $this->fetchModel('TinyAuthBackend.Actions');
 
+		/** @var \TinyAuthBackend\Model\Entity\TinyauthController|null $controller */
 		$controller = $controllersTable->find()
 			->where([
 				'plugin IS' => $row['plugin'],
@@ -145,6 +146,7 @@ class Importer {
 			$controllersTable->saveOrFail($controller);
 		}
 
+		/** @var \TinyAuthBackend\Model\Entity\Action|null $action */
 		$action = $actionsTable->find()
 			->where([
 				'controller_id' => $controller->id,
@@ -191,6 +193,7 @@ class Importer {
 
 		/** @var \TinyAuthBackend\Model\Table\AclPermissionsTable $permissionsTable */
 		$permissionsTable = $this->fetchModel('TinyAuthBackend.AclPermissions');
+		/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $permission */
 		$permission = $permissionsTable->find()
 			->where(['action_id' => $actionId, 'role_id' => $roleId])
 			->first();

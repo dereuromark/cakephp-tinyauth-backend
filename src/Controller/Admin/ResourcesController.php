@@ -89,7 +89,7 @@ class ResourcesController extends AppController {
 		if (!in_array($type, ['none', 'allow', 'deny'], true)) {
 			throw new BadRequestException('Invalid permission type');
 		}
-		if (!in_array($roleId, array_values((new RoleSourceService())->getRoles()), true)) {
+		if (!in_array($roleId, (new RoleSourceService())->getRoles(), true)) {
 			throw new BadRequestException('Invalid role');
 		}
 
@@ -103,37 +103,33 @@ class ResourcesController extends AppController {
 
 		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 
+		/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
 		$existing = $resourceAclTable->find()
 			->where(['resource_ability_id' => $abilityId, 'role_id' => $roleId])
 			->first();
 
 		if ($type === 'none') {
-			if ($existing) {
-				if (!$resourceAclTable->delete($existing)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to remove permission');
-				}
+			if ($existing && !$resourceAclTable->delete($existing)) {
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to remove permission');
+			}
+		} elseif ($existing) {
+			$existing->type = $type;
+			$existing->scope_id = $scopeId;
+			if (!$resourceAclTable->save($existing)) {
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to update permission');
 			}
 		} else {
-			/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
-			if ($existing) {
-				$existing->type = $type;
-				$existing->scope_id = $scopeId;
-				if (!$resourceAclTable->save($existing)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to update permission');
-				}
-			} else {
-				$permission = $resourceAclTable->newEntity([
-					'resource_ability_id' => $abilityId,
-					'role_id' => $roleId,
-					'type' => $type,
-					'scope_id' => $scopeId,
-				]);
-				if (!$resourceAclTable->save($permission)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to create permission');
-				}
+			$permission = $resourceAclTable->newEntity([
+				'resource_ability_id' => $abilityId,
+				'role_id' => $roleId,
+				'type' => $type,
+				'scope_id' => $scopeId,
+			]);
+			if (!$resourceAclTable->save($permission)) {
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to create permission');
 			}
 		}
 

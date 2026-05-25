@@ -100,7 +100,7 @@ class TinyAuthResolver implements ResolverInterface {
 	public function getPolicy(mixed $resource): object {
 		$classes = $this->resolveCandidateClasses($resource);
 		if ($classes === []) {
-			throw new MissingPolicyException([is_object($resource) ? $resource::class : gettype($resource)]);
+			throw new MissingPolicyException([get_debug_type($resource)]);
 		}
 
 		if (!$this->isAllowed($classes)) {

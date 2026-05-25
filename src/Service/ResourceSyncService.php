@@ -112,6 +112,7 @@ class ResourceSyncService {
 		$result = ['added' => 0, 'abilities_added' => 0];
 
 		foreach ($scanned as $item) {
+			/** @var \TinyAuthBackend\Model\Entity\Resource|null $existing */
 			$existing = $resourcesTable->find()
 				->where(['entity_class' => $item['entity_class']])
 				->first();
@@ -129,17 +130,20 @@ class ResourceSyncService {
 			}
 
 			if ($existing && $addDefaultAbilities) {
+				/** @var \TinyAuthBackend\Model\Entity\Resource $typedExisting */
+				$typedExisting = $existing;
 				foreach ($this->defaultAbilities as $abilityName) {
+					/** @var \TinyAuthBackend\Model\Entity\ResourceAbility|null $existingAbility */
 					$existingAbility = $abilitiesTable->find()
 						->where([
-							'resource_id' => $existing->id,
+							'resource_id' => $typedExisting->id,
 							'name' => $abilityName,
 						])
 						->first();
 
 					if (!$existingAbility) {
 						$ability = $abilitiesTable->newEntity([
-							'resource_id' => $existing->id,
+							'resource_id' => $typedExisting->id,
 							'name' => $abilityName,
 						]);
 						if ($abilitiesTable->save($ability)) {

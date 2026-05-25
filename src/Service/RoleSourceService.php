@@ -157,7 +157,7 @@ class RoleSourceService {
 				->toArray();
 
 			return $roles;
-		} catch (Exception $e) {
+		} catch (Exception) {
 			return [];
 		}
 	}
@@ -217,7 +217,7 @@ class RoleSourceService {
 		try {
 			/** @var \TinyAuthBackend\Model\Table\RolesTable $rolesTable */
 			$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
-		} catch (Exception $e) {
+		} catch (Exception) {
 			return;
 		}
 
@@ -225,20 +225,24 @@ class RoleSourceService {
 		foreach ($roles as $alias => $id) {
 			$sortOrder++;
 
+			/** @var \TinyAuthBackend\Model\Entity\Role|null $role */
 			$role = $rolesTable->find()->where(['id' => $id])->first();
 			if (!$role) {
 				$role = $rolesTable->find()->where(['alias' => $alias])->first();
 			}
 
 			if ($role) {
-				$role = $rolesTable->patchEntity($role, [
+				/** @var \TinyAuthBackend\Model\Entity\Role $typedRole */
+				$typedRole = $role;
+				/** @var \TinyAuthBackend\Model\Entity\Role $updatedRole */
+				$updatedRole = $rolesTable->patchEntity($typedRole, [
 					'id' => $id,
 					'alias' => $alias,
-					'name' => $role->name ?: ucfirst($alias),
+					'name' => $typedRole->name ?: ucfirst($alias),
 					'parent_id' => null,
-					'sort_order' => $role->sort_order ?: $sortOrder,
+					'sort_order' => $typedRole->sort_order ?: $sortOrder,
 				]);
-				$rolesTable->save($role);
+				$rolesTable->save($updatedRole);
 
 				continue;
 			}

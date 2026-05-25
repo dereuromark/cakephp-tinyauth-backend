@@ -84,15 +84,13 @@ class FeatureService {
 			} elseif ($configValue === false) {
 				// Force disabled
 				$result[$feature] = false;
-			} else {
+			} elseif ($feature === 'roles') {
 				// Auto-detect
-				if ($feature === 'roles') {
-					// Special handling: roles available from external source OR table
-					$hasExternalSource = Configure::read('TinyAuthBackend.roleSource') !== null;
-					$result[$feature] = $hasExternalSource || $this->tableExists($table);
-				} else {
-					$result[$feature] = $this->tableExists($table);
-				}
+				// Special handling: roles available from external source OR table
+				$hasExternalSource = Configure::read('TinyAuthBackend.roleSource') !== null;
+				$result[$feature] = $hasExternalSource || $this->tableExists($table);
+			} else {
+				$result[$feature] = $this->tableExists($table);
 			}
 		}
 
@@ -184,7 +182,7 @@ class FeatureService {
 			$tables = $connection->getSchemaCollection()->listTables();
 
 			return in_array($tableName, $tables, true);
-		} catch (Exception $e) {
+		} catch (Exception) {
 			// Treat connection errors as "table missing" - conservative approach
 			// Logging could be added here if debugging is needed
 			return false;

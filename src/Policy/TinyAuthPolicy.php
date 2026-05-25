@@ -77,7 +77,7 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	 */
 	public function before(?IdentityInterface $identity, mixed $resource, string $action): ?bool {
 		$user = $this->resolveUser($identity);
-		if ($user === null) {
+		if (!$user instanceof EntityInterface) {
 			return false;
 		}
 
@@ -101,7 +101,7 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	 */
 	public function can(?IdentityInterface $identity, string $ability, EntityInterface $entity): bool {
 		$user = $this->resolveUser($identity);
-		if ($user === null) {
+		if (!$user instanceof EntityInterface) {
 			return false;
 		}
 
@@ -235,7 +235,7 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	 */
 	protected function applyScopeConditions(?IdentityInterface $identity, SelectQuery $query, string $ability): SelectQuery {
 		$user = $this->resolveUser($identity);
-		if ($user === null) {
+		if (!$user instanceof EntityInterface) {
 			return $query->where(['1 = 0']);
 		}
 
@@ -266,7 +266,7 @@ class TinyAuthPolicy implements BeforePolicyInterface {
 	 * @return \Cake\Datasource\EntityInterface|null
 	 */
 	protected function resolveUser(?IdentityInterface $identity): ?EntityInterface {
-		if ($identity === null) {
+		if (!$identity instanceof IdentityInterface) {
 			return null;
 		}
 		$data = $identity->getOriginalData();

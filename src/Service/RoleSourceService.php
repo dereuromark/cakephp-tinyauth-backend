@@ -232,13 +232,15 @@ class RoleSourceService {
 			}
 
 			if ($role) {
+				/** @var \TinyAuthBackend\Model\Entity\Role $typedRole */
+				$typedRole = $role;
 				/** @var \TinyAuthBackend\Model\Entity\Role $updatedRole */
-				$updatedRole = $rolesTable->patchEntity($role, [
+				$updatedRole = $rolesTable->patchEntity($typedRole, [
 					'id' => $id,
 					'alias' => $alias,
-					'name' => $role->name ?: ucfirst($alias),
+					'name' => $typedRole->name ?: ucfirst($alias),
 					'parent_id' => null,
-					'sort_order' => $role->sort_order ?: $sortOrder,
+					'sort_order' => $typedRole->sort_order ?: $sortOrder,
 				]);
 				$rolesTable->save($updatedRole);
 

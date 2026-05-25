@@ -271,6 +271,7 @@ class TinyAuthService {
 		if (!$multiRole) {
 			$roleColumn = Configure::read('TinyAuthBackend.roleColumn') ?: 'role_id';
 			$rolesTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.Roles');
+			/** @var \TinyAuthBackend\Model\Entity\Role|null $role */
 			$role = $rolesTable->find()->where(['id' => $user->get($roleColumn)])->first();
 
 			return $role ? [$role->alias] : [];

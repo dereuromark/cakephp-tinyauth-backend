@@ -231,16 +231,17 @@ class RoleSourceService {
 			}
 
 			if ($role) {
-				$role = $rolesTable->patchEntity($role, [
-					'id' => $id,
-					'alias' => $alias,
-					'name' => $role->name ?: ucfirst($alias),
-					'parent_id' => null,
-					'sort_order' => $role->sort_order ?: $sortOrder,
-				]);
-				$rolesTable->save($role);
+					/** @var \TinyAuthBackend\Model\Entity\Role $role */
+					$role = $rolesTable->patchEntity($role, [
+						'id' => $id,
+						'alias' => $alias,
+						'name' => $role->name ?: ucfirst($alias),
+						'parent_id' => null,
+						'sort_order' => $role->sort_order ?: $sortOrder,
+					]);
+					$rolesTable->save($role);
 
-				continue;
+					continue;
 			}
 
 			$role = $rolesTable->newEntity([

@@ -145,12 +145,13 @@ class Importer {
 			$controllersTable->saveOrFail($controller);
 		}
 
-		$action = $actionsTable->find()
-			->where([
-				'controller_id' => $controller->id,
-				'name' => $actionName,
-			])
-			->first();
+			/** @var \TinyAuthBackend\Model\Entity\Action|null $action */
+			$action = $actionsTable->find()
+				->where([
+					'controller_id' => $controller->id,
+					'name' => $actionName,
+				])
+				->first();
 
 		if (!$action) {
 			$action = $actionsTable->newEntity([

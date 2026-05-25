@@ -130,6 +130,7 @@ class ResourceSyncService {
 
 			if ($existing && $addDefaultAbilities) {
 				foreach ($this->defaultAbilities as $abilityName) {
+					/** @var \TinyAuthBackend\Model\Entity\ResourceAbility|null $existingAbility */
 					$existingAbility = $abilitiesTable->find()
 						->where([
 							'resource_id' => $existing->id,

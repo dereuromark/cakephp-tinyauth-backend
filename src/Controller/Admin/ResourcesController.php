@@ -117,16 +117,16 @@ class ResourcesController extends AppController {
 			$existing->type = $type;
 			$existing->scope_id = $scopeId;
 			if (!$resourceAclTable->save($existing)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to update permission');
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to update permission');
 			}
 		} else {
-				$permission = $resourceAclTable->newEntity([
-					'resource_ability_id' => $abilityId,
-					'role_id' => $roleId,
-					'type' => $type,
-					'scope_id' => $scopeId,
-				]);
+			$permission = $resourceAclTable->newEntity([
+				'resource_ability_id' => $abilityId,
+				'role_id' => $roleId,
+				'type' => $type,
+				'scope_id' => $scopeId,
+			]);
 			if (!$resourceAclTable->save($permission)) {
 				$this->response = $this->response->withStatus(500);
 				$this->set('error', 'Failed to create permission');

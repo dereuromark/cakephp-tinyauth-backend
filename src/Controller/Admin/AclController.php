@@ -79,16 +79,16 @@ class AclController extends AppController {
 			$existing->type = $type;
 			$existing->description = $description;
 			if (!$permissionsTable->save($existing)) {
-					$this->response = $this->response->withStatus(500);
-					$this->set('error', 'Failed to update permission');
+				$this->response = $this->response->withStatus(500);
+				$this->set('error', 'Failed to update permission');
 			}
 		} else {
-				$permission = $permissionsTable->newEntity([
-					'action_id' => $actionId,
-					'role_id' => $roleId,
-					'type' => $type,
-					'description' => $description,
-				]);
+			$permission = $permissionsTable->newEntity([
+				'action_id' => $actionId,
+				'role_id' => $roleId,
+				'type' => $type,
+				'description' => $description,
+			]);
 			if (!$permissionsTable->save($permission)) {
 				$this->response = $this->response->withStatus(500);
 				$this->set('error', 'Failed to save permission');

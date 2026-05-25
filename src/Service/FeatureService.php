@@ -90,7 +90,7 @@ class FeatureService {
 				$hasExternalSource = Configure::read('TinyAuthBackend.roleSource') !== null;
 				$result[$feature] = $hasExternalSource || $this->tableExists($table);
 			} else {
-					$result[$feature] = $this->tableExists($table);
+				$result[$feature] = $this->tableExists($table);
 			}
 		}
 

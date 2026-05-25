@@ -33,7 +33,7 @@ class RolesController extends AppController {
 			$hierarchy = $rolesTable->findHierarchy();
 		}
 
-		$this->set(['isManaged' => $isManaged, 'hierarchy' => $hierarchy, 'roles' => $roles]);
+		$this->set(compact('isManaged', 'hierarchy', 'roles'));
 	}
 
 	/**
@@ -64,7 +64,7 @@ class RolesController extends AppController {
 			->orderBy(['name' => 'ASC'])
 			->toArray();
 
-		$this->set(['role' => $role, 'parents' => $parents]);
+		$this->set(compact('role', 'parents'));
 
 		return $this->render('form');
 	}
@@ -101,7 +101,7 @@ class RolesController extends AppController {
 			->orderBy(['name' => 'ASC'])
 			->toArray();
 
-		$this->set(['role' => $role, 'parents' => $parents]);
+		$this->set(compact('role', 'parents'));
 
 		return $this->render('form');
 	}

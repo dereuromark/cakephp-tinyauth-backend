@@ -52,7 +52,7 @@ class DashboardController extends AppController {
 			->all()
 			->toArray();
 
-		$this->set(['stats' => $stats, 'features' => $features, 'recentControllers' => $recentControllers]);
+		$this->set(compact('stats', 'features', 'recentControllers'));
 	}
 
 	/**

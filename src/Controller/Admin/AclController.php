@@ -38,7 +38,7 @@ class AclController extends AppController {
 			$permissions = $this->buildCellStates($roles, array_map(static fn ($action) => (int)$action->id, $actions));
 		}
 
-		$this->set(['tree' => $tree, 'roles' => $roles, 'selectedController' => $selectedController, 'actions' => $actions, 'permissions' => $permissions]);
+		$this->set(compact('tree', 'roles', 'selectedController', 'actions', 'permissions'));
 	}
 
 	/**

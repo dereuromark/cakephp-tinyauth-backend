@@ -37,7 +37,7 @@ class AllowController extends AppController {
 
 		$controllers = $query->all()->toArray();
 
-		$this->set(['controllers' => $controllers, 'filter' => $filter]);
+		$this->set(compact('controllers', 'filter'));
 	}
 
 	/**

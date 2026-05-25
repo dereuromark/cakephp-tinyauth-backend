@@ -70,7 +70,7 @@ class ResourcesController extends AppController {
 			}
 		}
 
-		$this->set(['resources' => $resources, 'roles' => $roles, 'scopes' => $scopes, 'selectedResource' => $selectedResource, 'abilities' => $abilities, 'permissions' => $permissions]);
+		$this->set(compact('resources', 'roles', 'scopes', 'selectedResource', 'abilities', 'permissions'));
 	}
 
 	/**
@@ -139,7 +139,7 @@ class ResourcesController extends AppController {
 		$scopes = $scopesTable->find()->orderBy(['name' => 'ASC'])->toArray();
 
 		$this->viewBuilder()->disableAutoLayout();
-		$this->set(['abilityId' => $abilityId, 'roleId' => $roleId, 'type' => $type, 'scope' => $scope, 'scopes' => $scopes]);
+		$this->set(compact('abilityId', 'roleId', 'type', 'scope', 'scopes'));
 
 		return $this->render('toggle_cell');
 	}

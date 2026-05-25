@@ -195,6 +195,7 @@ class ImportExportService {
 			}
 
 			// Find or create controller
+			/** @var \TinyAuthBackend\Model\Entity\TinyauthController|null $controller */
 			$controller = $controllersTable->find()
 				->where([
 					'plugin IS' => $plugin,
@@ -217,17 +218,19 @@ class ImportExportService {
 					continue;
 				}
 			}
+			/** @var \TinyAuthBackend\Model\Entity\TinyauthController $typedController */
+			$typedController = $controller;
 
 			// Process actions
 			foreach ($actions as $actionName => $rolesList) {
 				/** @var \TinyAuthBackend\Model\Entity\Action|null $action */
 				$action = $actionsTable->find()
-						->where(['controller_id' => $controller->id, 'name' => $actionName])
-						->first();
+					->where(['controller_id' => $typedController->id, 'name' => $actionName])
+					->first();
 
 				if (!$action) {
 					$action = $actionsTable->newEntity([
-						'controller_id' => $controller->id,
+						'controller_id' => $typedController->id,
 						'name' => $actionName,
 						'is_public' => false,
 					]);
@@ -239,6 +242,8 @@ class ImportExportService {
 						continue;
 					}
 				}
+				/** @var \TinyAuthBackend\Model\Entity\Action $typedAction */
+				$typedAction = $action;
 
 				// Parse roles
 				$roleAliases = array_map('trim', explode(',', (string)$rolesList));
@@ -253,12 +258,12 @@ class ImportExportService {
 
 					/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
 					$existing = $permissionsTable->find()
-							->where(['action_id' => $action->id, 'role_id' => $roleId])
-							->first();
+						->where(['action_id' => $typedAction->id, 'role_id' => $roleId])
+						->first();
 
 					if (!$existing) {
 						$permission = $permissionsTable->newEntity([
-							'action_id' => $action->id,
+							'action_id' => $typedAction->id,
 							'role_id' => $roleId,
 							'type' => 'allow',
 						]);

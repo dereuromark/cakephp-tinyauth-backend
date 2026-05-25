@@ -225,23 +225,23 @@ class RoleSourceService {
 		foreach ($roles as $alias => $id) {
 			$sortOrder++;
 
+			/** @var \TinyAuthBackend\Model\Entity\Role|null $role */
 			$role = $rolesTable->find()->where(['id' => $id])->first();
 			if (!$role) {
 				$role = $rolesTable->find()->where(['alias' => $alias])->first();
 			}
 
 			if ($role) {
-					/** @var \TinyAuthBackend\Model\Entity\Role $role */
-					$role = $rolesTable->patchEntity($role, [
-						'id' => $id,
-						'alias' => $alias,
-						'name' => $role->name ?: ucfirst($alias),
-						'parent_id' => null,
-						'sort_order' => $role->sort_order ?: $sortOrder,
-					]);
-					$rolesTable->save($role);
+				$role = $rolesTable->patchEntity($role, [
+					'id' => $id,
+					'alias' => $alias,
+					'name' => $role->name ?: ucfirst($alias),
+					'parent_id' => null,
+					'sort_order' => $role->sort_order ?: $sortOrder,
+				]);
+				$rolesTable->save($role);
 
-					continue;
+				continue;
 			}
 
 			$role = $rolesTable->newEntity([

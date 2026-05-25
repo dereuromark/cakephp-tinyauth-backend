@@ -103,10 +103,10 @@ class ResourcesController extends AppController {
 
 		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 
-			/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
-			$existing = $resourceAclTable->find()
-				->where(['resource_ability_id' => $abilityId, 'role_id' => $roleId])
-				->first();
+		/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
+		$existing = $resourceAclTable->find()
+			->where(['resource_ability_id' => $abilityId, 'role_id' => $roleId])
+			->first();
 
 		if ($type === 'none') {
 			if ($existing && !$resourceAclTable->delete($existing)) {

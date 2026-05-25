@@ -152,8 +152,8 @@ class RolesTable extends Table {
 							return false; // Circular reference detected
 						}
 						$visited[] = $parentId;
-							/** @var \TinyAuthBackend\Model\Entity\Role|null $parent */
-							$parent = $this->find()->select(['parent_id'])->where(['id' => $parentId])->first();
+						/** @var \TinyAuthBackend\Model\Entity\Role|null $parent */
+						$parent = $this->find()->select(['parent_id'])->where(['id' => $parentId])->first();
 						$parentId = $parent ? (int)$parent->parent_id : null;
 						$maxDepth--;
 					}

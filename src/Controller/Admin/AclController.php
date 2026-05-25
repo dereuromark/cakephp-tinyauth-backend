@@ -65,10 +65,10 @@ class AclController extends AppController {
 
 		$permissionsTable = $this->fetchTable('TinyAuthBackend.AclPermissions');
 
-			/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
-			$existing = $permissionsTable->find()
-				->where(['action_id' => $actionId, 'role_id' => $roleId])
-				->first();
+		/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
+		$existing = $permissionsTable->find()
+			->where(['action_id' => $actionId, 'role_id' => $roleId])
+			->first();
 
 		if ($type === 'none') {
 			if ($existing && !$permissionsTable->delete($existing)) {

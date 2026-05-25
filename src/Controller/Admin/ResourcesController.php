@@ -103,9 +103,10 @@ class ResourcesController extends AppController {
 
 		$resourceAclTable = $this->fetchTable('TinyAuthBackend.ResourceAcl');
 
-		$existing = $resourceAclTable->find()
-			->where(['resource_ability_id' => $abilityId, 'role_id' => $roleId])
-			->first();
+			/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
+			$existing = $resourceAclTable->find()
+				->where(['resource_ability_id' => $abilityId, 'role_id' => $roleId])
+				->first();
 
 		if ($type === 'none') {
 			if ($existing && !$resourceAclTable->delete($existing)) {
@@ -113,7 +114,6 @@ class ResourcesController extends AppController {
 				$this->set('error', 'Failed to remove permission');
 			}
 		} elseif ($existing) {
-			/** @var \TinyAuthBackend\Model\Entity\ResourceAcl|null $existing */
 			$existing->type = $type;
 			$existing->scope_id = $scopeId;
 			if (!$resourceAclTable->save($existing)) {

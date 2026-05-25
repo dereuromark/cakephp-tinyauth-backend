@@ -220,9 +220,10 @@ class ImportExportService {
 
 			// Process actions
 			foreach ($actions as $actionName => $rolesList) {
-				$action = $actionsTable->find()
-					->where(['controller_id' => $controller->id, 'name' => $actionName])
-					->first();
+					/** @var \TinyAuthBackend\Model\Entity\Action|null $action */
+					$action = $actionsTable->find()
+						->where(['controller_id' => $controller->id, 'name' => $actionName])
+						->first();
 
 				if (!$action) {
 					$action = $actionsTable->newEntity([
@@ -250,9 +251,10 @@ class ImportExportService {
 
 					$roleId = $roleLookup[$alias];
 
-					$existing = $permissionsTable->find()
-						->where(['action_id' => $action->id, 'role_id' => $roleId])
-						->first();
+						/** @var \TinyAuthBackend\Model\Entity\AclPermission|null $existing */
+						$existing = $permissionsTable->find()
+							->where(['action_id' => $action->id, 'role_id' => $roleId])
+							->first();
 
 					if (!$existing) {
 						$permission = $permissionsTable->newEntity([

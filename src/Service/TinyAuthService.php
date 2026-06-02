@@ -37,7 +37,7 @@ class TinyAuthService {
 	 * @return bool Whether access is allowed.
 	 */
 	public function canAccess(
-		string|array $roles,
+		array|string $roles,
 		string $resource,
 		string $ability,
 		?EntityInterface $entity = null,
@@ -160,7 +160,7 @@ class TinyAuthService {
 	 * @return array<string, mixed>|null Null = no access, empty array = full access, array = conditions.
 	 */
 	public function getScopeCondition(
-		string|array $roles,
+		array|string $roles,
 		string $resource,
 		string $ability,
 		EntityInterface $user,

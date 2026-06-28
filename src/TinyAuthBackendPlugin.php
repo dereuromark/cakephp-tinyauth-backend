@@ -7,6 +7,7 @@ use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Routing\RouteBuilder;
+use InvalidArgumentException;
 use TinyAuthBackend\Command\ImportCommand;
 use TinyAuthBackend\Command\InitCommand;
 use TinyAuthBackend\Command\SyncCommand;
@@ -32,10 +33,14 @@ class TinyAuthBackendPlugin extends BasePlugin {
 	protected bool $routesEnabled = true;
 
 	/**
-	 * @param \Cake\Core\PluginApplicationInterface<\Cake\Core\HttpApplicationInterface> $app The application instance
+	 * @param mixed $app The application instance
 	 * @return void
 	 */
-	public function bootstrap(PluginApplicationInterface $app): void {
+	public function bootstrap(mixed $app): void {
+		if (!$app instanceof PluginApplicationInterface) {
+			throw new InvalidArgumentException('Expected a plugin application instance.');
+		}
+
 		parent::bootstrap($app);
 	}
 

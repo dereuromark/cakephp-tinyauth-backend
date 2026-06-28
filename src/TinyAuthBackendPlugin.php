@@ -5,7 +5,6 @@ namespace TinyAuthBackend;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
-use Cake\Core\PluginApplicationInterface;
 use Cake\Routing\RouteBuilder;
 use TinyAuthBackend\Command\ImportCommand;
 use TinyAuthBackend\Command\InitCommand;
@@ -35,7 +34,7 @@ class TinyAuthBackendPlugin extends BasePlugin {
 	 * @param \Cake\Core\PluginApplicationInterface $app The application instance
 	 * @return void
 	 */
-	public function bootstrap(PluginApplicationInterface $app): void {
+	public function bootstrap($app): void {
 		parent::bootstrap($app);
 	}
 

@@ -90,6 +90,11 @@ $result = $service->sync();
 $controllers = $service->scan();
 ```
 
+Application controllers are stored without a plugin (`plugin = NULL`), matching
+CakePHP's route parameters. During synchronization, legacy rows that used the
+application namespace as their plugin are normalized in place so their actions
+and permissions remain attached.
+
 `sync()` returns:
 
 ```php

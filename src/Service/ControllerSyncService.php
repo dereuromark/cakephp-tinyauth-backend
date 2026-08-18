@@ -55,10 +55,9 @@ class ControllerSyncService {
 	 */
 	public function scan(): array {
 		$found = [];
-		$appNamespace = (string)(Configure::read('App.namespace') ?: 'App');
 
 		// Scan app controllers
-		$found = array_merge($found, $this->scanPath(APP . 'Controller' . DS, $appNamespace));
+		$found = array_merge($found, $this->scanPath(APP . 'Controller' . DS, null));
 
 		// Scan plugin controllers
 		$plugins = Plugin::loaded();
@@ -207,6 +206,8 @@ class ControllerSyncService {
 
 		$scanned = $this->scan();
 		$result = ['added' => 0, 'updated' => 0, 'actions_added' => 0];
+		$appNamespace = (string)(Configure::read('App.namespace') ?: 'App');
+		$loadedPlugins = Plugin::loaded();
 
 		// Pre-load all existing controllers and actions into hashmaps so the per-row
 		// loop below is constant-time on lookup. The previous implementation issued
@@ -229,6 +230,19 @@ class ControllerSyncService {
 		foreach ($scanned as $item) {
 			$key = $this->controllerKey($item['plugin'], $item['prefix'], $item['name']);
 			$existing = $existingByKey[$key] ?? null;
+			if (!$existing && $item['plugin'] === null) {
+				$legacyKey = $this->controllerKey($appNamespace, $item['prefix'], $item['name']);
+				$legacy = $existingByKey[$legacyKey] ?? null;
+				if ($legacy && !in_array($appNamespace, $loadedPlugins, true)) {
+					$legacy->set('plugin', null);
+					if ($controllersTable->save($legacy)) {
+						unset($existingByKey[$legacyKey]);
+						$existingByKey[$key] = $legacy;
+						$existing = $legacy;
+						$result['updated']++;
+					}
+				}
+			}
 
 			if (!$existing && $addNew) {
 				$controller = $controllersTable->newEntity([

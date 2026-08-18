@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TinyAuthBackend\Test\TestCase\Service;
 
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use TinyAuthBackend\Service\ControllerSyncService;
@@ -78,6 +79,42 @@ class ControllerSyncServiceTest extends TestCase {
 		$this->assertNull($controller->plugin);
 		$this->assertSame(1, $this->countRows('tinyauth_controllers', []));
 		$this->assertSame(1, $this->countRows('tinyauth_actions', ['controller_id' => 42]));
+	}
+
+	public function testSyncStopsWhenLegacyNormalizationFails(): void {
+		$this->insertRow('tinyauth_controllers', [
+			'id' => 42,
+			'plugin' => 'TestApp',
+			'prefix' => null,
+			'name' => 'Users',
+		]);
+		$controllersTable = TableRegistry::getTableLocator()->get('TinyAuthBackend.TinyauthControllers');
+		$controllersTable->getEventManager()->on('Model.beforeSave', function ($event, $entity): void {
+			if ($entity->id === 42) {
+				$event->stopPropagation();
+			}
+		});
+		$service = new class extends ControllerSyncService {
+
+			public function scan(): array {
+				return [
+					[
+						'plugin' => null,
+						'prefix' => null,
+						'name' => 'Users',
+						'actions' => [],
+					],
+				];
+			}
+		};
+
+		try {
+			$service->sync();
+			$this->fail('Expected legacy normalization to fail.');
+		} catch (PersistenceFailedException) {
+			$this->assertSame(1, $this->countRows('tinyauth_controllers', []));
+			$this->assertSame(0, $this->countRows('tinyauth_controllers', ['plugin IS' => null]));
+		}
 	}
 
 }

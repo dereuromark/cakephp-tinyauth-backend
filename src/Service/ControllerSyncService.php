@@ -235,12 +235,11 @@ class ControllerSyncService {
 				$legacy = $existingByKey[$legacyKey] ?? null;
 				if ($legacy && !in_array($appNamespace, $loadedPlugins, true)) {
 					$legacy->set('plugin', null);
-					if ($controllersTable->save($legacy)) {
-						unset($existingByKey[$legacyKey]);
-						$existingByKey[$key] = $legacy;
-						$existing = $legacy;
-						$result['updated']++;
-					}
+					$controllersTable->saveOrFail($legacy);
+					unset($existingByKey[$legacyKey]);
+					$existingByKey[$key] = $legacy;
+					$existing = $legacy;
+					$result['updated']++;
 				}
 			}
 

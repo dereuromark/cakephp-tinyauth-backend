@@ -31,7 +31,7 @@ requests, so you can trim the backend down to exactly the surface you use.
 
 ::: tip Adapter-only setups
 For a classic TinyAuth setup that only stores `allow` and `acl` in the database,
-disable `resources` and `scopes` — see the
+disable `resources` and `scopes`, see the
 [Adapter-Only strategy](/strategies/adapter-only).
 :::
 

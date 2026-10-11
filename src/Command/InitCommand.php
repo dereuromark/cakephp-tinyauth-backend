@@ -8,7 +8,7 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Routing\Router;
-use TinyAuth\Utility\TinyAuth;
+use TinyAuthBackend\Service\RoleSourceService;
 use TinyAuthBackend\Utility\Importer;
 
 class InitCommand extends Command {
@@ -28,7 +28,7 @@ class InitCommand extends Command {
 
 		$url = Router::url(['plugin' => 'TinyAuthBackend', 'prefix' => 'Admin', 'controller' => 'Dashboard', 'action' => 'index'], true);
 
-		$io->success('Necessary ACL rules stored. Using a user with this `' . $role . '` role you can now navigate to the backend `' . $url . '`.');
+		$io->success('Necessary ACL rules stored. Configure TinyAuthBackend.adminAccess for permitted users, then navigate to the backend `' . $url . '`.');
 
 		return static::CODE_SUCCESS;
 	}
@@ -37,7 +37,7 @@ class InitCommand extends Command {
 	 * @return array<string>
 	 */
 	protected function _getAvailableRoles() {
-		$roles = (new TinyAuth())->getAvailableRoles();
+		$roles = (new RoleSourceService())->getRoles();
 
 		return array_keys($roles);
 	}

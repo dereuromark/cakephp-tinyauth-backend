@@ -33,7 +33,7 @@ Use this mode if you want the backend to be the main source of truth for:
 1. Migrate the plugin tables.
 2. Configure TinyAuth DB adapters.
 3. Sync controllers and resources (`bin/cake tiny_auth_backend sync`).
-4. Wire `cakephp/authorization` with the plugin's `TinyAuthResolver` — see
+4. Wire `cakephp/authorization` with the plugin's `TinyAuthResolver`, see
    [Authorization Integration](/authorization/) for the full wiring guide.
 5. Manage request and resource permissions from the same backend.
 

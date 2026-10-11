@@ -12,9 +12,9 @@ They answer questions like:
 
 ## Data model
 
-- **Resource** — entity type, for example `Article`
-- **Ability** — action on that resource, for example `view`, `edit`, `publish`
-- **Scope** — optional field match, for example `article.user_id === user.id`
+- **Resource**, entity type, for example `Article`
+- **Ability**, action on that resource, for example `view`, `edit`, `publish`
+- **Scope**, optional field match, for example `article.user_id === user.id`
 
 ## Syncing resources
 
@@ -113,7 +113,7 @@ then this backend rule:
 means:
 
 ```php
-$article->user_id === $user->id
+return $article->user_id === $user->id;
 ```
 
 See [Scopes](/permissions/scopes) for the full scope model.

@@ -57,7 +57,7 @@ bin/cake tiny_auth_backend sync
 
 This is the CLI equivalent of clicking **Sync** in `/admin/auth/sync`. It walks
 your application (and plugins), writes discovered rows into
-`tinyauth_controllers` / `tinyauth_actions`, and is idempotent — re-running it
+`tinyauth_controllers` / `tinyauth_actions`, and is idempotent, re-running it
 never clobbers existing grants.
 
 You can scope the sync to controllers or resources only:

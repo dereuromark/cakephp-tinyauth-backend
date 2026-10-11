@@ -1,7 +1,7 @@
 # Strict Content-Security-Policy
 
 The plugin's admin UI is built to run under a strict Content-Security-Policy
-header — no `script-src 'unsafe-eval'`, no `style-src 'unsafe-inline'`.
+header, no `script-src 'unsafe-eval'`, no `style-src 'unsafe-inline'`.
 
 Inline `<script>` blocks in the layout carry a per-request nonce read from
 `$this->getRequest()->getAttribute('cspNonce')`, so any host-app middleware that
@@ -58,9 +58,9 @@ classes in the browser via `Function()` (`unsafe-eval`). See
 
 The plugin includes two CSP guard tests:
 
-- `tests/TestCase/CspComplianceTest.php` — scans the template source for Alpine.js
+- `tests/TestCase/CspComplianceTest.php`, scans the template source for Alpine.js
   directives and inline event handlers.
-- `tests/TestCase/Controller/Admin/RenderedCspComplianceTest.php` — checks the
+- `tests/TestCase/Controller/Admin/RenderedCspComplianceTest.php`, checks the
   rendered HTML.
 
 Both fail if a CSP-violating pattern reappears.

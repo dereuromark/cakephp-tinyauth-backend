@@ -40,13 +40,13 @@ Or:
 
 ::: warning Role IDs must be integers
 Whatever you put on the right-hand side of `alias => id` must be an integer or a
-numeric string. UUIDs and opaque slugs cannot be used as IDs directly — see
+numeric string. UUIDs and opaque slugs cannot be used as IDs directly, see
 [Roles](/permissions/roles#external-role-sources) for the full recipe.
 :::
 
 ## Identity without cakephp/authentication
 
-External role sources often come with custom identity resolution too — a JWT
+External role sources often come with custom identity resolution too, a JWT
 claim, an SSO gateway, a session payload written by middleware the app already
 owns. If you don't want to pull in `cakephp/authentication` just to satisfy the
 Authorization plugin's `IdentityInterface` contract, the plugin ships

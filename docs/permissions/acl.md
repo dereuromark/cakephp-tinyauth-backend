@@ -9,22 +9,22 @@ role-based permissions.
 
 The ACL interface displays:
 
-- **Left panel** — controller tree grouped by plugin and prefix
-- **Main panel** — permission matrix for the selected controller
+- **Left panel**, controller tree grouped by plugin and prefix
+- **Main panel**, permission matrix for the selected controller
 
 ### Permission matrix
 
 The matrix shows:
 
-- **Rows** — actions for the selected controller
-- **Columns** — available roles (ordered by hierarchy)
-- **Cells** — permission state
+- **Rows**, actions for the selected controller
+- **Columns**, available roles (ordered by hierarchy)
+- **Cells**, permission state
 
 ### Permission states
 
 | State | Display | Meaning |
 |-------|---------|---------|
-| None | Gray (empty) | No explicit permission — access denied |
+| None | Gray (empty) | No explicit permission, access denied |
 | Allow | Green checkmark | Access granted for this role |
 | Deny | Red X | Access explicitly denied (overrides inherited allow) |
 
@@ -37,7 +37,7 @@ Click on any cell to cycle through permission states:
 3. Deny → None
 
 ::: tip Instant save
-Changes are saved immediately via HTMX — there is no separate save button.
+Changes are saved immediately via HTMX, there is no separate save button.
 :::
 
 ## Permission logic
@@ -156,5 +156,5 @@ Cache::delete('TinyAuth.acl');
 
 ## See also
 
-- [Allow (Public Actions)](/permissions/allow) — actions reachable without auth.
-- [Resources](/permissions/resources) — entity-level authorization.
+- [Allow (Public Actions)](/permissions/allow), actions reachable without auth.
+- [Resources](/permissions/resources), entity-level authorization.

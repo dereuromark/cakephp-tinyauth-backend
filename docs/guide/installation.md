@@ -4,7 +4,7 @@ Install the plugin with Composer from your CakePHP project's ROOT directory
 (where the `composer.json` file is located):
 
 ```sh
-composer require dereuromark/cakephp-tinyauth-backend
+composer require dereuromark/cakephp-tinyauth-backend cakephp/migrations:^5
 ```
 
 This auto-requires the `dereuromark/cakephp-tinyauth` dependency.
@@ -18,6 +18,7 @@ public function bootstrap(): void
 {
     parent::bootstrap();
 
+    $this->addPlugin('Migrations');
     $this->addPlugin('TinyAuthBackend');
 }
 ```
@@ -42,52 +43,8 @@ This creates the backend tables:
 - `tinyauth_scopes`
 - `tinyauth_resource_acl`
 
-## Sync controllers and actions
+## Continue
 
-Before the backend can edit rules, it needs to know which controllers and
-actions exist. Run the sync command once after install (and again after adding
-new controllers):
+Composer declares the supported PHP and CakePHP ranges. The supplied migrations use the Migrations 5 `BaseMigration` API.
 
-```sh
-bin/cake tiny_auth_backend sync
-```
-
-This is the CLI equivalent of clicking **Sync** in `/admin/auth/sync`. It walks
-your application (and plugins), writes discovered rows into
-`tinyauth_controllers` / `tinyauth_actions`, and is idempotent — re-running it
-never clobbers existing grants.
-
-You can scope the sync to controllers or resources only:
-
-```sh
-bin/cake tiny_auth_backend sync controllers
-bin/cake tiny_auth_backend sync resources
-```
-
-## Initialize backend access
-
-To grant a role access to the backend out of the box, initialize it for an
-admin role:
-
-```sh
-bin/cake tiny_auth_backend init admin
-```
-
-## Import existing INI files
-
-If you previously used TinyAuth's file-based rules, import them once:
-
-```sh
-bin/cake tiny_auth_backend import allow
-bin/cake tiny_auth_backend import acl
-```
-
-## Next steps
-
-::: warning Configure access before going live
-The admin UI fails closed. Set an access gate before you rely on it — see
-[Admin Access](/guide/admin-access).
-:::
-
-- [Admin Access](/guide/admin-access) — gate who may reach `/admin/auth`.
-- [Strategies](/strategies/) — wire the backend into your runtime auth.
+Continue with [Getting started](./getting-started.md) to configure local admin access, create a role and synchronize controllers. Existing installations should review the database changes before migrating: the initial migration drops the old `tiny_auth_acl_rules` and `tiny_auth_allow_rules` tables. Preserve and migrate any rules you still need before running it.

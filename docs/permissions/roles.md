@@ -42,7 +42,7 @@ You do not have to manage roles in `tinyauth_roles`.
 
 `TinyAuthBackend.roleSource` can be:
 
-- `null` — use the plugin table
+- `null`, use the plugin table
 - a Configure path string
 - an array of `alias => id`
 - a callable returning that array
@@ -71,7 +71,7 @@ When an external source is used:
 
 Whatever you put on the right-hand side of `alias => id` must be an integer or a
 numeric string (e.g. `3` or `"3"`). The plugin stores permission rows keyed by an
-integer `role_id` foreign key — that is a deliberate design choice, not a bug —
+integer `role_id` foreign key, that is a deliberate design choice, not a bug.
 so non-numeric values like UUIDs, opaque slugs, or Keycloak `sub` claims cannot
 be used as IDs directly.
 
@@ -96,7 +96,7 @@ Configure::write('TinyAuthBackend.roleSource', function (): array {
     // Fetch whatever the upstream system considers "the roles the
     // current request has": LDAP groups, IdP scope claims, rows in
     // your own users_roles pivot, etc. Result is an ordered list of
-    // *aliases* — that's all you need from the outside world.
+    // *aliases*, that's all you need from the outside world.
     $aliases = MyIdentityService::currentUserRoleAliases();
 
     // Hand each alias a stable small integer. Hashing the alias keeps
@@ -123,7 +123,7 @@ What happens next:
 3. Stale aliases are pruned on the next boot, so if your IdP renames a role the
    old rule rows vanish with it.
 
-Your UUIDs never enter the plugin tables — they stay in your own identity / user
+Your UUIDs never enter the plugin tables, they stay in your own identity / user
 layer, and the plugin only sees the derived aliases.
 
 ## See also

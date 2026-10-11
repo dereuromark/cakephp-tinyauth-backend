@@ -61,6 +61,6 @@ This page is only about **public request access**.
 
 ::: danger Admin UI access is separate
 Configuring public actions does **not** open the admin UI. The admin UI at
-`/admin/auth` is gated independently and fails closed — see
+`/admin/auth` is gated independently and fails closed, see
 [Admin Access](/guide/admin-access).
 :::

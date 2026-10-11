@@ -1,5 +1,5 @@
 # CakePHP TinyAuth backend
-[![CI](https://github.com/dereuromark/cakephp-tinyauth-backend/actions/workflows/ci.yml/badge.svg?branch=cake6)](https://github.com/dereuromark/cakephp-tinyauth-backend/actions/workflows/ci.yml?query=branch%3Amaster)
+[![CI](https://github.com/dereuromark/cakephp-tinyauth-backend/actions/workflows/ci.yml/badge.svg?branch=cake6)](https://github.com/dereuromark/cakephp-tinyauth-backend/actions/workflows/ci.yml?query=branch%3Acake6)
 [![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tinyauth-backend/master.svg)](https://codecov.io/github/dereuromark/cakephp-tinyauth-backend/branch/master)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat)](https://phpstan.org/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tinyauth-backend/license.svg)](LICENSE)
@@ -13,7 +13,7 @@ Composer applications consuming this development branch must set `minimum-stabil
 
 A database backend and admin interface for [TinyAuth](https://dereuromark.github.io/cakephp-tinyauth/). Manage roles, public actions, controller permissions and optional resource permissions through `/admin/auth`.
 
-The current branch targets CakePHP 5. Composer declares the supported PHP and framework ranges.
+The current branch targets CakePHP 6. Composer declares the supported PHP and framework ranges.
 
 ## Documentation
 

@@ -5,7 +5,7 @@ roles in CakePHP. It is a companion to the
 [TinyAuth plugin](https://github.com/dereuromark/cakephp-tinyauth) and replaces
 the native INI file approach with editable database tables.
 
-The current branch targets CakePHP 5. Composer declares the supported PHP and framework ranges.
+The current branch targets CakePHP 6. Composer declares the supported PHP and framework ranges.
 
 
 ## What you get

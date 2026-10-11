@@ -132,9 +132,9 @@ jobs:
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: 24
 
       - name: Regenerate webroot/css/tailwind.css
         run: composer assets
@@ -142,7 +142,7 @@ jobs:
       - name: Fail if generated CSS is stale
         run: |
           if ! git diff --quiet -- webroot/css/tailwind.css; then
-            echo "::error::webroot/css/tailwind.css is out of date. Run 'composer assets' locally and commit the regenerated file. See docs/Assets.md."
+            echo "::error::webroot/css/tailwind.css is out of date. Run 'composer assets' locally and commit the regenerated file. See https://dereuromark.github.io/cakephp-tinyauth-backend/guide/assets."
             git diff -- webroot/css/tailwind.css | head -40
             exit 1
           fi
@@ -154,7 +154,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
 

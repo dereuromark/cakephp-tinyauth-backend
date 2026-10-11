@@ -35,7 +35,8 @@
 		"cakephp/authorization": "^3.0",
 		"dereuromark/cakephp-i18n-lint": "^0.1.1",
 		"fig-r/psr2r-sniffer": "dev-master",
-		"phpunit/phpunit": "^11.5 || ^12.1 || ^13.0"
+		"phpunit/phpunit": "^11.5 || ^12.1 || ^13.0",
+		"cakephp/migrations": "^4.5 || ^5.0"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
@@ -69,5 +70,8 @@
 		"i18n-check": "i18n-lint check",
 		"i18n-extract": "i18n-lint extract",
 		"i18n-lint": "i18n-lint lint"
+	},
+	"suggest": {
+		"cakephp/migrations": "Required to create or update the backend database tables."
 	}
 }

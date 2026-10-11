@@ -71,7 +71,7 @@ It transparently unwraps `SelectQuery` instances to their repository, so the sam
 resolver works for both `$this->Authorization->authorize($article, 'edit')` and
 `$this->Authorization->applyScope($query)`. Cake's built-in `MapResolver` only
 handles the former, and `OrmResolver` requires convention-based `App\Policy\*`
-classes, `TinyAuthResolver` avoids both pitfalls.
+classes. `TinyAuthResolver` handles queries and entities through the same policy.
 :::
 
 ## In controllers
@@ -99,7 +99,7 @@ $this->Authorization->authorize($article, 'edit');
 ],
 ```
 
-For backward compatibility it also reads `TinyAuth.superAdminRole`.
+The policy also reads `TinyAuth.superAdminRole` as a fallback, but accepts aliases rather than the numeric role IDs used by TinyAuth itself. Configure `TinyAuthBackend.superAdminRole` explicitly to avoid ambiguity. Use `[]` to disable the bypass; `null` selects the fallback.
 
 If no config is set, the built-in fallback aliases are:
 
@@ -109,8 +109,8 @@ If no config is set, the built-in fallback aliases are:
 ## Identity without cakephp/authentication
 
 Most apps load `cakephp/authentication`, which hangs an `IdentityInterface` on
-the request automatically. If your app resolves users another way, a session
-payload, a JWT claim, an upstream SSO gateway, the plugin ships `EntityIdentity`,
+the request automatically. If your app resolves users another way, such as a session
+payload, JWT claim or upstream SSO gateway, the plugin ships `EntityIdentity`,
 a small wrapper that turns any Cake entity into a valid
 `Authorization\IdentityInterface` without pulling in the authentication plugin:
 
@@ -126,7 +126,7 @@ $request = $request->withAttribute('identity', $identity);
 `EntityIdentity` forwards array access and magic property reads to the underlying
 entity, so policies and templates can treat it interchangeably with the wrapped
 user entity. When constructed without an authorization service, `can()` returns
-`false` and `applyScope()` returns the resource unchanged, the right behavior
+`false` and `applyScope()` returns the resource unchanged. This wrapper alone therefore does not enforce a query scope. Use it only
 for strategies that gate by role only and never call into the Authorization
 service (see the [Adapter-Only strategy](/strategies/adapter-only)).
 

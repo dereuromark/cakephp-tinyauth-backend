@@ -17,6 +17,8 @@ Merge this into `config/app_local.php` for a local application:
 
 The plugin denies access without a gate, including in debug mode. This example permits local requests while debug is enabled. Replace it with an application identity and permission check before allowing remote administration; see [Admin access](./admin-access.md).
 
+Container setups may report a gateway IP instead of loopback and receive 403. Check the address your application sees; use an explicit development gate from [Admin access](./admin-access.md) only in a local environment.
+
 ## Open the dashboard and create a role
 
 Open `/admin/auth` through your local application. Open **Roles** and add a role with the alias `admin` and name `Admin`. Role IDs belong to the backend database; use the saved ID when assigning that role to users.
@@ -33,7 +35,9 @@ The ACL page now lists discovered controllers and actions. To create initial bac
 bin/cake tiny_auth_backend init admin
 ```
 
-This command reads backend roles and writes ACL entries. The `adminAccess` gate still decides who can open the admin interface.
+This command writes controller/action ACL entries for the plugin’s Admin controllers. These entries matter when your host application enforces TinyAuth ACL for these routes. The `adminAccess` gate still decides who can open the admin interface.
+
+When using `TinyAuthPolicy`, the alias `admin` is a super-admin by default and bypasses resource rules and scopes. Set `TinyAuthBackend.superAdminRole` to `[]` to disable that bypass, or choose an explicit alias. This setting is separate from the admin UI gate.
 
 ## Connect rules to your application
 

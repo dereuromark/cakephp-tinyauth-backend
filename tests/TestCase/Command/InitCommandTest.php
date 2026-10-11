@@ -26,7 +26,7 @@ class InitCommandTest extends TestCase {
 		parent::setUp();
 
 		$this->loadPlugins(['TinyAuthBackend']);
-		Configure::write('Roles', ['admin' => 1]);
+		(new RoleSourceService())->clearCache();
 
 		$this->insertRow('tinyauth_roles', [
 			'id' => 1,
@@ -35,6 +35,11 @@ class InitCommandTest extends TestCase {
 			'parent_id' => null,
 			'sort_order' => 1,
 		]);
+	}
+
+	public function tearDown(): void {
+		(new RoleSourceService())->clearCache();
+		parent::tearDown();
 	}
 
 	public function testInitCommandOutputsDashboardUrlAndCreatesPermissions(): void {

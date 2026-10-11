@@ -170,7 +170,7 @@ class RoleSourceService {
 	 * hands over non-integer ids (UUIDs, GUIDs, string slugs, ...)
 	 * there is no safe coercion, so the entry is dropped — but we
 	 * log a warning so the operator knows *why* their matrix is empty
-	 * instead of staring at silent zeros. See `docs/Roles.md` for the
+	 * instead of staring at silent zeros. See `https://dereuromark.github.io/cakephp-tinyauth-backend/permissions/roles` for the
 	 * supported shape and the "existing UUID roles" workaround.
 	 *
 	 * @param array<mixed, mixed> $roles
@@ -198,7 +198,7 @@ class RoleSourceService {
 			Log::warning(sprintf(
 				'TinyAuthBackend.roleSource dropped %d role(s) with non-numeric ids: %s. '
 				. 'Role ids must be integer or numeric-string; map UUID/opaque ids to stable ints yourself. '
-				. 'See docs/Roles.md.',
+				. 'See https://dereuromark.github.io/cakephp-tinyauth-backend/permissions/roles.',
 				count($dropped),
 				implode(', ', $dropped),
 			));

@@ -1,8 +1,6 @@
 # Admin Access
 
-This plugin ships an admin UI at `/admin/auth`. Because it manages authorization
-rules, accidental exposure is **RCE-equivalent**, an attacker who reaches the UI
-can grant themselves access to anything.
+This plugin ships an admin UI at `/admin/auth`. Anyone admitted to this interface can change the application’s authorization rules. Restrict access to users who may administer those rules.
 
 ::: danger Fails closed by default
 Regardless of `debug` mode, every request to the admin UI is rejected with `403`

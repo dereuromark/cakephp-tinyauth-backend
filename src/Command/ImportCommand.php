@@ -13,10 +13,13 @@ use TinyAuthBackend\Utility\Importer;
 
 class ImportCommand extends Command {
 
+	protected bool $importFailed = false;
+
 	/**
 	 * @inheritDoc
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): ?int {
+		$this->importFailed = false;
 		$type = $args->getArgument('type');
 		$file = $args->getArgument('file');
 		if (!$type || $type === 'allow') {
@@ -26,7 +29,7 @@ class ImportCommand extends Command {
 			$this->importAcl($file, $io);
 		}
 
-		return static::CODE_SUCCESS;
+		return $this->importFailed ? static::CODE_ERROR : static::CODE_SUCCESS;
 	}
 
 	/**
@@ -56,6 +59,7 @@ class ImportCommand extends Command {
 	 */
 	protected function importAllow(?string $file, ConsoleIo $io): void {
 		if (!AdapterConfig::isAllowEnabled()) {
+			$this->importFailed = true;
 			$io->error('Allow not enabled, skipping');
 
 			return;
@@ -64,11 +68,12 @@ class ImportCommand extends Command {
 		if ($file) {
 			$fileName = pathinfo($file, PATHINFO_BASENAME);
 		} else {
-			$fileName = Configure::read('TinyAuth.allowFile');
+			$fileName = Configure::read('TinyAuth.allowFile') ?: 'auth_allow.ini';
 			$path = Configure::read('TinyAuth.allowFilePath') ?: ROOT . DS . 'config' . DS;
-			$file = $path . $fileName;
+			$file = rtrim($path, '/\\') . DS . $fileName;
 		}
-		if (!file_exists($file)) {
+		if (!is_file($file) || !is_readable($file)) {
+			$this->importFailed = true;
 			$io->error($fileName . ' does not exist or cannot be found, skipping');
 
 			return;
@@ -87,6 +92,7 @@ class ImportCommand extends Command {
 	 */
 	protected function importAcl(?string $file, ConsoleIo $io): void {
 		if (!AdapterConfig::isAclEnabled()) {
+			$this->importFailed = true;
 			$io->error('ACL not enabled, skipping');
 
 			return;
@@ -95,11 +101,12 @@ class ImportCommand extends Command {
 		if ($file) {
 			$fileName = pathinfo($file, PATHINFO_BASENAME);
 		} else {
-			$fileName = Configure::read('TinyAuth.aclFile');
+			$fileName = Configure::read('TinyAuth.aclFile') ?: 'auth_acl.ini';
 			$path = Configure::read('TinyAuth.aclFilePath') ?: ROOT . DS . 'config' . DS;
-			$file = $path . $fileName;
+			$file = rtrim($path, '/\\') . DS . $fileName;
 		}
-		if (!file_exists($file)) {
+		if (!is_file($file) || !is_readable($file)) {
+			$this->importFailed = true;
 			$io->error($fileName . ' does not exist or cannot be found, skipping');
 
 			return;

@@ -48,11 +48,11 @@ class InitCommand extends Command {
 	public function getOptionParser(): ConsoleOptionParser {
 		$parser = parent::getOptionParser();
 		$parser->setDescription(
-			'Initialize the backend by allowing the given admin role access.',
+			'Create backend controller/action ACL entries for a role. The adminAccess gate is configured separately.',
 		);
 
 		$parser->addArgument('role', [
-			'help' => 'Slug of role to be used to open backend for',
+			'help' => 'Backend role alias to receive the initial ACL entries',
 			'required' => true,
 		]);
 

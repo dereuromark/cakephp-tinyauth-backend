@@ -26,8 +26,7 @@ TinyAuth adapter functionality exposed in the UI.
 | `resources` | [Resources](/permissions/resources) | Entity-level abilities |
 | `scopes` | [Scopes](/permissions/scopes) | Reusable field-comparison conditions |
 
-A disabled feature is removed from the navigation and its controllers reject
-requests, so you can trim the backend down to exactly the surface you use.
+A disabled feature is hidden from navigation. Its controller remains reachable by URL. Feature flags do not enforce authorization; the admin gate still protects every backend section.
 
 ::: tip Adapter-only setups
 For a classic TinyAuth setup that only stores `allow` and `acl` in the database,

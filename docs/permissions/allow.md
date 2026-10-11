@@ -62,17 +62,11 @@ CREATE TABLE tinyauth_actions (
 ## Programmatic access
 
 ```php
-use TinyAuthBackend\Service\TinyAuthService;
+use TinyAuthBackend\Auth\AllowAdapter\DbAllowAdapter;
 
-$service = new TinyAuthService();
-
-// Check if action is public
-$isPublic = $service->isPublicAction('Pages', 'display');
-
-// Check with plugin/prefix
-$isPublic = $service->isPublicAction('Articles', 'view', [
-    'plugin' => 'Blog',
-]);
+$rules = (new DbAllowAdapter())->getAllow([]);
+$isPublic = in_array('display', $rules['Pages']['allow'] ?? [], true);
+$isPluginPublic = in_array('view', $rules['Blog.Articles']['allow'] ?? [], true);
 ```
 
 ### Making actions public programmatically
@@ -90,14 +84,12 @@ $action = $actionsTable->find()
         ]);
     })
     ->where(['Actions.name' => 'display'])
-    ->first();
+    ->firstOrFail();
 
 // Make it public
 $action->is_public = true;
-$actionsTable->save($action);
-
-// Clear cache
-Cache::delete('TinyAuth.allow');
+$actionsTable->saveOrFail($action);
+// The table callback clears the TinyAuth rule caches.
 ```
 
 ## Integration with TinyAuth
@@ -116,9 +108,13 @@ The adapter returns data in TinyAuth's expected format:
 ```php
 // Returns an array like:
 [
-    'Pages' => ['display', 'home'],
-    'Users' => ['login', 'register'],
-    'Blog.Articles' => ['index', 'view'],
+    'Pages' => [
+        'plugin' => null,
+        'prefix' => null,
+        'controller' => 'Pages',
+        'allow' => ['display', 'home'],
+        'deny' => [],
+    ],
 ];
 ```
 

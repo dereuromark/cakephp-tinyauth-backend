@@ -4,14 +4,14 @@ Install the plugin with Composer from your CakePHP project's ROOT directory
 (where the `composer.json` file is located):
 
 ```sh
-composer require dereuromark/cakephp-tinyauth-backend cakephp/migrations:^5
+composer require dereuromark/cakephp-tinyauth-backend cakephp/migrations:"^4.5 || ^5.0"
 ```
 
 This auto-requires the `dereuromark/cakephp-tinyauth` dependency.
 
 ## Load the plugin
 
-Load the plugin in your application's `Application::bootstrap()`:
+If Migrations is already loaded by your application, add only TinyAuthBackend. Otherwise load both plugins in your application's `Application::bootstrap()`:
 
 ```php
 public function bootstrap(): void
@@ -45,6 +45,6 @@ This creates the backend tables:
 
 ## Continue
 
-Composer declares the supported PHP and CakePHP ranges. The supplied migrations use the Migrations 5 `BaseMigration` API.
+Composer declares the supported PHP and CakePHP ranges. The supplied migrations use `Migrations\BaseMigration`, available from Migrations 4.5. Composer selects a compatible version for your CakePHP installation.
 
-Continue with [Getting started](./getting-started.md) to configure local admin access, create a role and synchronize controllers. Existing installations should review the database changes before migrating: the initial migration drops the old `tiny_auth_acl_rules` and `tiny_auth_allow_rules` tables. Preserve and migrate any rules you still need before running it.
+Continue with [Getting started](./getting-started.md) to configure local admin access, create a role and synchronize controllers. Existing installations should review the database changes before migrating: the initial migration drops the old `tiny_auth_acl_rules` and `tiny_auth_allow_rules` tables. Export those tables before migrating and manually transfer any rules you still need into the normalized schema; the INI importer does not import those legacy database tables.

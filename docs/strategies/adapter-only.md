@@ -41,8 +41,8 @@ from the database".
 
 1. Run the plugin migrations.
 2. Sync controllers/actions into the backend.
-3. Import your old INI files once if you are migrating existing rules.
-4. Point TinyAuth to the DB adapters.
+3. Configure the DB adapters and align the TinyAuth and backend role mappings.
+4. Import your old INI files once if you are migrating existing rules.
 5. Manage `allow` and `acl` from `/admin/auth`.
 
 ## Sync controllers and actions

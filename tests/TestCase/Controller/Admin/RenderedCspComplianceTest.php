@@ -79,7 +79,7 @@ class RenderedCspComplianceTest extends TestCase {
 
 		$this->assertResponseOk();
 
-		$body = (string)$this->_response->getBody();
+		$body = (string)$this->response->getBody();
 
 		$this->assertStringNotContainsString(
 			' style="',

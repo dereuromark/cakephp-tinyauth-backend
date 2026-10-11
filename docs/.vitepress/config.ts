@@ -6,6 +6,7 @@ function sidebar() {
       text: 'Guide',
       items: [
         { text: 'Installation', link: '/guide/installation' },
+      { text: 'Upgrading to CakePHP 6', link: '/guide/upgrading' },
         { text: 'Getting started', link: '/guide/getting-started' },
         { text: 'Overview', link: '/guide/' },
         { text: 'Admin Access', link: '/guide/admin-access' },
@@ -66,6 +67,7 @@ export default defineConfig({
     logo: '/logo.svg',
     nav: [
       { text: 'Installation', link: '/guide/installation' },
+      { text: 'Upgrading to CakePHP 6', link: '/guide/upgrading' },
       { text: 'Getting started', link: '/guide/getting-started' },
       { text: 'Strategies', link: '/strategies/', activeMatch: '/strategies/' },
       { text: 'Permissions', link: '/permissions/roles', activeMatch: '/permissions/' },

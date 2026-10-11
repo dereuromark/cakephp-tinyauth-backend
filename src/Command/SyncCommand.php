@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use TinyAuthBackend\Service\ControllerSyncService;
 use TinyAuthBackend\Service\ResourceSyncService;
@@ -39,7 +38,9 @@ class SyncCommand extends Command {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute(Arguments $args, ConsoleIo $io): ?int {
+	public function execute(): ?int {
+		$args = $this->args;
+		$io = $this->io;
 		$type = $args->getArgument('type');
 
 		if (!$type || $type === 'controllers') {
@@ -70,10 +71,10 @@ class SyncCommand extends Command {
 	}
 
 	/**
-	 * @param \Cake\Console\ConsoleIo $io
+	 * @param \Cake\Console\ConsoleIoInterface $io
 	 * @return void
 	 */
-	protected function syncControllers(ConsoleIo $io): void {
+	protected function syncControllers(ConsoleIoInterface $io): void {
 		$result = (new ControllerSyncService())->sync();
 
 		$io->success(sprintf(
@@ -85,10 +86,10 @@ class SyncCommand extends Command {
 	}
 
 	/**
-	 * @param \Cake\Console\ConsoleIo $io
+	 * @param \Cake\Console\ConsoleIoInterface $io
 	 * @return void
 	 */
-	protected function syncResources(ConsoleIo $io): void {
+	protected function syncResources(ConsoleIoInterface $io): void {
 		$result = (new ResourceSyncService())->sync();
 
 		$io->success(sprintf(

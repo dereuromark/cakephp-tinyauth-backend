@@ -31,7 +31,7 @@ class AclPermission extends Entity {
 	/**
 	 * @var array<string, bool>
 	 */
-	protected array $_accessible = [
+	protected array $patchable = [
 		'action_id' => true,
 		'role_id' => true,
 		'type' => true,

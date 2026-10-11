@@ -4,10 +4,12 @@ Install the plugin with Composer from your CakePHP project's ROOT directory
 (where the `composer.json` file is located):
 
 ```sh
-composer require dereuromark/cakephp-tinyauth-backend cakephp/migrations:"^4.5 || ^5.0"
+composer config minimum-stability dev
+composer config prefer-stable true
+composer require dereuromark/cakephp-tinyauth-backend:dev-cake6 cakephp/migrations:dev-fix/6.x-cakephp-compatibility
 ```
 
-This auto-requires the `dereuromark/cakephp-tinyauth` dependency.
+This branch requires PHP 8.5 and CakePHP 6. It requires the `cake6` branch of TinyAuth and the CakePHP 6 compatibility branch of Migrations. Configure development stability in the application because dependency stability flags are not inherited.
 
 ## Load the plugin
 

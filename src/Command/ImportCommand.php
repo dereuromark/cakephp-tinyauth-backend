@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use TinyAuthBackend\Utility\AdapterConfig;
@@ -18,7 +17,9 @@ class ImportCommand extends Command {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute(Arguments $args, ConsoleIo $io): ?int {
+	public function execute(): ?int {
+		$args = $this->args;
+		$io = $this->io;
 		$this->importFailed = false;
 		$type = $args->getArgument('type');
 		$file = $args->getArgument('file');
@@ -54,10 +55,10 @@ class ImportCommand extends Command {
 
 	/**
 	 * @param string|null $file
-	 * @param \Cake\Console\ConsoleIo $io
+	 * @param \Cake\Console\ConsoleIoInterface $io
 	 * @return void
 	 */
-	protected function importAllow(?string $file, ConsoleIo $io): void {
+	protected function importAllow(?string $file, ConsoleIoInterface $io): void {
 		if (!AdapterConfig::isAllowEnabled()) {
 			$this->importFailed = true;
 			$io->error('Allow not enabled, skipping');
@@ -87,10 +88,10 @@ class ImportCommand extends Command {
 
 	/**
 	 * @param string|null $file
-	 * @param \Cake\Console\ConsoleIo $io
+	 * @param \Cake\Console\ConsoleIoInterface $io
 	 * @return void
 	 */
-	protected function importAcl(?string $file, ConsoleIo $io): void {
+	protected function importAcl(?string $file, ConsoleIoInterface $io): void {
 		if (!AdapterConfig::isAclEnabled()) {
 			$this->importFailed = true;
 			$io->error('ACL not enabled, skipping');

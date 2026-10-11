@@ -32,7 +32,7 @@ class ResourceAcl extends Entity {
 	/**
 	 * @var array<string, bool>
 	 */
-	protected array $_accessible = [
+	protected array $patchable = [
 		'resource_ability_id' => true,
 		'role_id' => true,
 		'type' => true,

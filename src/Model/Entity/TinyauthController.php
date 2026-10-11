@@ -20,7 +20,7 @@ class TinyauthController extends Entity {
 	/**
 	 * @var array<string, bool>
 	 */
-	protected array $_accessible = [
+	protected array $patchable = [
 		'plugin' => true,
 		'prefix' => true,
 		'name' => true,

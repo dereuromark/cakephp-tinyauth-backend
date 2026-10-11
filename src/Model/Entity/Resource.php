@@ -19,7 +19,7 @@ class Resource extends Entity {
 	/**
 	 * @var array<string, bool>
 	 */
-	protected array $_accessible = [
+	protected array $patchable = [
 		'name' => true,
 		'entity_class' => true,
 		'table_name' => true,

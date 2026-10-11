@@ -253,7 +253,7 @@ class RoleSourceService {
 				'name' => ucfirst($alias),
 				'parent_id' => null,
 				'sort_order' => $sortOrder,
-			], ['accessibleFields' => ['id' => true]]);
+			], ['patchableFields' => ['id' => true]]);
 			$rolesTable->save($role);
 		}
 

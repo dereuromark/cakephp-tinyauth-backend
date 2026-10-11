@@ -45,7 +45,7 @@ return new AuthorizationService($resolver);
 See [Authorization Integration](/authorization/) for the full wiring guide.
 
 If you need custom logic on top of the base policy, extend `TinyAuthPolicy` and
-override the specific hook — the parent signature matches CakePHP Authorization's
+override the specific hook, the parent signature matches CakePHP Authorization's
 calling convention:
 
 ```php

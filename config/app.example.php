@@ -51,7 +51,7 @@ return [
 		 * 'superAdminRole' => 'admin',
 		 * 'superAdminRole' => ['admin', 'root'],
 		 */
-		'superAdminRole' => null,
+		'superAdminRole' => null, // Defaults to admin/superadmin aliases; [] disables the policy bypass.
 
 		/*
 		 * Admin access gate. REQUIRED — the plugin fails closed by default,

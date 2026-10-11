@@ -5,8 +5,9 @@ function sidebar() {
     {
       text: 'Guide',
       items: [
-        { text: 'Overview', link: '/guide/' },
         { text: 'Installation', link: '/guide/installation' },
+        { text: 'Getting started', link: '/guide/getting-started' },
+        { text: 'Overview', link: '/guide/' },
         { text: 'Admin Access', link: '/guide/admin-access' },
         { text: 'Feature Flags', link: '/guide/feature-flags' },
         { text: 'Strict CSP', link: '/guide/strict-csp' },
@@ -51,7 +52,7 @@ function sidebar() {
 
 export default defineConfig({
   title: 'cakephp-tinyauth-backend',
-  description: 'A database-backed admin UI for managing CakePHP TinyAuth roles, permissions, and ACL — no INI files required.',
+  description: 'A database-backed admin UI for managing CakePHP TinyAuth roles, permissions, and ACL without INI files.',
   base: '/cakephp-tinyauth-backend/',
   lastUpdated: true,
   cleanUrls: true,
@@ -64,7 +65,8 @@ export default defineConfig({
   themeConfig: {
     logo: '/logo.svg',
     nav: [
-      { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
+      { text: 'Installation', link: '/guide/installation' },
+      { text: 'Getting started', link: '/guide/getting-started' },
       { text: 'Strategies', link: '/strategies/', activeMatch: '/strategies/' },
       { text: 'Permissions', link: '/permissions/roles', activeMatch: '/permissions/' },
       { text: 'Authorization', link: '/authorization/', activeMatch: '/authorization/' },
@@ -73,6 +75,7 @@ export default defineConfig({
         text: 'Links',
         items: [
           { text: 'GitHub', link: 'https://github.com/dereuromark/cakephp-tinyauth-backend' },
+          { text: 'TinyAuth docs', link: 'https://dereuromark.github.io/cakephp-tinyauth/' },
           { text: 'Packagist', link: 'https://packagist.org/packages/dereuromark/cakephp-tinyauth-backend' },
           { text: 'Issues', link: 'https://github.com/dereuromark/cakephp-tinyauth-backend/issues' },
         ],

@@ -40,6 +40,7 @@ class ImportCommandTest extends TestCase {
 	public function tearDown(): void {
 		Configure::delete('TinyAuth.aclAdapter');
 		Configure::delete('Roles');
+		Configure::delete('TinyAuth.aclFilePath');
 
 		parent::tearDown();
 	}
@@ -64,12 +65,32 @@ class ImportCommandTest extends TestCase {
 	public function testImportAclMissingFileExitsWithoutInsertingRows(): void {
 		$this->exec('tiny_auth_backend import acl ' . TMP . 'does-not-exist.ini');
 
-		// The command logs the error and returns success — it's a skip,
-		// not a hard failure — but the matrix must remain untouched.
-		$this->assertExitSuccess();
+		$this->assertExitError();
 		$this->assertErrorContains('does-not-exist.ini does not exist or cannot be found, skipping');
 		$this->assertSame(0, $this->countRows('tinyauth_controllers', []));
 		$this->assertSame(0, $this->countRows('tinyauth_actions', []));
+		$this->assertSame(0, $this->countRows('tinyauth_acl_permissions', []));
+	}
+
+	public function testImportUsesDefaultAclFileName(): void {
+		$file = TMP . 'auth_acl.ini';
+		file_put_contents($file, "[Articles]\nindex = admin\n");
+		Configure::delete('TinyAuth.aclFile');
+		Configure::write('TinyAuth.aclFilePath', rtrim(TMP, DS));
+
+		try {
+			$this->exec('tiny_auth_backend import acl');
+			$this->assertExitSuccess();
+			$this->assertOutputContains('Imported: auth_acl.ini');
+			$this->assertSame(1, $this->countRows('tinyauth_acl_permissions', ['role_id' => 1]));
+		} finally {
+			unlink($file);
+		}
+	}
+
+	public function testImportRejectsDirectory(): void {
+		$this->exec('tiny_auth_backend import acl ' . TMP);
+		$this->assertExitError();
 		$this->assertSame(0, $this->countRows('tinyauth_acl_permissions', []));
 	}
 

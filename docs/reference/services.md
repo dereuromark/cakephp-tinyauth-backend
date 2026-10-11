@@ -99,7 +99,7 @@ namespace is also a loaded plugin because the legacy row is ambiguous.
 `sync()` returns:
 
 ```php
-['added' => 0, 'updated' => 0, 'actions_added' => 0]
+['added' => 0, 'updated' => 0, 'actions_added' => 0];
 ```
 
 ## ResourceSyncService
@@ -119,7 +119,7 @@ $resources = $service->scan();
 By default, synced resources get these abilities:
 
 ```php
-['view', 'create', 'edit', 'delete']
+['view', 'create', 'edit', 'delete'];
 ```
 
 You can override them:

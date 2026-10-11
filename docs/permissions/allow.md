@@ -1,28 +1,27 @@
 # Allow (Public Actions)
 
-The Allow page lets you mark actions as publicly accessible — no authentication
+The Allow page lets you mark actions as publicly accessible, no authentication
 required.
 
 ![Allow / public actions management](../screenshots/allow.png)
 
 ## Overview
 
-Public actions bypass authentication entirely: anyone can access them without
-logging in.
+Public flags are consumed by the configured DB allow adapter or authorization integration. Editing a flag does not disable separate authentication middleware or controller checks in your application.
 
 Common examples:
 
-- `Pages::display` — static pages
-- `Users::login` — login page
-- `Users::register` — registration page
+- `Pages::display`, static pages
+- `Users::login`, login page
+- `Users::register`, registration page
 - API endpoints that don't require auth
 
 ## Interface
 
 The Allow page displays all controllers with their actions:
 
-- **Toggle switch** — enable/disable public access per action
-- **Bulk actions** — make all actions in a controller public/protected
+- **Toggle switch**, enable/disable public access per action
+- **Bulk actions**, make all actions in a controller public/protected
 
 ### Setting public actions
 
@@ -34,16 +33,16 @@ The Allow page displays all controllers with their actions:
 
 For each controller, you can:
 
-- **Make all public** — set all actions to public
-- **Make all protected** — remove public access from all actions
+- **Make all public**, set all actions to public
+- **Make all protected**, remove public access from all actions
 
 ### Filter options
 
 Filter the view by:
 
-- **All** — show all actions
-- **Public** — show only public actions
-- **Protected** — show only protected actions
+- **All**, show all actions
+- **Public**, show only public actions
+- **Protected**, show only protected actions
 
 ## Database schema
 
@@ -63,17 +62,11 @@ CREATE TABLE tinyauth_actions (
 ## Programmatic access
 
 ```php
-use TinyAuthBackend\Service\TinyAuthService;
+use TinyAuthBackend\Auth\AllowAdapter\DbAllowAdapter;
 
-$service = new TinyAuthService();
-
-// Check if action is public
-$isPublic = $service->isPublicAction('Pages', 'display');
-
-// Check with plugin/prefix
-$isPublic = $service->isPublicAction('Articles', 'view', [
-    'plugin' => 'Blog',
-]);
+$rules = (new DbAllowAdapter())->getAllow([]);
+$isPublic = in_array('display', $rules['Pages']['allow'] ?? [], true);
+$isPluginPublic = in_array('view', $rules['Blog.Articles']['allow'] ?? [], true);
 ```
 
 ### Making actions public programmatically
@@ -91,14 +84,12 @@ $action = $actionsTable->find()
         ]);
     })
     ->where(['Actions.name' => 'display'])
-    ->first();
+    ->firstOrFail();
 
 // Make it public
 $action->is_public = true;
-$actionsTable->save($action);
-
-// Clear cache
-Cache::delete('TinyAuth.allow');
+$actionsTable->saveOrFail($action);
+// The table callback clears the TinyAuth rule caches.
 ```
 
 ## Integration with TinyAuth
@@ -117,10 +108,14 @@ The adapter returns data in TinyAuth's expected format:
 ```php
 // Returns an array like:
 [
-    'Pages' => ['display', 'home'],
-    'Users' => ['login', 'register'],
-    'Blog.Articles' => ['index', 'view'],
-]
+    'Pages' => [
+        'plugin' => null,
+        'prefix' => null,
+        'controller' => 'Pages',
+        'allow' => ['display', 'home'],
+        'deny' => [],
+    ],
+];
 ```
 
 ## Security considerations
@@ -133,5 +128,5 @@ The adapter returns data in TinyAuth's expected format:
 
 ## See also
 
-- [Public Actions concept](/authorization/authentication) — the runtime view.
-- [ACL Matrix](/permissions/acl) — role-based controller/action permissions.
+- [Public Actions concept](/authorization/authentication), the runtime view.
+- [ACL Matrix](/permissions/acl), role-based controller/action permissions.

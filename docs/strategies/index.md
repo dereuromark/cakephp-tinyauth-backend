@@ -15,16 +15,16 @@ needs.
 
 ## Quick descriptions
 
-- **[Adapter-Only TinyAuth](/strategies/adapter-only)** — keep classic TinyAuth
+- **[Adapter-Only TinyAuth](/strategies/adapter-only)**, keep classic TinyAuth
   `allow` / `acl` behavior and move rule storage from INI files to database-backed
   adapters.
-- **[Full TinyAuthBackend](/strategies/full-backend)** — use the full backend:
+- **[Full TinyAuthBackend](/strategies/full-backend)**, use the full backend:
   roles, ACL, resources, scopes, hierarchy, and CakePHP Authorization
   integration.
-- **[Native CakePHP Auth](/strategies/native-auth)** — keep CakePHP
+- **[Native CakePHP Auth](/strategies/native-auth)**, keep CakePHP
   Authentication / Authorization as the runtime layer and use TinyAuthBackend
   mainly as a permission admin UI.
-- **[External Role Source](/strategies/external-roles)** — read roles from app
+- **[External Role Source](/strategies/external-roles)**, read roles from app
   config or a callback while keeping backend-managed ACL / resource assignments
   usable.
 

@@ -22,10 +22,10 @@ entity.{entity_field} === user.{user_field}
 1. Go to `/admin/auth/scopes`.
 2. Click **Add Scope**.
 3. Enter:
-   - **Name** — identifier (e.g. `own`, `team`, `department`)
-   - **Description** — what this scope does
-   - **Entity Field** — field on the entity to check
-   - **User Field** — field on the user to compare
+   - **Name**, identifier (e.g. `own`, `team`, `department`)
+   - **Description**, what this scope does
+   - **Entity Field**, field on the entity to check
+   - **User Field**, field on the user to compare
 
 ### Common scopes
 
@@ -133,9 +133,9 @@ $canEdit = $service->canAccessResource($user, $article, 'edit');
 ## Best practices
 
 ::: tip Keep scopes small
-1. **Keep scopes simple** — one condition per scope.
-2. **Use descriptive names** — `own`, `team`, not `scope1`.
-3. **Document scopes** — clear descriptions help administrators.
-4. **Test scope conditions** — verify field names are correct.
-5. **Handle null fields** — consider what happens if `entity_field` is null.
+1. **Keep scopes simple**, one condition per scope.
+2. **Use descriptive names**, `own`, `team`, not `scope1`.
+3. **Document scopes**, clear descriptions help administrators.
+4. **Test scope conditions**, verify field names are correct.
+5. **Handle null fields**, consider what happens if `entity_field` is null.
 :::

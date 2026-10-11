@@ -1,8 +1,6 @@
 # Admin Access
 
-This plugin ships an admin UI at `/admin/auth`. Because it manages authorization
-rules, accidental exposure is **RCE-equivalent** — an attacker who reaches the UI
-can grant themselves access to anything.
+This plugin ships an admin UI at `/admin/auth`. Anyone admitted to this interface can change the application’s authorization rules. Restrict access to users who may administer those rules.
 
 ::: danger Fails closed by default
 Regardless of `debug` mode, every request to the admin UI is rejected with `403`
@@ -54,7 +52,7 @@ The legacy `TinyAuthBackend.editorCheck` callable (signature
 unset, but is **deprecated** and emits a deprecation warning. Migrate by:
 
 1. Renaming the key from `editorCheck` to `adminAccess`.
-2. Dropping the `$identity` parameter — fetch it via
+2. Dropping the `$identity` parameter, fetch it via
    `$request->getAttribute('identity')` inside your `Closure`.
 
 ::: tip Precedence
@@ -63,6 +61,6 @@ If both keys are configured, `adminAccess` wins; `editorCheck` is ignored.
 
 ## Next steps
 
-- [Strict CSP](/guide/strict-csp) — run the admin UI under a strict
+- [Strict CSP](/guide/strict-csp), run the admin UI under a strict
   Content-Security-Policy header.
-- [Feature Flags](/guide/feature-flags) — choose which backend sections appear.
+- [Feature Flags](/guide/feature-flags), choose which backend sections appear.

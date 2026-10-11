@@ -40,6 +40,7 @@ class ScopesTable extends Table {
 	 * @return \Cake\Validation\Validator
 	 */
 	public function validationDefault(Validator $validator): Validator {
+		$validator->setProvider('table', $this);
 		$validator
 			->scalar('name')
 			->maxLength('name', 50)

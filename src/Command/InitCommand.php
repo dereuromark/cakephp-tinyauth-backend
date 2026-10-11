@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace TinyAuthBackend\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Routing\Router;
 use TinyAuthBackend\Service\RoleSourceService;
@@ -16,7 +14,9 @@ class InitCommand extends Command {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute(Arguments $args, ConsoleIo $io): ?int {
+	public function execute(): ?int {
+		$args = $this->args;
+		$io = $this->io;
 		$role = $args->getArgument('role');
 		$availableRoles = $this->_getAvailableRoles();
 		if (!in_array($role, $availableRoles, true)) {

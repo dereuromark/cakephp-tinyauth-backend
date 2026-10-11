@@ -12,7 +12,7 @@ trait DatabaseTestTrait {
 	protected function insertRow(string $table, array $data): void {
 		$tableObject = TableRegistry::getTableLocator()->get($table);
 		$entity = $tableObject->newEntity($data, [
-			'accessibleFields' => ['*' => true],
+			'patchableFields' => ['*' => true],
 		]);
 		$tableObject->saveOrFail($entity, ['checkRules' => false]);
 

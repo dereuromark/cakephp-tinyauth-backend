@@ -27,18 +27,18 @@
 		"docs": "https://dereuromark.github.io/cakephp-tinyauth-backend/"
 	},
 	"require": {
-		"php": ">=8.2",
-		"cakephp/cakephp": "^5.1.1",
-		"dereuromark/cakephp-tinyauth": "^5.0.0"
+		"php": ">=8.5",
+		"cakephp/cakephp": "^6.0@dev",
+		"dereuromark/cakephp-tinyauth": "dev-cake6"
 	},
 	"require-dev": {
-		"cakephp/authorization": "^3.0",
-		"dereuromark/cakephp-i18n-lint": "^0.1.1",
+		"cakephp/authorization": "^4.0@dev",
+		"dereuromark/cakephp-i18n-lint": "dev-cake6",
 		"fig-r/psr2r-sniffer": "dev-master",
-		"phpunit/phpunit": "^11.5 || ^12.1 || ^13.0",
-		"cakephp/migrations": "^4.5 || ^5.0"
+		"phpunit/phpunit": "^13.0",
+		"cakephp/migrations": "dev-fix/6.x-cakephp-compatibility"
 	},
-	"minimum-stability": "stable",
+	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {

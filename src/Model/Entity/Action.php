@@ -21,7 +21,7 @@ class Action extends Entity {
 	/**
 	 * @var array<string, bool>
 	 */
-	protected array $_accessible = [
+	protected array $patchable = [
 		'controller_id' => true,
 		'name' => true,
 		'is_public' => true,

@@ -24,7 +24,7 @@ class Role extends Entity {
 	/**
 	 * @var array<string, bool>
 	 */
-	protected array $_accessible = [
+	protected array $patchable = [
 		'name' => true,
 		'alias' => true,
 		'parent_id' => true,

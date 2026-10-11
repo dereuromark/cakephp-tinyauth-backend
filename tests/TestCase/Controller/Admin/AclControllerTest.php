@@ -243,7 +243,7 @@ class AclControllerTest extends TestCase {
 		$this->get(['prefix' => 'Admin', 'plugin' => 'TinyAuthBackend', 'controller' => 'Acl', 'action' => 'search', '?' => ['q' => 'Many']]);
 
 		$this->assertResponseCode(200);
-		$body = (string)$this->_response->getBody();
+		$body = (string)$this->response->getBody();
 		// Each rendered controller hit emits one anchor under the Controllers section.
 		// The action limits to 5 server-side, so even with 12 matching rows we must see
 		// exactly 5.

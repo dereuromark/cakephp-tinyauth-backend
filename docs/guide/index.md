@@ -60,15 +60,14 @@ Common sections:
 | `/admin/auth/sync/resources` | Scan entities/resources into the database |
 
 ::: danger Access is fail-closed
-The admin UI manages authorization rules, so accidental exposure is
-**RCE-equivalent**. The plugin rejects every admin request with `403` until you
+The admin UI can change authorization rules. The plugin rejects every admin request with `403` until you
 configure an explicit gate. See [Admin Access](/guide/admin-access).
 :::
 
 ## Next steps
 
-- [Getting started](/guide/getting-started), open the local UI and create a role.
-- [Installation](/guide/installation), install the plugin and run the migrations.
+- [Installation](/guide/installation): install the plugin and run the migrations.
+- [Getting started](/guide/getting-started): open the local UI and create a role.
 - [Admin Access](/guide/admin-access), configure who may manage `/admin/auth`.
 - [Strategies](/strategies/), choose how deeply you integrate the backend.
 - [Permissions](/permissions/roles), roles, public actions, ACL, resources, and scopes.

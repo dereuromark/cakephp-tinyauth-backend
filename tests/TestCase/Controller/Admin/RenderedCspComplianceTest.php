@@ -75,6 +75,27 @@ class RenderedCspComplianceTest extends TestCase {
 		// The test_app's Application sets a fixed `cspNonce` request attribute
 		// so the templates emit `nonce="…"` on inline `<script>` / `<style>`
 		// blocks (mirroring what a real CSP middleware in the host app does).
+		$this->assertStrictCspClean($url);
+	}
+
+	/**
+	 * CakePHP's own CspMiddleware sets `cspScriptNonce` instead of `cspNonce`.
+	 *
+	 * @param string $url
+	 * @return void
+	 */
+	#[DataProvider('adminUrlProvider')]
+	public function testAdminPageHtmlIsStrictCspCleanWithCoreScriptNonce(string $url): void {
+		Configure::write('TestApp.cspNonceAttribute', 'cspScriptNonce');
+
+		$this->assertStrictCspClean($url);
+	}
+
+	/**
+	 * @param string $url
+	 * @return void
+	 */
+	protected function assertStrictCspClean(string $url): void {
 		$this->get($url);
 
 		$this->assertResponseOk();
@@ -120,7 +141,7 @@ class RenderedCspComplianceTest extends TestCase {
 			foreach ($matches[1] as $attrs) {
 				$attrs = (string)$attrs;
 				$isExternal = preg_match('/\ssrc\s*=/', $attrs) === 1;
-				$isNonced = preg_match('/\snonce\s*=/', $attrs) === 1;
+				$isNonced = preg_match('/\snonce="test-nonce-deadbeef"/', $attrs) === 1;
 				$this->assertTrue(
 					$isExternal || $isNonced,
 					"Rendered HTML for $url contains an unnonced inline `<script>` opening tag <script$attrs>. "

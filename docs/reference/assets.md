@@ -68,8 +68,9 @@ definition, `unsafe-eval`. Pre-compiling in the package keeps the plugin
 strict-CSP compatible out of the box.
 
 Inline `<script>` blocks that remain in the layout (HTMX CSRF wiring, dark-mode
-FOUC bootstrap, the `window.TinyAuth` URL map) carry the request's `cspNonce` so
-they pass under nonced strict CSP without needing `unsafe-inline`. See
+FOUC bootstrap, the `window.TinyAuth` URL map) carry the request's `cspScriptNonce`
+(falling back to `cspNonce`) so they pass under nonced strict CSP without needing
+`unsafe-inline`. See
 [Strict CSP](/guide/strict-csp) for the host-app side.
 
 ## CSP guard test

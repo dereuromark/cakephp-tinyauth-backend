@@ -3,20 +3,42 @@
 The plugin's admin UI is built to run under a strict Content-Security-Policy
 header, no `script-src 'unsafe-eval'`, no `style-src 'unsafe-inline'`.
 
-Inline `<script>` blocks in the layout carry a per-request nonce read from
-`$this->getRequest()->getAttribute('cspNonce')`, so any host-app middleware that
-sets that attribute and emits a matching `Content-Security-Policy` header will
-work out of the box.
+Inline `<script>` blocks in the layout carry a per-request nonce read from the
+`cspScriptNonce` request attribute, which CakePHP's own `CspMiddleware` sets when
+`scriptNonce` is enabled. A `cspNonce` attribute set by a custom middleware is
+still supported as a fallback.
 
 There are two host-app concerns to be aware of.
 
 ## 1. CSP middleware
 
-The plugin does **not** ship its own CSP middleware. Add a small middleware to
-your app that:
+The plugin does **not** ship its own CSP middleware. CakePHP's
+`Cake\Http\Middleware\CspMiddleware` with `scriptNonce` enabled works out of the
+box. It needs `paragonie/csp-builder`:
+
+```bash
+composer require paragonie/csp-builder
+```
+
+The policy must define a `script-src` directive (or `default-src`). Without one,
+the builder returns an empty nonce and the plugin's inline scripts stay blocked:
+
+```php
+use Cake\Http\Middleware\CspMiddleware;
+
+$middlewareQueue->add(new CspMiddleware([
+    'script-src' => [
+        'self' => true,
+    ],
+], [
+    'scriptNonce' => true,
+]));
+```
+
+A custom middleware works too if it:
 
 - generates a per-request nonce,
-- exposes it as the `cspNonce` request attribute, and
+- exposes it as the `cspScriptNonce` (or `cspNonce`) request attribute, and
 - emits a `Content-Security-Policy` header with `'nonce-…'` in `script-src`.
 
 ::: tip Reference implementation

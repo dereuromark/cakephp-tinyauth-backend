@@ -14,7 +14,28 @@ There are two host-app concerns to be aware of.
 
 The plugin does **not** ship its own CSP middleware. CakePHP's
 `Cake\Http\Middleware\CspMiddleware` with `scriptNonce` enabled works out of the
-box. A custom middleware works too if it:
+box. It needs `paragonie/csp-builder`:
+
+```bash
+composer require paragonie/csp-builder
+```
+
+The policy must define a `script-src` directive (or `default-src`). Without one,
+the builder returns an empty nonce and the plugin's inline scripts stay blocked:
+
+```php
+use Cake\Http\Middleware\CspMiddleware;
+
+$middlewareQueue->add(new CspMiddleware([
+    'script-src' => [
+        'self' => true,
+    ],
+], [
+    'scriptNonce' => true,
+]));
+```
+
+A custom middleware works too if it:
 
 - generates a per-request nonce,
 - exposes it as the `cspScriptNonce` (or `cspNonce`) request attribute, and
